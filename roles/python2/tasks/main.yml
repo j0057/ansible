@@ -10,7 +10,8 @@
     creates: /usr/bin/pip
 
 - name: copy .whl files from ~/pypkg27
-  copy: src=~/pypkg27 dest=/root
+  #copy: src=~/pypkg27 dest=/root
+  synchronize: src=~/pypkg27 dest=/root group=no owner=no
 
 - name: install pip
   pip: state=latest extra_args='--no-index --find-links=/root/pypkg27' name=pip

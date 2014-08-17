@@ -1,0 +1,8 @@
+- name: "create virtualenv"
+  pip:
+  args:
+    name: "{{ whl }}"
+    virtualenv: "{{ dir }}"
+    extra_args: "--no-index --find-links /root/pypkg27"
+    state: present
+
