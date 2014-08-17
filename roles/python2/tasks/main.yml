@@ -13,21 +13,12 @@
   #copy: src=~/pypkg27 dest=/root
   synchronize: src=~/pypkg27 dest=/root group=no owner=no
 
-- name: install pip
-  pip: state=latest extra_args='--no-index --find-links=/root/pypkg27' name=pip
-
-- name: install setuptools
-  pip: state=latest extra_args='--no-index --find-links=/root/pypkg27' name=setuptools
-
-- name: install setuptools-metadata
-  pip: state=latest extra_args='--no-index --find-links=/root/pypkg27' name=setuptools-metadata
-
-- name: install setuptools-version-command
-  pip: state=latest extra_args='--no-index --find-links=/root/pypkg27' name=setuptools-version-command
-
-- name: install virtualenv
-  pip: state=latest extra_args='--no-index --find-links=/root/pypkg27' name=virtualenv
-
-- name: install wheel
-  pip: state=latest extra_args='--no-index --find-links=/root/pypkg27' name=wheel
-
+- name: install packages
+  pip: "state=latest extra_args='--no-index --find-links=/root/pypkg27' name={{ item }}"
+  with_items:
+    - pip
+    - setuptools
+    - setuptools-metadata
+    - setuptools-version-command
+    - virtualenv
+    - wheel
