@@ -1,11 +1,15 @@
 ---
 - hosts: arch
   roles:
-    - role: arch-common
-    - role: nginx
-    - role: python2
-    - role: virtualenv
-      dir: /srv/mp3
-      whl: mp3==2.0dev_82_g096ae3e
-      
 
+    - role: arch-common
+
+    - role: nginx
+
+    - role: python2
+
+    - role: virtualenv
+      dir: /srv/hello
+      whl: hello==1.2-5-g8159f75
+
+    - role: uwsgi
