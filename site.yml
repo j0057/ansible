@@ -5,13 +5,15 @@
     - role: arch-common
 
     - role: nginx
+      servers:
+      - name: arch-vbox.j0057.nl
 
     - role: python2
       virtualenvs:
-        - dir: /srv/hello
-          whl: hello==1.2-5-g8159f75
+      - dir: /srv/hello
+        whl: hello==1.2-5-g8159f75
 
     - role: uwsgi
       apps:
-        - name: hello
-        - virtualenv: /srv/hello
+      - name: hello
+        config: hello.yml.j2

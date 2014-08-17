@@ -1,0 +1,12 @@
+uwsgi:
+  plugins: python2
+  master: true
+  workers: 1
+  auto-procname: true
+  procname-prefix-spaced: hello
+  chdir: /srv/hello
+  virtualenv: /srv/hello
+  module: hello
+  callable: app
+  env: HELLO_MESSAGE=Albatross!
+

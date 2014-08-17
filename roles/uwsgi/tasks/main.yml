@@ -1,11 +1,40 @@
 - name: install uwsgi
-  pacman: name=uwsgi state=present
+  pacman: "name={{ item }} state=present"
+  with_items:
+    - uwsgi
+    - uwsgi-plugin-python2
 
-- name: install /etc/tmpfiles.d/run_uwsgi.conf
-  template: src=run_uwsgi.conf.j2 dest=/etc/tmpfiles.d/run_uwsgi.conf
+- name: install config files
+  template:
+  args:
+    src: "{{ item.src }}"
+    dest: "{{ item.dst }}"
+  with_items:
+    - src: run_uwsgi.conf.j2
+      dst: /etc/tmpfiles.d/run_uwsgi.conf
+    - src: uwsgi@.service.j2
+      dst: /etc/systemd/system/uwsgi@.service
+    - src: uwsgi@.socket.j2
+      dst: /etc/systemd/system/uwsgi@.socket
 
-- name: install /etc/systemd/system/wsgi@.service
-  template: src=uwsgi@.service.j2 dest=/etc/systemd/system/uwsgi@.service
+- name: create uwsgi apps-enabled directory
+  file:
+  args: 
+    path: /etc/uwsgi/apps-enabled
+    state: directory
 
-- name: install /etc/systemd/system/uwsgi@.socket
-  template: src=uwsgi@.socket.j2 dest=/etc/systemd/system/uwsgi@.socket
+- name: install uwsgi configs
+  template:
+  args:
+    src: "{{ item.config }}"
+    dest: "/etc/uwsgi/apps-enabled/{{ item.name }}.yml"
+  with_items: apps
+
+- name: enable uwsgi sockets
+  service:
+  args:
+    name: "uwsgi@{{ item.name }}.socket"
+    enabled: yes
+    state: started
+  with_items: apps
+

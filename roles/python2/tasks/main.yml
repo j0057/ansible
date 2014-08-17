@@ -13,7 +13,11 @@
   synchronize: src=~/pypkg27 dest=/root group=no owner=no
 
 - name: install packages
-  pip: "state=latest extra_args='--no-index --find-links=/root/pypkg27' name={{ item }}"
+  pip:
+  args:
+    name: "{{ item }}"
+    state: latest
+    extra_args: "--no-index --find-links=/root/pypkg27"
   with_items:
     - pip
     - setuptools

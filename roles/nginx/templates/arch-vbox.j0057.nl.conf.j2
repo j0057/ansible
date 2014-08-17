@@ -1,0 +1,13 @@
+server {
+    listen 80;
+    server_name arch-vbox.j0057.nl;
+
+    location /hello {
+        include /etc/nginx/uwsgi_params;
+        uwsgi_pass unix:/run/uwsgi/hello.socket;
+    }
+
+    location / {
+        root /srv/root;
+    }
+}
