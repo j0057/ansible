@@ -1,0 +1,11 @@
+- name: install uwsgi
+  pacman: name=uwsgi state=present
+
+- name: install /etc/tmpfiles.d/run_uwsgi.conf
+  template: src=run_uwsgi.conf.j2 dest=/etc/tmpfiles.d/run_uwsgi.conf
+
+- name: install /etc/systemd/system/wsgi@.service
+  template: src=uwsgi@.service.j2 dest=/etc/systemd/system/uwsgi@.service
+
+- name: install /etc/systemd/system/uwsgi@.socket
+  template: src=uwsgi@.socket.j2 dest=/etc/systemd/system/uwsgi@.socket

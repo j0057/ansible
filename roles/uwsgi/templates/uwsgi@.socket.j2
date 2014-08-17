@@ -1,0 +1,11 @@
+[Unit]
+Description=uWSGI socket for %i
+
+[Socket]
+ListenStream=/run/uwsgi/%i.socket
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=sockets.target
+
