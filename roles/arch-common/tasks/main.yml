@@ -1,0 +1,10 @@
+- name: check connection
+  ping:
+- name: "set hostname to {{ hostname }}"
+  hostname: 
+  args:
+    name: "{{ hostname }}"
+- name: "disable root login"
+  shell: passwd -l root ; touch /root/.root-login-disabled 
+  args:
+    creates: /root/.root-login-disabled

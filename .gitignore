@@ -1,2 +1,3 @@
 install/authorized_keys
 env
+*.swp
