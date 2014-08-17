@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+message() { echo ; echo "# $1" ; echo ; }
+
+# HOSTNAME
+message "Setting hostname to archlinux"
+echo archlinux > /etc/hostname
+
+# TZNAME
+message "Setting timezone to Europe/Amsteredam"
+ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
+
+message "Setting locale to en_US.UTF-8"
+echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
+locale-gen
+
+message "Creating initial ram disk"
+mkinitcpio -p linux
+
+message "Setting password to root"
+echo -en "root\nroot\n" | passwd root
+
+message "Installing GRUB"
+grub-install --target=i386-pc --recheck /dev/sda
+grub-mkconfig -o /boot/grub/grub.cfg
+
+message "Enabling services"
+systemctl enable dhcpcd@enp0s3.service
+systemctl enable sshd.service
+
+message "Enabling SSH to root"
+mkdir /root/.ssh
+curl http://xi:8000/authorized_keys > /root/.ssh/authorized_keys
+chmod 0700 /root/.ssh
+chmod 0600 /root/.ssh/authorized_keys
+

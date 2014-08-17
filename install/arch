@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+message() { echo ; echo "# $1" ; echo ; }
+
+message "Partitioning"
+fdisk /dev/sda << EOF
+o
+n
+p
+1
+
++100M
+n
+p
+2
+
+
+w
+p
+q
+EOF
+sleep 5
+
+message "Formatting"
+mkfs.btrfs -f /dev/sda2
+mkfs.ext4 /dev/sda1
+
+message "Mounting"
+mount /dev/sda2 /mnt
+mkdir /mnt/boot
+mount /dev/sda1 /mnt/boot
+
+message "Bootstrapping"
+pacstrap /mnt base btrfs-progs grub openssh python2 lsb-release
+
+message "Generating /etc/fstab"
+genfstab -p /mnt > /mnt/etc/fstab
+
+message "Chrooting....."
+arch-chroot "/mnt" bash -c "curl http://xi:8000/arch_chroot | bash -ex"
+
+message "Unmounting"
+umount -R /mnt
+
