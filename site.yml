@@ -7,9 +7,11 @@
     - role: nginx
 
     - role: python2
-
-    - role: virtualenv
-      dir: /srv/hello
-      whl: hello==1.2-5-g8159f75
+      virtualenvs:
+        - dir: /srv/hello
+          whl: hello==1.2-5-g8159f75
 
     - role: uwsgi
+      apps:
+        - name: hello
+        - virtualenv: /srv/hello
