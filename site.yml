@@ -3,4 +3,5 @@
   roles:
     - arch-common
     - nginx
+    - python2
 
