@@ -1,0 +1,8 @@
+- name: ensure postfix etc are installed
+  pacman: "name={{ item }} state=present"
+  with_items:
+  - postfix
+
+- name: configure main.cf
+  template: src=main.cf.j2 dest=/etc/postfix/main.cf backup=yes
+  notify: "restart postfix"

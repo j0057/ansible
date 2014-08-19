@@ -12,3 +12,11 @@
     apps:
     - name: hello
       config: hello.yml.j2
+  - role: postfix
+    main_cf:
+      myhostname: j0057.nl
+      mydomain: j0057.nl
+      mydestination:
+      - j0057.nl
+      - punosqnp.nl
+      - arch-vbox

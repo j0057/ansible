@@ -1,0 +1,2 @@
+- name: "restart postfix"
+  action: service name=postfix.service state=restarted

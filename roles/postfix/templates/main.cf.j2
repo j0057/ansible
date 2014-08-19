@@ -1,0 +1,56 @@
+smtpd_banner = $myhostname ESMTP $mail_name
+biff = no
+append_dot_mydomain = no
+#smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+#smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+#smtpd_use_tls=yes
+#smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+#smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+myhostname = {{ main_cf.myhostname }}
+mydomain = {{ main_cf.mydomain }}
+alias_maps = hash:/etc/postfix/aliases
+alias_database = hash:/etc/aliases/aliases
+myorigin = $mydomain
+mydestination = {{ main_cf.mydestination | join(", ") }}
+relayhost = 
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mailbox_command = procmail -a "$EXTENSION"
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+inet_protocols = ipv4
+
+smtpd_delay_reject = yes
+
+smtpd_helo_required = yes
+smtpd_helo_restrictions =
+  permit_mynetworks,
+  reject_non_fqdn_hostname,
+  reject_invalid_hostname,
+  reject_unknown_hostname,
+  permit
+
+smtpd_sender_restrictions =
+  permit_sasl_authenticated,
+  permit_mynetworks,
+  reject_non_fqdn_sender,
+  reject_unknown_sender_domain,
+  permit
+
+smtpd_recipient_restrictions =
+  reject_unauth_pipelining,
+  reject_non_fqdn_recipient,
+  reject_unknown_recipient_domain,
+  permit_mynetworks,
+  permit_sasl_authenticated,
+  reject_unauth_destination,
+  reject_rbl_client relays.ordb.org,
+  reject_rbl_client sbl-xbl.spamhaus.org,
+  #check_policy_service unix:private/policy-spf,
+  #check_policy_service inet:127.0.0.1:10023,
+  permit
+
+#policy-spf_time_limit = 3600s
+
+virtual_alias_maps = hash:/etc/postfix/virtual
+
