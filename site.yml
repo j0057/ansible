@@ -1,19 +1,14 @@
----
 - hosts: arch
   roles:
-
-    - role: arch-common
-
-    - role: nginx
-      servers:
-      - name: arch-vbox.j0057.nl
-
-    - role: python2
-      virtualenvs:
-      - dir: /srv/hello
-        whl: hello==1.2-5-g8159f75
-
-    - role: uwsgi
-      apps:
-      - name: hello
-        config: hello.yml.j2
+  - role: arch-common
+  - role: nginx
+    servers:
+    - name: arch-vbox.j0057.nl
+  - role: python2
+    virtualenvs:
+    - dir: /srv/hello
+      whl: hello==1.2-5-g8159f75
+  - role: uwsgi
+    apps:
+    - name: hello
+      config: hello.yml.j2
