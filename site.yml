@@ -1,18 +1,35 @@
 - hosts: arch
   roles:
+
   - role: arch-common
+    users:
+    - jjm
+
   - role: nginx
     servers:
     - name: arch-vbox.j0057.nl
+
   - role: python2
     virtualenvs:
     - dir: /srv/hello
       whl: hello==1.2-5-g8159f75
+
   - role: uwsgi
     apps:
     - name: hello
       config: hello.yml.j2
+
   - role: postfix
+    aliases:
+    - name: "root"
+      dest: "jjm"
+    - name: "*"
+      dest: "jjm"
+    virtuals:
+    - domain: "@j0057.nl"
+      user: "jjm"
+    - domain: "@punosqnp.nl"
+      user: "jjm"
     main_cf:
       myhostname: j0057.nl
       mydomain: j0057.nl

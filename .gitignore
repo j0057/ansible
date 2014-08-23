@@ -1,3 +1,6 @@
 install/authorized_keys
 env
 *.swp
+install/aur
+install/pypkg27
+group_vars/arch.yml

@@ -1,4 +1,4 @@
-arch-vbox ansible_ssh_port=30022 ansible_ssh_host=localhost ansible_ssh_user=root ansible_python_interpreter=/usr/bin/python2 hostname=arch-vbox
+arch-vbox ansible_ssh_port=30022 ansible_ssh_host=127.0.0.1 ansible_ssh_user=root ansible_python_interpreter=/usr/bin/python2 hostname=arch-vbox
 
 [arch]
 arch-vbox

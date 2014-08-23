@@ -1,15 +1,37 @@
-- name: check connection
+- name: "check connection"
   ping:
+  tags: arch-common
 
-- name: "set hostname to {{ hostname }}"
+- name: "set hostname"
   hostname: 
   args:
     name: "{{ hostname }}"
+  tags: arch-common
 
 - name: "disable root login"
   shell: passwd -l root ; touch /root/.root-login-disabled 
   args:
     creates: /root/.root-login-disabled
+  tags: arch-common
 
-- name: install rsync
-  pacman: name=rsync state=installed
+- name: "create users"
+  user:
+  args:
+    name: "{{ item }}"
+  with_items: users
+  tags: arch-common
+
+- name: "install rsync"
+  pacman: "name=rsync state=installed"
+  tags: arch-common
+
+- name: "add AUR repository"
+  ini_file: "backup=yes dest=/etc/pacman.conf section=aur option={{ item.option }} value={{ item.value }}"
+  with_items:
+  - option: SigLevel
+    value: Never
+  - option: Server
+    value: "{{ aur_url }}"
+
+- name: "update package cache"
+  action: shell pacman -Sy

@@ -46,11 +46,11 @@ smtpd_recipient_restrictions =
   reject_unauth_destination,
   reject_rbl_client relays.ordb.org,
   reject_rbl_client sbl-xbl.spamhaus.org,
-  #check_policy_service unix:private/policy-spf,
-  #check_policy_service inet:127.0.0.1:10023,
+  check_policy_service unix:private/policy-spf,
+  check_policy_service inet:127.0.0.1:10023,
   permit
 
-#policy-spf_time_limit = 3600s
+policy-spf_time_limit = 3600s
 
 virtual_alias_maps = hash:/etc/postfix/virtual
 

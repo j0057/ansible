@@ -2,7 +2,39 @@
   pacman: "name={{ item }} state=present"
   with_items:
   - postfix
+  - postgrey
+  - python2-postfix-policyd-spf
+  - procmail
+  notify: "restart postfix"
+  tags: postfix
 
-- name: configure main.cf
+- name: configure /etc/postfix/main.cf
   template: src=main.cf.j2 dest=/etc/postfix/main.cf backup=yes
   notify: "restart postfix"
+  tags: postfix
+
+- name: configure /etc/postfix/master.cf
+  lineinfile: "dest=/etc/postfix/master.cf line='policy-spf unix - n n - - spawn user=nobody argv=/usr/bin/policyd-spf'"
+  notify: "restart postfix"
+  tags: postfix
+
+- name: configure /etc/postfix/aliases
+  lineinfile: "dest=/etc/postfix/aliases line='{{ item.name }}: {{ item.dest }}'"
+  with_items: aliases
+  notify: "run postalias"
+  tags: postfix
+
+- name: configure /etc/postfix/virtual
+  lineinfile: "dest=/etc/postfix/virtual line='{{ item.domain }}: {{ item.user }}'"
+  with_items: virtuals
+  notify: "run postmap"
+  tags: postfix
+
+- name: ensure services are enabled
+  service: "name={{ item }} enabled=yes"
+  with_items:
+  - postfix.service
+  - postgrey.service
+  notify: "restart postfix"
+  tags: postfix
+

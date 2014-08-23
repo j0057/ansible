@@ -1,2 +1,13 @@
 - name: "restart postfix"
-  action: service name=postfix.service state=restarted
+  action: "service name={{ item }} state=restarted"
+  with_items:
+  - postfix.service
+  - postgrey.service
+
+- name: "run postalias"
+  action: shell postalias /etc/postfix/aliases
+  notify: "restart postfix"
+
+- name: "run postmap"
+  action: shell postmap /etc/postfix/virtual
+  notify: "restart postfix"

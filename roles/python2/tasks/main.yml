@@ -3,21 +3,20 @@
   args:
     url: https://bootstrap.pypa.io/get-pip.py
     dest: /root/get-pip.py
+  tags: python2
 
 - name: ensure pip is installed
   shell: python2.7 /root/get-pip.py
   args:
     creates: /usr/bin/pip
-
-- name: copy .whl files from ~/pypkg27
-  synchronize: src=~/pypkg27 dest=/root group=no owner=no
+  tags: python2
 
 - name: install packages
   pip:
   args:
     name: "{{ item }}"
     state: latest
-    extra_args: "--no-index --find-links=/root/pypkg27"
+    extra_args: "--no-index --find-links {{ pypkg_url }}"
   with_items:
     - pip
     - setuptools
@@ -25,12 +24,14 @@
     - setuptools-version-command
     - virtualenv
     - wheel
+  tags: python2
 
 - name: create virtualenvs
   pip:
   args:
     name: "{{ item.whl }}"
     virtualenv: "{{ item.dir }}"
-    extra_args: "--no-index --find-links /root/pypkg27"
+    extra_args: "--no-index --find-links {{ pypkg_url }}"
     state: present
   with_items: virtualenvs
+  tags: python2
