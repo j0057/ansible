@@ -1,0 +1,20 @@
+[global]
+workgroup = WORKGROUP
+server string = Samba Server
+#printcap name = /etc/printcap
+#load printers = yes
+log file = /var/log/samba/%m.log
+max log size = 50
+
+[homes]
+comment = Home directories
+browseable = no
+writable = yes
+
+#[printers]
+#comment = All printers
+#path = /var/spool/samba
+#guest ok = yes
+#browseable = no
+#writable = no
+#printable = yes

@@ -37,3 +37,5 @@
       - j0057.nl
       - punosqnp.nl
       - arch-vbox
+
+  - role: samba
