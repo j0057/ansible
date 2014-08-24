@@ -3,7 +3,12 @@
 
   - role: arch-common
     users:
-    - jjm
+    - { name: jjm, comment: "Joost Molenaar" }
+
+  - role: data
+    files:
+    - { src: j0057.nl.crt, dest: /etc/ssl/certs,    mode: "0644", user: root, group: root }
+    - { src: j0057.nl.key, dest: /etc/ssl/private,  mode: "0600", user: root, group: root }
 
   - role: nginx
     servers:
@@ -19,26 +24,30 @@
     - name: hello
       config: hello.yml.j2
 
-  - role: postfix
-    aliases:
-    - name: "root"
-      dest: "jjm"
-    - name: "*"
-      dest: "jjm"
-    virtuals:
-    - domain: "@j0057.nl"
-      user: "jjm"
-    - domain: "@punosqnp.nl"
-      user: "jjm"
-    main_cf:
-      myhostname: j0057.nl
-      mydomain: j0057.nl
-      mydestination:
-      - j0057.nl
-      - punosqnp.nl
-      - arch-vbox
-
-  # role: dovecot
+  - role: email
+    postfix:
+      aliases:
+      - name: "root"
+        dest: "jjm"
+      - name: "*"
+        dest: "jjm"
+      virtuals:
+      - domain: "@j0057.nl"
+        user: "jjm"
+      - domain: "@punosqnp.nl"
+        user: "jjm"
+      main_cf:
+        myhostname: j0057.nl
+        mydomain: j0057.nl
+        mydestination:
+        - j0057.nl
+        - punosqnp.nl
+        - arch-vbox
+    dovecot:
+      users:
+      - { name: jjm, password: mail-password, uid: 1000, gid: 1000, home: /home/jjm }
+      ssl_cert: /etc/ssl/certs/j0057.nl.crt
+      ssl_key: /etc/ssl/private/j0057.nl.key
 
   - role: samba
   # role: nfs
@@ -46,7 +55,8 @@
   # role: mysql
   # role: sane
   # role: cups
+  # role: fail2ban
 
-  # certs
   # data/state
+
 
