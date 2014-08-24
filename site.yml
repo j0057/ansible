@@ -43,13 +43,3 @@
       ssl_key: /etc/ssl/private/j0057.nl.key
 
   - role: samba
-  # role: nfs
-
-  # role: mysql
-  # role: sane
-  # role: cups
-  # role: fail2ban
-
-  # data/state
-
-
