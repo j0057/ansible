@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+message() { echo ; echo -e "\e[1;37m==> $1\e[0;0m" ; echo ; }
+
+export -f message
+
+export INSTALL_HOST="10.0.2.2:8000"
+export INSTALL_HOSTNAME="archlinux"
+export INSTALL_TZNAME="Europe/Amsterdam"
+export INSTALL_LOCALE="en_US.UTF8"
+export INSTALL_PUBKEYS="id_rsa.pub key2.pub key3.pub"
+
+message "Starting stage 1"
+curl "http://${INSTALL_HOST}/arch_stage1" | bash -e
+
+message "Starting stage 2 in chroot"
+arch-chroot "/mnt" bash -c "curl \"http://${INSTALL_HOST}/arch_stage2\" | bash -e"
+
+message "Unmounting"
+umount -R /mnt
+

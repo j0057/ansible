@@ -1,23 +1,9 @@
 #!/bin/bash -e
 
-message() { echo ; echo "# $1" ; echo ; }
-
-message "Partitioning"
-fdisk /dev/sda << EOF
-o
-n
-p
-1
-
-+100M
-n
-p
-2
-
-
-w
-p
-q
+message "Partitioning" # 2048 sectors/MB, sda1: 256MB, sda2: the rest
+sfdisk --quiet --Linux --unit S /dev/sda << EOF
+$[1*2048],$[256*2048],L
+$[257*2048],,L
 EOF
 sleep 5
 
@@ -35,10 +21,4 @@ pacstrap /mnt base btrfs-progs grub openssh python2 lsb-release
 
 message "Generating /etc/fstab"
 genfstab -p /mnt > /mnt/etc/fstab
-
-message "Chrooting....."
-arch-chroot "/mnt" bash -c "curl http://xi:8000/arch_chroot | bash -ex"
-
-message "Unmounting"
-umount -R /mnt
 

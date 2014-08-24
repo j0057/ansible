@@ -1,17 +1,13 @@
 #!/bin/bash -e
 
-message() { echo ; echo "# $1" ; echo ; }
+message "Setting hostname to ${INSTALL_HOSTNAME}"
+echo "${INSTALL_HOSTNAME}" > /etc/hostname
 
-# HOSTNAME
-message "Setting hostname to archlinux"
-echo archlinux > /etc/hostname
+message "Setting timezone to ${INSTALL_TZNAME}"
+ln -sf "/usr/share/zoneinfo/${INSTALL_TZNAME}" /etc/localtime
 
-# TZNAME
-message "Setting timezone to Europe/Amsteredam"
-ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
-
-message "Setting locale to en_US.UTF-8"
-echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
+message "Setting locale to ${INSTALL_LOCALE}"
+echo "${INSTALL_LOCALE}" >> /etc/locale.gen
 locale-gen
 
 message "Creating initial ram disk"
@@ -30,7 +26,10 @@ systemctl enable sshd.service
 
 message "Enabling SSH to root"
 mkdir /root/.ssh
-curl http://xi:8000/authorized_keys > /root/.ssh/authorized_keys
+touch /root/.ssh/authorized_keys
+for pubkey in $INSTALL_PUBKEYS; do
+    curl "http://${INSTALL_HOST}/${pubkey}" >> /root/.ssh/authorized_keys
+done
 chmod 0700 /root/.ssh
 chmod 0600 /root/.ssh/authorized_keys
 
