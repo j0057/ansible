@@ -1,3 +1,0 @@
-- name: "install dovecot"
-  pacman: name=dovecot state=present
-  tags: dovecot
