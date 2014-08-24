@@ -3,12 +3,12 @@
 
   - role: arch-common
     users:
-    - { name: jjm, comment: "Joost Molenaar" }
+    - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar" }
 
   - role: data
     files:
-    - { src: j0057.nl.crt, dest: /etc/ssl/certs,    mode: "0644", user: root, group: root }
-    - { src: j0057.nl.key, dest: /etc/ssl/private,  mode: "0600", user: root, group: root }
+    - { src: j0057.nl.crt, dest: /etc/ssl/certs,   mode: "0644", user: root, group: root }
+    - { src: j0057.nl.key, dest: /etc/ssl/private, mode: "0600", user: root, group: root }
 
   - role: nginx
     servers:
@@ -16,36 +16,29 @@
 
   - role: python2
     virtualenvs:
-    - dir: /srv/hello
-      whl: hello==1.2-5-g8159f75
+    - { dir: /srv/hello, whl: hello==1.2-5-g8159f75 }
 
   - role: uwsgi
     apps:
-    - name: hello
-      config: hello.yml.j2
+    - { name: hello, config: hello.yml.j2 }
 
   - role: email
     postfix:
       aliases:
-      - name: "root"
-        dest: "jjm"
-      - name: "*"
-        dest: "jjm"
+      - { dest: "jjm", name: "root" }
+      - { dest: "jjm", name: "*" }
       virtuals:
-      - domain: "@j0057.nl"
-        user: "jjm"
-      - domain: "@punosqnp.nl"
-        user: "jjm"
+      - { user: "jjm", domain: "@j0057.nl" }
+      - { user: "jjm", domain: "@punosqnp.nl" }
       main_cf:
         myhostname: j0057.nl
         mydomain: j0057.nl
-        mydestination:
-        - j0057.nl
-        - punosqnp.nl
-        - arch-vbox
+        mydestination: [j0057.nl, punosqnp.nl, arch-vbox]
+        ssl_cert: /etc/ssl/certs/j0057.nl.crt
+        ssl_key: /etc/ssl/private/j0057.nl.key
     dovecot:
       users:
-      - { name: jjm, password: mail-password, uid: 1000, gid: 1000, home: /home/jjm }
+      - { name: jjm, uid: 1000, gid: 1000, password: mail-password, home: /home/jjm }
       ssl_cert: /etc/ssl/certs/j0057.nl.crt
       ssl_key: /etc/ssl/private/j0057.nl.key
 
