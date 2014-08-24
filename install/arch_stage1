@@ -1,15 +1,15 @@
 #!/bin/bash -e
 
 message "Partitioning" # 2048 sectors/MB, sda1: 256MB, sda2: the rest
-sfdisk --quiet --Linux --unit S /dev/sda << EOF
+sfdisk --quiet --unit S /dev/sda << EOF
 $[1*2048],$[256*2048],L
 $[257*2048],,L
 EOF
-sleep 5
+partprobe /dev/sda
 
 message "Formatting"
-mkfs.btrfs -f /dev/sda2
-mkfs.ext4 /dev/sda1
+mkfs.btrfs --force --label "root" /dev/sda2
+mkfs.ext4 -L "boot" /dev/sda1
 
 message "Mounting"
 mount /dev/sda2 /mnt
@@ -20,5 +20,5 @@ message "Bootstrapping"
 pacstrap /mnt base btrfs-progs grub openssh python2 lsb-release
 
 message "Generating /etc/fstab"
-genfstab -p /mnt > /mnt/etc/fstab
+genfstab -L -p /mnt > /mnt/etc/fstab
 
