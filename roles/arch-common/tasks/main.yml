@@ -32,6 +32,9 @@
     value: Never
   - option: Server
     value: "{{ aur_url }}"
+  notify: "update pacman"
+  tags: arch-common
 
-- name: "update package cache"
-  action: shell pacman -Sy
+- name: "flush handlers"
+  meta: flush_handlers
+  tags: arch-common

@@ -1,10 +1,14 @@
-- name: install uwsgi
-  pacman: "name={{ item }} state=present"
+- name: "install uwsgi"
+  pacman: 
+  args:
+    name: "{{ item }}"
+    state: present
   with_items:
     - uwsgi
     - uwsgi-plugin-python2
+  tags: uwsgi
 
-- name: install config files
+- name: "install config files"
   template:
   args:
     src: "{{ item.src }}"
@@ -16,25 +20,28 @@
       dst: /etc/systemd/system/uwsgi@.service
     - src: uwsgi@.socket.j2
       dst: /etc/systemd/system/uwsgi@.socket
+  tags: uwsgi
 
-- name: create uwsgi apps-enabled directory
+- name: "create uwsgi apps-enabled directory"
   file:
   args: 
     path: /etc/uwsgi/apps-enabled
     state: directory
+  tags: uwsgi
 
-- name: install uwsgi configs
+- name: "install uwsgi configs"
   template:
   args:
     src: "{{ item.config }}"
     dest: "/etc/uwsgi/apps-enabled/{{ item.name }}.yml"
   with_items: apps
+  tags: uwsgi
 
-- name: enable uwsgi sockets
+- name: "enable uwsgi sockets"
   service:
   args:
     name: "uwsgi@{{ item.name }}.socket"
     enabled: yes
     state: started
   with_items: apps
-
+  tags: uwsgi

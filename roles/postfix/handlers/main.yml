@@ -3,11 +3,14 @@
   with_items:
   - postfix.service
   - postgrey.service
+  tags: postfix
 
 - name: "run postalias"
   action: shell postalias /etc/postfix/aliases
   notify: "restart postfix"
+  tags: postfix
 
 - name: "run postmap"
   action: shell postmap /etc/postfix/virtual
   notify: "restart postfix"
+  tags: postfix

@@ -38,3 +38,7 @@
   notify: "restart postfix"
   tags: postfix
 
+- name: flush handlers
+  meta: flush_handlers
+  tags: postfix
+

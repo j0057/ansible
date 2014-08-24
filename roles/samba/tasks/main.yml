@@ -1,10 +1,15 @@
 - name: "install samba"
   pacman: "name=samba state=present"
-  tags: samba
   notify: "restart samba"
+  tags: samba
 
 - name: "configure samba"
   template: "src=smb.conf.j2 dest=/etc/samba/smb.conf"
-  tags: samba
   notify: "restart samba"
+  tags: samba
+
+- name: "flush handlers"
+  meta: flush_handlers
+  tags: samba
+
 

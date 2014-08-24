@@ -1,4 +1,4 @@
-- hosts: arch
+- hosts: arch-vbox
   roles:
 
   - role: arch-common
@@ -38,4 +38,15 @@
       - punosqnp.nl
       - arch-vbox
 
+  # role: dovecot
+
   - role: samba
+  # role: nfs
+
+  # role: mysql
+  # role: sane
+  # role: cups
+
+  # certs
+  # data/state
+

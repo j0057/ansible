@@ -3,3 +3,5 @@
   with_items:
   - smbd.service
   - nmbd.service
+  tags: samba
+
