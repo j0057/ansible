@@ -42,4 +42,8 @@
       ssl_cert: /etc/ssl/certs/j0057.nl.crt
       ssl_key: /etc/ssl/private/j0057.nl.key
 
-  - role: samba
+  - role: fileserver
+    fstab:
+    - { dev: "LABEL=USB2T", dir: "/mnt/usb2t", fstype: ext4, opts: nofail }
+    shares:
+

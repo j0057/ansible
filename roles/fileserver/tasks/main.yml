@@ -1,15 +1,26 @@
+- name: "configure /etc/fstab"
+  mount:
+  args:
+    src: "{{ item.dev }}"
+    name: "{{ item.dir }}"
+    fstype: "{{ item.fstype }}"
+    opts: "{{ item.opts }}"
+    state: "mounted"
+  with_items: fstab
+  tags: [fileserver, fstab]
+
 - name: "install samba"
   pacman: "name=samba state=present"
   notify: "restart samba"
-  tags: samba
+  tags: [fileserver, samba]
 
 - name: "configure samba"
   template: "src=smb.conf.j2 dest=/etc/samba/smb.conf"
   notify: "restart samba"
-  tags: samba
+  tags: [fileserver, samba]
 
 - name: "flush handlers"
   meta: flush_handlers
-  tags: samba
+  tags: [fileserver, samba]
 
 
