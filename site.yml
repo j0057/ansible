@@ -16,7 +16,8 @@
 
   - role: python2
     virtualenvs:
-    - { dir: /srv/hello, whl: hello==1.2-5-g8159f75 }
+    - { dir: /srv/hello,   pkg: hello==1.2-5-g8159f75 }
+    - { dir: /srv/mp3-dev, pkg: mp3==2.0dev-82-g096ae3e }
 
   - role: uwsgi
     apps:

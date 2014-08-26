@@ -17,19 +17,13 @@
     name: "{{ item }}"
     state: latest
     extra_args: "--no-index --find-links {{ pypkg_url }}"
-  with_items:
-    - pip
-    - setuptools
-    - setuptools-metadata
-    - setuptools-version-command
-    - virtualenv
-    - wheel
+  with_items: [pip, setuptools, setuptools-metadata, setuptools-version-command, virtualenv, wheel]
   tags: python2
 
 - name: create virtualenvs
   pip:
   args:
-    name: "{{ item.whl }}"
+    name: "{{ item.pkg }}"
     virtualenv: "{{ item.dir }}"
     extra_args: "--no-index --find-links {{ pypkg_url }}"
     state: present
