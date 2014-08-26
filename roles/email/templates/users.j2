@@ -1,4 +1,4 @@
-{% for u in dovecot.users %}
+{% for u in email.dovecot.users %}
 {{ u.name }}:{PLAIN}{{ u.password }}:{{ u.uid }}:{{ u.gid }}::{{ u.home }}
 {% endfor %}
 

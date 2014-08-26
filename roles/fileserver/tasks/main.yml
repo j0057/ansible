@@ -6,7 +6,7 @@
     fstype: "{{ item.fstype }}"
     opts: "{{ item.opts }}"
     state: "mounted"
-  with_items: fstab
+  with_items: fileserver.fstab
   tags: [fileserver, fstab]
 
 - name: "install samba"

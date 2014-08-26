@@ -25,13 +25,13 @@
 
 - name: "configure /etc/postfix/aliases"
   lineinfile: "dest=/etc/postfix/aliases line='{{ item.name }}: {{ item.dest }}'"
-  with_items: postfix.aliases
+  with_items: email.postfix.aliases
   notify: "run postalias"
   tags: [email, postfix]
 
 - name: "configure /etc/postfix/virtual"
   lineinfile: "dest=/etc/postfix/virtual line='{{ item.domain }} {{ item.user }}'"
-  with_items: postfix.virtuals
+  with_items: email.postfix.virtuals
   notify: "run postmap"
   tags: [email, postfix]
 

@@ -21,8 +21,8 @@
   tags: nginx
 
 - name: "create servers"
-  template: "src={{ item.name }}.conf.j2 dest=/etc/nginx/servers/{{ item.name }}.conf"
-  with_items: servers
+  template: "src={{ item }}.conf.j2 dest=/etc/nginx/servers/{{ item }}.conf"
+  with_items: nginx.servers
   notify: "restart nginx"
   tags: nginx
 

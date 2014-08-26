@@ -27,5 +27,5 @@
     virtualenv: "{{ item.dir }}"
     extra_args: "--no-index --find-links {{ pypkg_url }}"
     state: present
-  with_items: virtualenvs
+  with_items: python2.virtualenvs
   tags: python2

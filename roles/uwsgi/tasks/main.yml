@@ -34,7 +34,7 @@
   args:
     src: "{{ item.config }}"
     dest: "/etc/uwsgi/apps-enabled/{{ item.name }}.yml"
-  with_items: apps
+  with_items: python2.uwsgi
   tags: uwsgi
 
 - name: "enable uwsgi sockets"
@@ -43,5 +43,5 @@
     name: "uwsgi@{{ item.name }}.socket"
     enabled: yes
     state: started
-  with_items: apps
+  with_items: python2.uwsgi 
   tags: uwsgi

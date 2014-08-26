@@ -2,4 +2,45 @@ ansible_ssh_port: 30022
 ansible_ssh_host: 127.0.0.1
 ansible_ssh_user: root
 ansible_python_interpreter: /usr/bin/python2
+
 hostname: arch-vbox
+users:
+  - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar" }
+files:
+  - { src: j0057.nl.crt, dest: /etc/ssl/certs,   mode: "0644", user: root, group: root }
+  - { src: j0057.nl.key, dest: /etc/ssl/private, mode: "0600", user: root, group: root }
+nginx:
+  servers:
+  - arch-vbox.j0057.nl
+
+python2:
+  virtualenvs:
+  - { dir: /srv/hello,   pkg: hello==1.2-5-g8159f75 }
+  - { dir: /srv/mp3-dev, pkg: mp3==2.0dev-82-g096ae3e }
+  uwsgi:
+  - { name: hello, config: hello.yml.j2 }
+
+email:
+  postfix:
+    aliases:
+    - { dest: "jjm", name: "root" }
+    - { dest: "jjm", name: "*" }
+    virtuals:
+    - { user: "jjm", domain: "@j0057.nl" }
+    - { user: "jjm", domain: "@punosqnp.nl" }
+    main_cf:
+      myhostname: j0057.nl
+      mydomain: j0057.nl
+      mydestination: [j0057.nl, punosqnp.nl, arch-vbox]
+      ssl_cert: /etc/ssl/certs/j0057.nl.crt
+      ssl_key: /etc/ssl/private/j0057.nl.key
+  dovecot:
+    users:
+    - { name: jjm, uid: 1000, gid: 1000, password: mail-password, home: /home/jjm }
+    ssl_cert: /etc/ssl/certs/j0057.nl.crt
+    ssl_key: /etc/ssl/private/j0057.nl.key
+
+fileserver:
+  fstab:
+  - { dev: "LABEL=USB2T", dir: "/mnt/usb2t", fstype: ext4, opts: nofail }
+  shares: []
