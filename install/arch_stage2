@@ -21,7 +21,6 @@ grub-install --target=i386-pc --recheck /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
 
 message "Enabling services"
-systemctl enable dhcpcd@enp0s3.service
 systemctl enable sshd.service
 
 message "Enabling SSH to root"
@@ -32,4 +31,21 @@ for pubkey in $INSTALL_PUBKEYS; do
 done
 chmod 0700 /root/.ssh
 chmod 0600 /root/.ssh/authorized_keys
+
+message "Configuring static interface"
+cat > /etc/netctl/eth0-dhcp << EOF
+Description="Dynamic ethernet connection"
+Interface=enp0s3
+Connection=ethernet
+IP=dhcp
+EOF
+cat > /etc/netctl/eth1-static << EOF
+Description="Static ethernet connection"
+Interface=enp0s8
+Connection=ethernet
+IP=static
+Address=("${INSTALL_ETH1_ADDRESS}")
+EOF
+netctl enable eth0-dhcp
+netctl enable eth1-static
 
