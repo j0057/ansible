@@ -16,11 +16,18 @@ nginx:
   - arch-vbox.j0057.nl
 
 python2:
-  virtualenvs:
-  - { dir: /srv/hello,   pkg: hello==1.2-5-g8159f75,  stop: uwsgi@hello.service }
-  - { dir: /srv/mp3-dev, pkg: mp3==2.0dev-82-g096ae3e }
-  uwsgi:
-  - { name: hello, config: hello.yml.j2 }
+  webapps:
+  - name: hello
+    dir: /srv/hello
+    pkg: hello==1.2-5-g8159f75
+    cfg: hello.yml
+  - name: mp3-dev
+    dir: /srv/mp3-dev
+    pkg: mp3==2.0dev-82-g096ae3e
+    cfg: mp3-dev.yml
+  apps:
+  - dir: /srv/twitter
+    pkg: twitter-0.1-92-gdb2ce58
 
 email:
   postfix:
@@ -36,6 +43,7 @@ email:
       mydestination: [j0057.nl, punosqnp.nl, arch-vbox]
       ssl_cert: /etc/ssl/certs/j0057.nl.crt
       ssl_key: /etc/ssl/private/j0057.nl.key
+
   dovecot:
     users:
     - { name: jjm, uid: 1000, gid: 1000, password: mail-password, home: /home/jjm }

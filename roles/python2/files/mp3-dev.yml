@@ -1,0 +1,12 @@
+uwsgi:
+  plugins: python2
+  master: true
+  workers: 1
+  auto-procname: true
+  procname-prefix-spaced: hello
+  chdir: /srv/mp3-dev
+  virtualenv: /srv/mp3-dev
+  module: mp3.server
+  callable: app
+  env: MP3_PREFIX=/mp3-dev
+

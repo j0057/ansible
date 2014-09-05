@@ -4,7 +4,6 @@
   - role: data
   - role: nginx
   - role: python2
-  - role: uwsgi
   - role: email
   - role: fileserver
 

@@ -4,7 +4,7 @@ After=syslog.target
 
 [Service]
 ExecStart=/usr/bin/uwsgi --socket=/run/uwsgi/%i.socket --yaml=/etc/uwsgi/apps-enabled/%i.yml
-KillSignal=SIGQUIT
+KillSignal=SIGINT
 Type=notify
 StandardOutput=syslog
 StandardError=syslog
