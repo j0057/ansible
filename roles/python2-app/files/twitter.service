@@ -1,0 +1,15 @@
+[Unit]
+Description=Twitter robot zoo
+
+[Service]
+Type=simple
+User=nobody
+Group=nobody
+WorkingDirectory=/srv/twitter
+ExecStart=/srv/twitter -m robot_zoo --no-time
+SyslogIdentifier=twitter
+After=networking.service
+
+[Install]
+WantedBy=multi-user.target
+

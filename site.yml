@@ -1,9 +1,72 @@
 - hosts: arch
   roles:
+
   - role: arch-common
+    hostname: arch-vbox
+    users:
+    - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar" }
+
   - role: data
+    files:
+      - { src: j0057.nl.crt, dest: /etc/ssl/certs,   mode: "0644", user: root, group: root }
+      - { src: j0057.nl.key, dest: /etc/ssl/private, mode: "0600", user: root, group: root }
+
   - role: nginx
+    servers:
+    - arch-vbox.j0057.nl
+
   - role: python2
+
+  - role: python2-app
+    name: hello
+    pkg: hello==1.2-5-g8159f75
+    cfg: 
+    - { src: hello.yml, dest: "/etc/uwsgi/apps-enabled/hello.yml" }
+    svc:
+      enable: { name: uwsgi@hello.socket, state: started }
+      update: { name: uwsgi@hello.service, state: stopped }
+  
+  - role: python2-app
+    name: mp3-dev
+    pkg: mp3==2.0dev-82-g096ae3e
+    cfg: 
+    - { src: mp3-dev.yml, dest: "/etc/uwsgi/apps-enabled/mp3-dev.yml" }
+    svc:
+      enable: { name: uwsgi@mp3-dev.socket, state: started }
+      update: { name: uwsgi@mp3-dev.service, state: stopped }
+
+  - role: python2-app
+    name: twitter
+    pkg: twitter==0.1-93-gf462e56
+    cfg:
+    - { src: twitter.service, dest: "/etc/systemd/system/twitter.service" }
+    svc:
+      enable: { name: twitter.service, state: started }
+      update: { name: twitter.service, state: restarted }
+
   - role: email
+    postfix:
+      aliases:
+      - { dest: "jjm", name: "root" }
+      - { dest: "jjm", name: "*" }
+      virtuals:
+      - { user: "jjm", domain: "@j0057.nl" }
+      - { user: "jjm", domain: "@punosqnp.nl" }
+      main_cf:
+        myhostname: j0057.nl
+        mydomain: j0057.nl
+        mydestination: [j0057.nl, punosqnp.nl, arch-vbox]
+        ssl_cert: /etc/ssl/certs/j0057.nl.crt
+        ssl_key: /etc/ssl/private/j0057.nl.key
+
+    dovecot:
+      users:
+      - { name: jjm, uid: 1000, gid: 1000, password: mail-password, home: /home/jjm }
+      ssl_cert: /etc/ssl/certs/j0057.nl.crt
+      ssl_key: /etc/ssl/private/j0057.nl.key
+
   - role: fileserver
+    fstab:
+    - { dev: "LABEL=USB2T", dir: "/mnt/usb2t", fstype: ext4, opts: nofail }
+    shares: []
 

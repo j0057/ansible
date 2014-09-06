@@ -12,8 +12,8 @@ disable_plaintext_auth = no
 mail_location = mbox:~/mail:INBOX=/var/mail/%u
 
 ssl = yes
-ssl_cert = <{{ email.dovecot.ssl_cert }}
-ssl_key = <{{ email.dovecot.ssl_key }}
+ssl_cert = <{{ dovecot.ssl_cert }}
+ssl_key = <{{ dovecot.ssl_key }}
 
 service auth {
     unix_listener /var/spool/postfix/private/auth {

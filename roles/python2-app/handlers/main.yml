@@ -1,0 +1,5 @@
+- name: "{{ name }}: restart python2-app"
+  service:
+    name: "{{ svc['update'].name }}"
+    enabled: yes
+    state: "{{ svc['update'].state }}"

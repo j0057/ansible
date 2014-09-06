@@ -16,23 +16,27 @@
 
 - name: "create users"
   user:
-  args:
     name: "{{ item.name }}"
     comment: "{{ item.comment }}"
   with_items: users
   tags: arch-common
 
 - name: "install rsync"
-  pacman: "name=rsync state=installed"
+  pacman: 
+    name: rsync
+    state: installed
   tags: arch-common
 
 - name: "add AUR repository"
-  ini_file: "backup=yes dest=/etc/pacman.conf section=aur option={{ item.option }} value={{ item.value }}"
+  ini_file: 
+    backup: yes
+    dest: "/etc/pacman.conf"
+    section: aur
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
   with_items:
-  - option: SigLevel
-    value: Never
-  - option: Server
-    value: "{{ aur_url }}"
+  - { option: SigLevel, value: Never }
+  - { option: Server, value: "{{ aur_url }}" }
   notify: "update pacman"
   tags: arch-common
 

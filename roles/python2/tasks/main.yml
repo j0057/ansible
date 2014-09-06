@@ -10,6 +10,7 @@
 
 - name: ensure pip is installed
   shell: python2.7 /root/get-pip.py
+  args:
     creates: /usr/bin/pip
   tags: python2
 
@@ -18,7 +19,13 @@
     name: "{{ item }}"
     state: latest
     extra_args: "--no-index --find-links {{ pypkg_url }}"
-  with_items: [pip, setuptools, setuptools-metadata, setuptools-version-command, virtualenv, wheel]
+  with_items:
+  - pip
+  - setuptools
+  - setuptools-metadata
+  - setuptools-version-command
+  - virtualenv
+  - wheel
   tags: python2
 
 #
@@ -30,21 +37,18 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - uwsgi
-    - uwsgi-plugin-python2
+  - uwsgi
+  - uwsgi-plugin-python2
   tags: [python2, uwsgi]
 
 - name: "install config files"
   copy:
     src: "{{ item.src }}"
-    dest: "{{ item.dst }}"
+    dest: "{{ item.dest }}"
   with_items:
-    - src: run_uwsgi.conf
-      dst: /etc/tmpfiles.d/run_uwsgi.conf
-    - src: uwsgi@.service
-      dst: /etc/systemd/system/uwsgi@.service
-    - src: uwsgi@.socket
-      dst: /etc/systemd/system/uwsgi@.socket
+  - { src: run_uwsgi.conf,  dest: /etc/tmpfiles.d/run_uwsgi.conf }
+  - { src: uwsgi@.service,  dest: /etc/systemd/system/uwsgi@.service }
+  - { src: uwsgi@.socket,   dest: /etc/systemd/system/uwsgi@.socket }
   tags: [python2, uwsgi]
 
 - name: "create uwsgi apps-enabled directory"
@@ -53,39 +57,3 @@
     state: directory
   tags: [python2, uwsgi]
 
-#
-# webapps
-#
-
-- name: create virtualenvs
-  pip:
-    name: "{{ item.pkg }}"
-    virtualenv: "{{ item.dir }}"
-    extra_args: "--no-index --find-links {{ pypkg_url }}"
-    state: present
-  register: upgraded_webapps
-  with_items: python2.webapps
-  tags: [python2, webapps]
-
-- name: install uwsgi configs
-  copy:
-    src: "{{ item.name }}.yml"
-    dest: "/etc/uwsgi/apps-enabled"
-  with_items: python2.webapps
-  tags: [python2, webapps]
-
-- name: enable uwsgi sockets
-  service:
-    name: "uwsgi@{{ item.name }}.socket"
-    enabled: yes
-    state: started
-  with_items: python2.webapps
-  tags: [python2, uwsgi]
-
-- name: stop services
-  service:
-    name: "uwsgi@{{ item.item.name}}.service"
-    state: stopped
-  when: item.changed
-  with_items: upgraded_webapps.results
-  tags: python2
