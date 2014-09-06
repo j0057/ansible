@@ -37,7 +37,7 @@
 
   - role: python2-app
     name: twitter
-    pkg: twitter==0.1-93-gf462e56
+    pkg: twitter==0.1-95-g28f2262
     cfg:
     - { src: twitter.service, dest: "/etc/systemd/system/twitter.service" }
     svc:

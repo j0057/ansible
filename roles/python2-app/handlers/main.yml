@@ -1,4 +1,7 @@
-- name: "{{ name }}: restart python2-app"
+- name: "{{ name }} | reload systemd units"
+  shell: systemctl daemon-reload
+
+- name: "{{ name }} | restart"
   service:
     name: "{{ svc['update'].name }}"
     enabled: yes

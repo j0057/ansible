@@ -1,25 +1,25 @@
-- name: "{{ name }}: create virtualenvs"
+- name: "{{ name }} | create virtualenvs"
   pip:
     name: "{{ pkg }}"
     virtualenv: "/srv/{{ name }}"
     extra_args: "--no-index --find-links {{ pypkg_url }}"
     state: present
-  notify: "{{ name }}: restart python2-app"
+  notify: "{{ name }} | restart"
   tags: python2-app
 
-- name: "{{ name }}: install configs"
+- name: "{{ name }} | install configs"
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
   with_items: cfg
-  notify: "{{ name }}: restart python2-app"
+  notify: "{{ name }} | restart"
   tags: python2-app
 
-- name: "{{ name }}: enable services"
+- name: "{{ name }} | enable services"
   service:
     name: "{{ svc.enable.name }}"
     enabled: yes
     state: "{{ svc.enable.state }}"
   with_items: python2.webapps
-  notify: "{{ name }}: restart python2-app"
+  notify: "{{ name }} | restart"
   tags: python2-app
