@@ -1,25 +1,38 @@
-- name: "{{ name }} | create virtualenvs"
+- name: "{{ name }} | install {{ pkg }}"
   pip:
     name: "{{ pkg }}"
     virtualenv: "/srv/{{ name }}"
     extra_args: "--no-index --find-links {{ pypkg_url }}"
     state: present
-  notify: "{{ name }} | restart"
+  notify: "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
   tags: python2-app
 
-- name: "{{ name }} | install configs"
+- name: "{{ name }} | configure"
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
   with_items: cfg
-  notify: "{{ name }} | restart"
+  notify: 
+  - "{{ name }} | reload systemd units"
+  - "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
   tags: python2-app
 
-- name: "{{ name }} | enable services"
+- name: "{{ name }} | enable {{ svc.enable.name }}"
   service:
     name: "{{ svc.enable.name }}"
     enabled: yes
     state: "{{ svc.enable.state }}"
   with_items: python2.webapps
-  notify: "{{ name }} | restart"
+  notify: "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
+  tags: python2-app
+
+- name: "{{ name }} | create /var/lib/{{ name }}"
+  file:
+    name: "/var/lib/{{ name }}"
+    state: directory
+    owner: nobody
+    group: nobody
+  tags: python2-app
+
+- meta: flush_handlers
   tags: python2-app

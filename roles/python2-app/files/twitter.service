@@ -1,7 +1,7 @@
 [Unit]
 Description=Twitter robot zoo
-Requires=networking.service
-After=networking.service
+Requires=network.target
+After=network.target
 
 [Service]
 Type=simple
@@ -10,6 +10,8 @@ Group=nobody
 WorkingDirectory=/srv/twitter
 ExecStart=/srv/twitter/bin/python -m robot_zoo --no-time
 SyslogIdentifier=twitter
+Environment=ROBOT_ZOO_CONFIG=/etc/twitter
+Environment=ROBOT_ZOO_LIB=/var/lib/twitter
 
 [Install]
 WantedBy=multi-user.target
