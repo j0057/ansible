@@ -1,0 +1,6 @@
+- name: "restart haproxy"
+  service:
+    name: haproxy.service
+    enabled: yes
+    state: restarted
+  tags: haproxy

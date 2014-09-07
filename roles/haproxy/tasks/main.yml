@@ -1,0 +1,15 @@
+- name: "install haproxy"
+  pacman:
+    name: haproxy
+    state: present
+  notify: "restart haproxy"
+  tags: haproxy
+
+- name: "configure haproxy"
+  copy:
+    src: "haproxy.cfg"
+    dest: "/etc/haproxy/haproxy.cfg"
+  notify: "restart haproxy"
+  tags: haproxy
+
+

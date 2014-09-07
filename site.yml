@@ -18,7 +18,6 @@
 
   - role: python2
 
-  # webapp : hello
   - role: python2-app
     name: hello
     pkg: hello==1.2-5-g8159f75
@@ -28,7 +27,6 @@
       enable: { name: uwsgi@hello.socket, state: started }
       update: { name: uwsgi@hello.service, state: stopped }
  
-  # webapp : mp3-dev 
   - role: python2-app
     name: mp3-dev
     pkg: mp3==2.0dev-82-g096ae3e
@@ -38,10 +36,9 @@
       enable: { name: uwsgi@mp3-dev.socket, state: started }
       update: { name: uwsgi@mp3-dev.service, state: stopped }
 
-  # app : twitter
   - role: python2-app
     name: twitter
-    pkg: twitter==0.1-102-g90fa266
+    pkg: twitter==0.1-104-g6906035
     cfg:
     - { src: "data/twitter", dest: "/etc" }
     - { src: "twitter.service", dest: "/etc/systemd/system/twitter.service" }
@@ -49,7 +46,6 @@
       enable: { name: twitter.service, state: started }
       update: { name: twitter.service, state: restarted }
 
-  # email                       # to do: enforce SPF, reject ip without reverse DNS
   - role: email
     postfix:
       aliases:
@@ -75,4 +71,6 @@
     fstab:
     - { dev: "LABEL=USB2T", dir: "/mnt/usb2t", fstype: ext4, opts: nofail }
     shares: []
+
+  - role: haproxy
 
