@@ -1,0 +1,6 @@
+- name: "restart fail2ban"
+  service:
+    name: fail2ban.service
+    enabled: yes
+    state: restarted
+  tags: fail2ban

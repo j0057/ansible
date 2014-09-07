@@ -1,0 +1,13 @@
+- name: "install fail2ban"
+  pacman:
+    name: fail2ban
+    state: present
+  notify: "restart fail2ban"
+  tags: fail2ban
+
+- name: "configure fail2ban"
+  copy:
+    src: jail.conf
+    dest: "/etc/fail2ban/jail.d/jail.conf"
+  notify: "restart fail2ban"
+  tags: fail2ban
