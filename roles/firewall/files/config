@@ -1,0 +1,10 @@
+export GEOLITE_URL="http://geolite.maxmind.com/download/geoip/database/GeoIPCountryCSV.zip"
+export GEOBLOCKS="cn kz ru ph"
+export GEOBLOCKS_DIR=/var/lib/firewall
+
+export ipset=$(type -p ipset)
+export iptables=$(type -p iptables)
+export ip6tables=$(type -p ip6tables)
+export geoblocks=$(type -p geoblocks)
+export geoblocks=${geoblocks:-./geoblocks}
+

@@ -1,0 +1,185 @@
+#!/bin/bash
+
+create_chains() {
+    $iptables --table filter --new-chain fail2ban
+    $iptables --table filter --new-chain geoblocks
+    $iptables --table filter --new-chain allowed
+}
+
+delete_chains() {
+    $iptables --table filter --flush INPUT
+    $iptables --table filter --flush allowed
+    $iptables --table filter --flush geoblocks
+    $iptables --table filter --flush fail2ban
+
+    $iptables --table filter --delete-chain allowed
+    $iptables --table filter --delete-chain geoblocks
+    $iptables --table filter --delete-chain fail2ban
+}
+
+create_allowed_chain() {
+    $iptables --table filter --append allowed --protocol tcp --dport    22 --match state --state NEW --jump ACCEPT # ssh
+    #iptables --table filter --append allowed --protocol tcp --dport  1022 --match state --state NEW --jump ACCEPT # ssh during upgrade
+
+    $iptables --table filter --append allowed --protocol tcp --dport    80 --match state --state NEW --jump ACCEPT # http
+    $iptables --table filter --append allowed --protocol tcp --dport   443 --match state --state NEW --jump ACCEPT # https
+
+    $iptables --table filter --append allowed --protocol tcp --dport    25 --match state --state NEW --jump ACCEPT # smtp
+    $iptables --table filter --append allowed --protocol tcp --dport   110 --match state --state NEW --jump ACCEPT # pop3
+    $iptables --table filter --append allowed --protocol tcp --dport   143 --match state --state NEW --jump ACCEPT # imap
+    $iptables --table filter --append allowed --protocol tcp --dport   993 --match state --state NEW --jump ACCEPT # imaps
+    $iptables --table filter --append allowed --protocol tcp --dport   995 --match state --state NEW --jump ACCEPT # pop3s
+
+    $iptables --table filter --append allowed --protocol udp --dport   123                           --jump ACCEPT # ntp
+
+    $iptables --table filter --append allowed --protocol udp --dport   137                           --jump ACCEPT # netbios
+    $iptables --table filter --append allowed --protocol udp --dport   138                           --jump ACCEPT # netbios
+    $iptables --table filter --append allowed --protocol udp --dport   139                           --jump ACCEPT # netbios
+
+    $iptables --table filter --append allowed --protocol tcp --dport   111 --match state --state NEW --jump ACCEPT # rpcbind
+    $iptables --table filter --append allowed --protocol udp --dport   111                           --jump ACCEPT # rpcbind
+    $iptables --table filter --append allowed --protocol tcp --dport  2049 --match state --state NEW --jump ACCEPT # nfsd
+    $iptables --table filter --append allowed --protocol udp --dport  2049                           --jump ACCEPT # nfsd
+
+    $iptables --table filter --append allowed --protocol tcp --dport 32764:32769 --match state --state NEW --jump ACCEPT # other nfs stuff
+    $iptables --table filter --append allowed --protocol udp --dport 32764:32769                           --jump ACCEPT # other nfs stuff
+
+    #iptables --table filter --append allowed --protocol tcp --dport 12345 --match state --state NEW --jump ACCEPT
+    #iptables --table filter --append allowed --protocol tcp --dport 23456 --match state --state NEW --jump ACCEPT
+    #iptables --table filter --append allowed --protocol tcp --dport 34567 --match state --state NEW --jump ACCEPT
+    #iptables --table filter --append allowed --protocol tcp --dport 45678 --match state --state NEW --jump ACCEPT
+    #iptables --table filter --append allowed --protocol tcp --dport 56789 --match state --state NEW --jump ACCEPT
+
+    #iptables --table filter --append allowed --protocol udp --dport 12345                           --jump ACCEPT
+    #iptables --table filter --append allowed --protocol udp --dport 23456                           --jump ACCEPT
+    #iptables --table filter --append allowed --protocol udp --dport 34567                           --jump ACCEPT
+    #iptables --table filter --append allowed --protocol udp --dport 45678                           --jump ACCEPT
+    #iptables --table filter --append allowed --protocol udp --dport 56789                           --jump ACCEPT
+}
+
+create_geoblocks_chain() {
+    case "$iptables" in
+        /sbin/iptables)
+            for cc in $GEOBLOCKS; do
+                $ipset create $cc hash:net
+            done
+
+            #$geoblocks $GEOBLOCKS | sed 's/^/add /' | $ipset restore
+
+            #for cc in $GEOBLOCKS; do
+            #    $geoblocks $cc | xargs --verbose --replace $ipset add $cc {}
+            #done
+
+            sed 's/^/add /' $GEOBLOCKS_DIR/geoblocks | $ipset restore
+
+            for cc in $GEOBLOCKS; do
+                $iptables --table filter --append geoblocks --match "set" --match-set $cc src --jump LOG --log-prefix "[GEOBLOCK/${cc}] "
+                $iptables --table filter --append geoblocks --match "set" --match-set $cc src --jump DROP
+            done
+            ;;
+    esac
+}
+
+delete_geoblocks_ipsets() {
+    case "$iptables" in
+        /sbin/iptables)
+            for cc in $GEOBLOCKS; do
+                $ipset flush $cc
+                $ipset destroy $cc
+            done
+            ;;
+    esac
+}
+
+create_INPUT_chain() {
+    $iptables --table filter --append INPUT --jump geoblocks
+    $iptables --table filter --append INPUT --jump fail2ban
+    $iptables --table filter --append INPUT --jump allowed
+
+    # allow packets of established connections
+    $iptables --table filter --append INPUT --protocol tcp --match state --state RELATED,ESTABLISHED --jump ACCEPT
+
+    case "$iptables" in
+        /sbin/iptables)
+            # ping is ok
+            $iptables --table filter --append INPUT --protocol icmp --jump ACCEPT
+
+            # allow local connections
+            $iptables --table filter --append INPUT --protocol tcp --source 127.0.0.1 --destination 127.0.0.1 --jump ACCEPT
+            $iptables --table filter --append INPUT --protocol udp --source 127.0.0.1 --destination 127.0.0.1 --jump ACCEPT
+
+            # allow dns responses
+            $iptables --table filter --append INPUT --protocol udp --source 192.168.178.1 --sport 53 --jump ACCEPT
+
+            # allow multicasts
+            $iptables --table filter --append INPUT --destination 224.0.0.0/8 --jump ACCEPT
+            ;;
+
+        /sbin/ip6tables)
+            # allow link-local (fe80::/10) ping and broadcast (ff01::1) ping
+            $iptables --table filter --append INPUT --protocol icmpv6 --source fe80::/10 --destination ff02::1 --jump ACCEPT
+            $iptables --table filter --append INPUT --protocol icmpv6 --source fe80::/10 --destination fe80::/10 --jump ACCEPT
+            ;;
+    esac
+
+    # log and drop everything else
+    $iptables --table filter --append INPUT --jump LOG "--log-prefix=[REJECTED] "
+    $iptables --table filter --append INPUT --protocol tcp --jump DROP
+}
+
+enable_firewall() {
+    create_chains
+    create_allowed_chain
+    create_geoblocks_chain
+    create_INPUT_chain
+}
+
+disable_firewall() {
+    delete_chains
+    delete_geoblocks_ipsets
+}
+
+start() {
+    iptables=$iptables  enable_firewall
+    iptables=$ip6tables enable_firewall
+}
+
+stop() {
+    iptables=$iptables  disable_firewall
+    iptables=$ip6tables disable_firewall
+}
+
+restart() {
+    stop
+    start
+}
+
+status() {
+    $iptables --table filter --list --numeric --verbose
+}
+
+if [ -f /etc/default/firewall ]; then source /etc/default/firewall
+elif [ -f /etc/sysconfig/firewall ]; then source /etc/sysconfig/firewall
+elif [ -f ./config ]; then source ./config
+fi
+
+case "$1" in
+    on|start)
+        start
+        ;;
+    off|stop)
+        stop
+        ;;
+    list|status)
+        status
+        ;;
+    restart)
+        restart
+        ;;
+    *)
+        echo "usage:"
+        echo "$0 [start|stop|status|retart]"
+        echo "   [   on|off |list  ]"
+        exit 1
+        ;;
+esac

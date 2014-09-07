@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ -f /etc/default/firewall ]; then source /etc/default/firewall
+elif [ -f /etc/sysconfig/firewall ]; then source /etc/sysconfig/firewall
+elif [ -f ./config ]; then source ./config
+fi
+
+mkdir -p $GEOBLOCKS_DIR
+$geoblocks $GEOBLOCKS > $GEOBLOCKS_DIR/geoblocks~ || exit 1
+mv $GEOBLOCKS_DIR/geoblocks~ $GEOBLOCKS_DIR/geoblocks
+
