@@ -6,6 +6,8 @@
     users:
     - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar" }
 
+  - role: firewall
+
   - role: data
     files:
       - { src: j0057.nl.crt,         dest: /etc/ssl/certs,   mode: "0644", user: root, group: root }
@@ -73,6 +75,3 @@
     shares: []
 
   - role: haproxy
-
-  - role: fail2ban
-

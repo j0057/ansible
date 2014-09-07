@@ -26,6 +26,7 @@
   - setuptools-version-command
   - virtualenv
   - wheel
+  - requests
   tags: python2
 
 #
