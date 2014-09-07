@@ -19,24 +19,33 @@
 - name: "configure /etc/postfix/master.cf"
   lineinfile:
     dest: "/etc/postfix/master.cf"
-    line: "policy-spf unix - n n - - spawn user=nobody argv=/usr/bin/policyd-spf"
+    line: "{{ item }}"
+  with_items:
+    - "policy-spf unix - n n - - spawn user=nobody argv=/usr/bin/policyd-spf"
+    - "465 inet n - n - - smtpd -o smtpd_tls_wrappermode=yes -o smtpd_sasl_auth_enable=yes"
   notify: "restart postfix"
   tags: [email, postfix]
 
 - name: "configure /etc/postfix/aliases"
-  lineinfile: "dest=/etc/postfix/aliases line='{{ item.name }}: {{ item.dest }}'"
+  lineinfile:
+    dest: "/etc/postfix/aliases"
+    line: "{{ item.name }}: {{ item.dest }}"
   with_items: postfix.aliases
   notify: "run postalias"
   tags: [email, postfix]
 
 - name: "configure /etc/postfix/virtual"
-  lineinfile: "dest=/etc/postfix/virtual line='{{ item.domain }} {{ item.user }}'"
+  lineinfile:
+    dest: "/etc/postfix/virtual" 
+    line: "{{ item.domain }} {{ item.user }}"
   with_items: postfix.virtuals
   notify: "run postmap"
   tags: [email, postfix]
 
 - name: "ensure services are enabled"
-  service: "name={{ item }} enabled=yes"
+  service: 
+    name: "{{ item }}"
+    enabled: yes
   with_items:
   - postfix.service
   - postgrey.service
@@ -58,8 +67,15 @@
   with_items:
   - { src: users.j2, dest: /etc/dovecot/users }
   - { src: dovecot.conf.j2, dest: /etc/dovecot/dovecot.conf }
-  tags: [email, dovecot]
   notify: "restart dovecot"
+  tags: [email, dovecot]
+
+- name: "ensure dovecot is enabled"
+  service:
+    name: dovecot.service
+    enabled: yes
+  notify: "restart dovecot"
+  tags: [email, dovecot]
 
 #
 # mutt

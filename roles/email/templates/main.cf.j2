@@ -1,9 +1,9 @@
 smtpd_banner = $myhostname ESMTP $mail_name
 biff = no
 append_dot_mydomain = no
-smtpd_tls_cert_file={{ postfix.main_cf.ssl_cert }}
-smtpd_tls_key_file={{ postfix.main_cf.ssl_key }}
-smtpd_use_tls=yes
+smtpd_tls_cert_file = {{ postfix.main_cf.ssl_cert }}
+smtpd_tls_key_file = {{ postfix.main_cf.ssl_key }}
+smtpd_use_tls = yes
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 myhostname = {{ postfix.main_cf.myhostname }}
@@ -20,8 +20,11 @@ recipient_delimiter = +
 inet_interfaces = all
 inet_protocols = ipv4
 
-smtpd_delay_reject = yes
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable = yes
 
+smtpd_delay_reject = yes
 smtpd_helo_required = yes
 smtpd_helo_restrictions =
   permit_mynetworks,

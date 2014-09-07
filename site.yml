@@ -8,8 +8,9 @@
 
   - role: data
     files:
-      - { src: j0057.nl.crt, dest: /etc/ssl/certs,   mode: "0644", user: root, group: root }
-      - { src: j0057.nl.key, dest: /etc/ssl/private, mode: "0600", user: root, group: root }
+      - { src: j0057.nl.crt,         dest: /etc/ssl/certs,   mode: "0644", user: root, group: root }
+      - { src: j0057.nl.chained.crt, dest: /etc/ssl/certs,   mode: "0644", user: root, group: root }
+      - { src: j0057.nl.key,         dest: /etc/ssl/private, mode: "0600", user: root, group: root }
 
   - role: nginx
     servers:
@@ -17,6 +18,7 @@
 
   - role: python2
 
+  # webapp : hello
   - role: python2-app
     name: hello
     pkg: hello==1.2-5-g8159f75
@@ -25,7 +27,8 @@
     svc:
       enable: { name: uwsgi@hello.socket, state: started }
       update: { name: uwsgi@hello.service, state: stopped }
-  
+ 
+  # webapp : mp3-dev 
   - role: python2-app
     name: mp3-dev
     pkg: mp3==2.0dev-82-g096ae3e
@@ -35,6 +38,7 @@
       enable: { name: uwsgi@mp3-dev.socket, state: started }
       update: { name: uwsgi@mp3-dev.service, state: stopped }
 
+  # app : twitter
   - role: python2-app
     name: twitter
     pkg: twitter==0.1-102-g90fa266
@@ -45,6 +49,7 @@
       enable: { name: twitter.service, state: started }
       update: { name: twitter.service, state: restarted }
 
+  # email                       # to do: enforce SPF, reject ip without reverse DNS
   - role: email
     postfix:
       aliases:
@@ -57,13 +62,13 @@
         myhostname: j0057.nl
         mydomain: j0057.nl
         mydestination: [j0057.nl, punosqnp.nl, arch-vbox]
-        ssl_cert: /etc/ssl/certs/j0057.nl.crt
+        ssl_cert: /etc/ssl/certs/j0057.nl.chained.crt
         ssl_key: /etc/ssl/private/j0057.nl.key
 
     dovecot:
       users:
       - { name: jjm, uid: 1000, gid: 1000, password: mail-password, home: /home/jjm }
-      ssl_cert: /etc/ssl/certs/j0057.nl.crt
+      ssl_cert: /etc/ssl/certs/j0057.nl.chained.crt
       ssl_key: /etc/ssl/private/j0057.nl.key
 
   - role: fileserver
