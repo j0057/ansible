@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo $PATH
+
 if [ -f /etc/default/firewall ]; then source /etc/default/firewall
 elif [ -f /etc/sysconfig/firewall ]; then source /etc/sysconfig/firewall
 elif [ -f ./config ]; then source ./config

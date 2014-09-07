@@ -1,10 +1,38 @@
 export GEOLITE_URL="http://geolite.maxmind.com/download/geoip/database/GeoIPCountryCSV.zip"
-export GEOBLOCKS="cn kz ru ph"
+export GEOBLOCKS="cn kz ru ph in vn"
 export GEOBLOCKS_DIR=/var/lib/firewall
 
-export ipset=$(type -p ipset)
-export iptables=$(type -p iptables)
-export ip6tables=$(type -p ip6tables)
-export geoblocks=$(type -p geoblocks)
-export geoblocks=${geoblocks:-./geoblocks}
+export ipset=/usr/bin/ipset
+export iptables=/usr/bin/iptables
+export ip6tables=/usr/bin/ip6tables
+export geoblocks=/usr/local/sbin/geoblocks
 
+create_allowed_chain() {
+    allow tcp    22 # ssh
+
+    allow tcp    80 # http
+    allow tcp   443 # https
+
+    allow tcp    25 # smtp
+    allow tcp   110 # pop3
+    allow tcp   143 # imap
+    allow tcp   465 # smtps
+    allow tcp   993 # imaps
+    allow tcp   995 # pop3s
+
+    allow udp   123 # ntp
+
+    allow udp   137 # netbios
+    allow udp   138 # netbios
+    allow udp   139 # netbios
+
+    allow tcp   111 # rpcbind
+    allow udp   111 # rpcbind
+    allow tcp  2049 # nfsd
+    allow udp  2049 # nfsd
+
+    allow tcp 32764:32769 # other nfs stuff
+    allow udp 32764:32769 # other nfs stuff
+}
+
+export -f create_allowed_chain
