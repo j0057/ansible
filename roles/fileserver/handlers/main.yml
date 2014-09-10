@@ -1,7 +1,18 @@
 - name: "restart samba"
-  action: "service name={{ item }} state=restarted"
+  service:
+    name: "{{ item }}"
+    state: restarted
   with_items:
   - smbd.service
   - nmbd.service
-  tags: [samba]
+  tags: [fileserver, samba]
 
+- name: "restart nfs"
+  service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+  - nfs-config
+  - rpc-statd
+  - nfs-server
+  tags: [fileserver, nfs]

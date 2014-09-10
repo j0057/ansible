@@ -1,3 +1,7 @@
+#
+# fstab
+#
+
 - name: "configure /etc/fstab"
   mount:
   args:
@@ -9,6 +13,10 @@
   with_items: fstab
   tags: [fileserver, fstab]
 
+#
+# samba
+#
+
 - name: "install samba"
   pacman: "name=samba state=present"
   notify: "restart samba"
@@ -19,8 +27,25 @@
   notify: "restart samba"
   tags: [fileserver, samba]
 
+#
+# nfs
+#
+
+- name: "install nfs-utils"
+  pacman: "name=nfs-utils state=present"
+  notify: "restart nfs"
+  tags: [fileserver, nfs]
+
+- name: "configure nfs"
+  copy:
+    src: "nfs-server.conf"
+    dest: "/etc/conf.d"
+  notify: "restart nfs"
+  tags: [fileserver, nfs]
+
+###
+
 - name: "flush handlers"
   meta: flush_handlers
   tags: [fileserver, samba]
-
 

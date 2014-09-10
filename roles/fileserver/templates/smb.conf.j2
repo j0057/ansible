@@ -18,3 +18,11 @@ writable = yes
 #browseable = no
 #writable = no
 #printable = yes
+
+{% for s in shares %}
+[{{ s.name }}]
+browsable = yes
+read only = no
+path = {{ s.dir }}
+
+{% endfor %}
