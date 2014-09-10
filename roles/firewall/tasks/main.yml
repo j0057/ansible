@@ -1,8 +1,4 @@
 
-#
-# firewall
-#
-
 - name: "install fail2ban and ipset"
   pacman:
     name: "{{ item }}"

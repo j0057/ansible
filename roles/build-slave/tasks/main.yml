@@ -1,0 +1,102 @@
+#
+# find slave tag
+#
+
+- name: "set slave tag fact"
+  set_fact:
+    slave_tag: "{{ ansible_distribution.lower() }}{{ ansible_distribution_major_version.replace('NA','') }}/{{ ansible_architecture }}"
+  tags: build-slave
+
+#
+# install build packages
+#
+
+- name: "install build packages on RHEL"
+  yum: 
+    name: "{{ item }}"
+    state: present
+  with_items:
+  - "python27-python-devel"
+  - "@Development Tools"
+  when: ansible_os_family == "RedHat"
+  tags: buildslave
+
+- name: "install build packages on Arch"
+  shell: "pacman --sync --noconfirm --refresh base-devel ; touch /root/.pkg-base-devel-installed"
+  args:
+    creates: "/root/.pkg-base-devel-installed"
+  when: ansible_os_family == "Archlinux"
+  tags: build-slave
+
+#
+# build python2 wheels
+#
+
+- name: "create output directory"
+  file: 
+    dest: "/root/whl/{{ slave_tag }}"
+    state: directory
+  tags: build-slave
+
+- name: "copy requirements.txt"
+  copy:
+    src: "requirements.txt"
+    dest: "/root/whl"
+  tags: build-slave
+
+- name: "build missing wheels"
+  shell: >
+    pip wheel
+      --no-index
+      --find-links {{ pysrc_url }}
+      --find-links /root/whl/{{ slave_tag }}
+      --wheel-dir /root/whl/{{ slave_tag }}
+      --pre
+      --requirement /root/whl/requirements.txt
+  tags: build-slave
+    
+- name: "get the build output"
+  synchronize:
+    src: "/root/whl/{{ slave_tag }}/*.whl"
+    dest: "./install/pypkg27/{{ slave_tag }}"
+    mode: pull
+  tags: build-slave
+
+#
+# build AUR packages
+#
+
+# name: "create build directory"
+# file:
+#   dest: "{{ item }}"
+#   state: directory
+# with_items:
+# - "/root/build"
+# - "/root/aur"
+# when: ansible_os_family == "Archlinux"
+# tags: build-slave
+
+# name: "copy build scripts"
+# copy:
+#   src: "{{ item.src }}"
+#   dest: "/root/build"
+#   mode: "{{ item.mode }}"
+# with_items:
+# - { src: build-aur,      mode: "0700" }
+# - { src: build-aur.conf, mode: "0600" }
+# when: ansible_os_family == "Archlinux"
+# tags: build-slave
+
+# name: "run build scripts"
+# shell: "/root/build/build-aur"
+# when: ansible_os_family == "Archlinux"
+# tags: build-slave
+
+# name: "get build output"
+# synchronize:
+#   src: "/root/build/*.pkg.tar.xz"
+#   dest: "./install/aur/{{ slave_tag }}"
+#   mode: pull
+# when: ansible_os_family == "Archlinux"
+# tags: build-slave
+

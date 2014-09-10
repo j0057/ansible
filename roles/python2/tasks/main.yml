@@ -18,7 +18,7 @@
   pip:
     name: "{{ item }}"
     state: latest
-    extra_args: "--no-index --find-links {{ pypkg_url }}"
+    extra_args: "--no-index --find-links {{ pypkg_url }}/{{ ansible_architecture }}/"
   with_items:
   - pip
   - setuptools

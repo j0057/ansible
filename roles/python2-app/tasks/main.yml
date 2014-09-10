@@ -2,7 +2,7 @@
   pip:
     name: "{{ pkg }}"
     virtualenv: "/srv/{{ name }}"
-    extra_args: "--no-index --find-links {{ pypkg_url }}"
+    extra_args: "--no-index --find-links {{ pypkg_url }}/{{ ansible_architecture }}/"
     state: present
   notify: "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
   tags: python2-app

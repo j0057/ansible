@@ -1,4 +1,6 @@
-- hosts: arch
+- hosts: 
+  - arch-vbox
+
   roles:
 
   - role: arch-common
@@ -13,6 +15,8 @@
       - { src: j0057.nl.crt,         dest: /etc/ssl/certs,   mode: "0644", user: root, group: root }
       - { src: j0057.nl.chained.crt, dest: /etc/ssl/certs,   mode: "0644", user: root, group: root }
       - { src: j0057.nl.key,         dest: /etc/ssl/private, mode: "0600", user: root, group: root }
+
+  - role: build-slave
 
   - role: nginx
     servers:
