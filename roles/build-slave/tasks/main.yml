@@ -42,7 +42,6 @@
   copy:
     src: "requirements.txt"
     dest: "/root/whl"
-  register: copy_requirements_txt
   tags: build-slave
 
 - name: "build missing wheels"
@@ -54,7 +53,6 @@
       --wheel-dir /root/whl/{{ slave_tag }}
       --pre
       --requirement /root/whl/requirements.txt
-  when: copy_requirements_txt.changed
   tags: build-slave
     
 - name: "get the build output"
