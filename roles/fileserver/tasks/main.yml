@@ -19,12 +19,12 @@
 
 - name: "samba | install"
   pacman: "name=samba state=present"
-  notify: "restart samba"
+  notify: "samba | restart"
   tags: [fileserver, samba]
 
 - name: "samba | configure"
   template: "src=smb.conf.j2 dest=/etc/samba/smb.conf"
-  notify: "restart samba"
+  notify: "samba | restart"
   tags: [fileserver, samba]
 
 #
@@ -33,7 +33,7 @@
 
 - name: "nfs | install"
   pacman: "name=nfs-utils state=present"
-  notify: "restart nfs"
+  notify: "nfs | restart"
   tags: [fileserver, nfs]
 
 - name: "nfs | configure daemons"
@@ -43,19 +43,31 @@
   with_items:
   - nfs-server.conf
   - nfs-common.conf
-  notify: "restart nfs"
+  notify: "nfs | restart"
   tags: [fileserver, nfs]
 
 - name: "nfs | configure exports"
   template:
     src: exports.j2
     dest: /etc/exports
-  notify: "restart nfs"
+  notify: "nfs | restart"
   tags: [fileserver, nfs]
 
 #
 # cups
 #
+
+- name: "cups | install"
+  pacman:
+    name: "{{ item }}"
+    state: present
+  with_items:
+  - cups
+  - ghostscript
+  - gsfonts
+  - hplip
+  notify: "cups | restart"
+  tags: [fileserver, cups]
 
 #
 # sane
