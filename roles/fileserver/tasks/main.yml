@@ -2,7 +2,7 @@
 # fstab
 #
 
-- name: "configure /etc/fstab"
+- name: "fstab | configure"
   mount:
   args:
     src: "{{ item.dev }}"
@@ -17,12 +17,12 @@
 # samba
 #
 
-- name: "install samba"
+- name: "samba | install"
   pacman: "name=samba state=present"
   notify: "restart samba"
   tags: [fileserver, samba]
 
-- name: "configure samba"
+- name: "samba | configure"
   template: "src=smb.conf.j2 dest=/etc/samba/smb.conf"
   notify: "restart samba"
   tags: [fileserver, samba]
@@ -31,17 +31,35 @@
 # nfs
 #
 
-- name: "install nfs-utils"
+- name: "nfs | install"
   pacman: "name=nfs-utils state=present"
   notify: "restart nfs"
   tags: [fileserver, nfs]
 
-- name: "configure nfs"
+- name: "nfs | configure daemons"
   copy:
-    src: "nfs-server.conf"
+    src: "{{ item }}"
     dest: "/etc/conf.d"
+  with_items:
+  - nfs-server.conf
+  - nfs-common.conf
   notify: "restart nfs"
   tags: [fileserver, nfs]
+
+- name: "nfs | configure exports"
+  template:
+    src: exports.j2
+    dest: /etc/exports
+  notify: "restart nfs"
+  tags: [fileserver, nfs]
+
+#
+# cups
+#
+
+#
+# sane
+#
 
 ###
 
