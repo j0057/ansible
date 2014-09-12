@@ -1,3 +1,5 @@
+# mount.cifs //ip/sharename /mnt/point -o guest
+
 [global]
 workgroup = WORKGROUP
 server string = Samba Server
@@ -24,5 +26,6 @@ writable = yes
 browsable = yes
 read only = no
 path = {{ s.dir }}
+guest ok = yes
 
 {% endfor %}
