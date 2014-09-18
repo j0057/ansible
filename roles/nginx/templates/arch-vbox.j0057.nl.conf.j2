@@ -7,6 +7,11 @@ server {
         uwsgi_pass unix:/run/uwsgi/hello.socket;
     }
 
+    location /mp3-dev {
+        include /etc/nginx/uwsgi_params;
+        uwsgi_pass unix:/run/uwsgi/mp3-dev.socket;
+    }
+
     location / {
         root /srv/root;
     }

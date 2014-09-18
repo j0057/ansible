@@ -1,4 +1,6 @@
 arch-vbox
+arch-qemu
 
 [arch]
 arch-vbox
+arch-qemu

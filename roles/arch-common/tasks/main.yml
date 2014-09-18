@@ -31,12 +31,12 @@
   ini_file: 
     backup: yes
     dest: "/etc/pacman.conf"
-    section: aur
+    section: "aur_{{ ansible_architecture }}"
     option: "{{ item.option }}"
     value: "{{ item.value }}"
   with_items:
   - { option: SigLevel, value: Never }
-  - { option: Server, value: "{{ aur_url }}" }
+  - { option: Server, value: "{{ aur_url }}_{{ ansible_architecture }}" }
   notify: "update pacman"
   tags: arch-common
 

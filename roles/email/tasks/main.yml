@@ -46,6 +46,7 @@
   service: 
     name: "{{ item }}"
     enabled: yes
+    state: started
   with_items:
   - postfix.service
   - postgrey.service
@@ -74,6 +75,7 @@
   service:
     name: dovecot.service
     enabled: yes
+    state: started
   notify: "restart dovecot"
   tags: [email, dovecot]
 

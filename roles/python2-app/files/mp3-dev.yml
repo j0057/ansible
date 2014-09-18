@@ -3,10 +3,11 @@ uwsgi:
   master: true
   workers: 1
   auto-procname: true
-  procname-prefix-spaced: hello
+  procname-prefix-spaced: mp3-dev
   chdir: /srv/mp3-dev
   virtualenv: /srv/mp3-dev
   module: mp3.server
   callable: app
   env: MP3_PREFIX=/mp3-dev
+  env: MP3_STATE=/var/lib/mp3-dev
 

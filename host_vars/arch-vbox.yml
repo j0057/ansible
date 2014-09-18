@@ -4,3 +4,6 @@ ansible_python_interpreter: /usr/bin/python2
 
 hostname: arch-vbox
 
+pysrc_url: http://10.101.0.2:8000/pypkg27/src/
+pypkg_url: http://10.101.0.2:8000/pypkg27/archlinux
+aur_url: http://10.101.0.2:8000/aur
