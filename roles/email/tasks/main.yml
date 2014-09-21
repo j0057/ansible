@@ -42,17 +42,6 @@
   notify: "run postmap"
   tags: [email, postfix]
 
-- name: "ensure services are enabled"
-  service: 
-    name: "{{ item }}"
-    enabled: yes
-    state: started
-  with_items:
-  - postfix.service
-  - postgrey.service
-  notify: "restart postfix"
-  tags: [email, postfix]
-
 #
 # dovecot
 #
@@ -71,14 +60,6 @@
   notify: "restart dovecot"
   tags: [email, dovecot]
 
-- name: "ensure dovecot is enabled"
-  service:
-    name: dovecot.service
-    enabled: yes
-    state: started
-  notify: "restart dovecot"
-  tags: [email, dovecot]
-
 #
 # mutt
 #
@@ -93,11 +74,8 @@
   template: src=muttrc.j2 dest=/etc/Muttrc
   tags: [email, mutt]
 
-#
-# flush handlers
-#
+#####
 
-- name: "flush handlers"
-  meta: flush_handlers
+- meta: flush_handlers
   tags: [email, postfix, dovecot, mutt]
 

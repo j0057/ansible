@@ -1,10 +1,3 @@
-- name: "restart postfix"
-  service: "name={{ item }} state=restarted"
-  with_items:
-  - postfix.service
-  - postgrey.service
-  tags: [email, postfix]
-
 - name: "run postalias"
   shell: postalias /etc/postfix/aliases
   notify: "restart postfix"
@@ -15,6 +8,19 @@
   notify: "restart postfix"
   tags: [email, postfix]
 
+- name: "restart postfix"
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: restarted
+  with_items:
+  - postfix.service
+  - postgrey.service
+  tags: [email, postfix]
+
 - name: "restart dovecot"
-  service: "name=dovecot.service state=restarted"
+  service:
+    name: dovecot.service
+    enabled: yes
+    state: restarted
   tags: [email, dovecot]
