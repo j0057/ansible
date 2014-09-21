@@ -5,6 +5,16 @@
   notify: "restart haproxy"
   tags: haproxy
 
+- name: "create haproxy directory"
+  file:
+    name: "/var/lib/haproxy"
+    state: directory
+    owner: haproxy
+    group: haproxy
+    mode: "700"
+  notify: "restart haproxy"
+  tags: haproxy
+
 - name: "configure haproxy"
   copy:
     src: "haproxy.cfg"
