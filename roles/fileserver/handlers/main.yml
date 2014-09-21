@@ -11,12 +11,13 @@
 - name: "nfs | restart"
   service:
     name: "{{ item }}"
+    enabled: yes
     state: restarted
-    enabled: true
   with_items:
-  - nfs-config
-  - rpc-statd
-  - nfs-server
+  - rpcbind.service
+  - nfs-config.service
+  - rpc-statd.service
+  - nfs-server.service
   tags: [fileserver, nfs]
 
 - name: "cups | restart"
