@@ -1,0 +1,10 @@
+ansible_ssh_host: 192.168.178.30
+ansible_ssh_port: 22
+ansible_ssh_user: root
+ansible_python_interpreter: /usr/bin/python2
+
+hostname: tau
+
+pysrc_url: http://192.168.178.49:8000/pypkg27/src/
+pypkg_url: http://192.168.178.49:8000/pypkg27/archlinux
+aur_url: http://192.168.178.49:8000/aur

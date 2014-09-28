@@ -24,7 +24,8 @@ create_allowed_chain() {
 
     allow udp   137 # netbios
     allow udp   138 # netbios
-    allow udp   139 # netbios
+    allow tcp   139 # netbios
+    allow tcp   445 # netbios
 
     allow tcp   111 # rpcbind
     allow udp   111 # rpcbind

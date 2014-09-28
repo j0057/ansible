@@ -1,11 +1,11 @@
 - hosts: 
   - arch-vbox
   - arch-qemu
+  - tau
 
   roles:
 
   - role: arch-common
-    hostname: arch-vbox
     users:
     - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar" }
 
@@ -21,13 +21,11 @@
 
   - role: nginx
     servers:
-    - arch-vbox.j0057.nl
+    - j0057.nl
 
   - role: python2
 
   - role: firewall
-
-  - role: build-slave
 
   - role: python2-app
     name: hello
@@ -49,7 +47,7 @@
 
   - role: python2-app
     name: twitter
-    pkg: twitter==0.1-104-g6906035
+    pkg: twitter==0.1-106-gf16523a
     cfg:
     - { src: "data/twitter", dest: "/etc" }
     - { src: "twitter.service", dest: "/etc/systemd/system/twitter.service" }
@@ -86,3 +84,10 @@
       name: "music"
 
   - role: haproxy
+
+- hosts:
+  - arch-vbox
+  - arch-qemu
+  roles:
+  - role: build-slave
+

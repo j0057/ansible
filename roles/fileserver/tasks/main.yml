@@ -66,6 +66,8 @@
   - ghostscript
   - gsfonts
   - hplip
+  - python2-dbus
+  - python2-gobject2
   notify: "cups | restart"
   tags: [fileserver, cups]
 
