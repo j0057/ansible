@@ -88,14 +88,14 @@ create_INPUT_chain() {
 
         */ip6tables)
             # allow link-local (fe80::/10) ping and broadcast (ff02::1) ping
-            $iptables --table filter --append INPUT --protocol icmpv6 --source fe80::/10 --destination ff02::1 --jump ACCEPT
+            $iptables --table filter --append INPUT --protocol icmpv6 --source fe80::/10 --destination ff02::/16 --jump ACCEPT
             $iptables --table filter --append INPUT --protocol icmpv6 --source fe80::/10 --destination fe80::/10 --jump ACCEPT
             ;;
     esac
 
     # log and drop everything else
     $iptables --table filter --append INPUT --jump LOG "--log-prefix=[REJECTED] "
-    $iptables --table filter --append INPUT --protocol tcp --jump DROP
+    $iptables --table filter --append INPUT --jump DROP
 }
 
 enable_firewall() {

@@ -9,5 +9,5 @@ fi
 
 mkdir -p $GEOBLOCKS_DIR
 $geoblocks $GEOBLOCKS > $GEOBLOCKS_DIR/geoblocks~ || exit 1
+diff $GEOBLOCKS_DIR/geoblocks $GEOBLOCKS_DIR/geoblocks~
 mv $GEOBLOCKS_DIR/geoblocks~ $GEOBLOCKS_DIR/geoblocks
-
