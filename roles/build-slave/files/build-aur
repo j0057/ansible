@@ -1,0 +1,31 @@
+#!/bin/bash -e
+
+. "${0}.conf"
+
+mkdir -p "${PKGDEST}"
+mkdir -p build
+
+cd build
+for (( i=0 ; i < ${#PKGS[*]} ; i++ )); do
+    name="${PKGS[i]}"
+    prefix="${name:0:2}"
+    url="https://aur.archlinux.org/packages/${prefix}/${name}/${name}.tar.gz"
+    echo "==> ${name} @ ${url}"
+    curl --silent "${url}" > "${name}.tar.gz"
+    tar xzf "${name}.tar.gz"
+
+    pkgver=$(sed -n '/^pkgver=/ s/pkgver=// p' "${name}/PKGBUILD")
+    pkgrel=$(sed -n '/^pkgrel=/ s/pkgrel=// p' "${name}/PKGBUILD")
+
+    if [ ! -f ${PKGDEST}/${name}-${pkgver}-${pkgrel}-*.pkg.tar.xz ]; then
+        cd "${name}"
+        makepkg --force --syncdeps --rmdeps --asroot --noconfirm
+        cd ..
+        repo-add --new "${PKGDEST}/aur.db.tar.gz" ${PKGDEST}/${name}-${pkgver}-${pkgrel}-*.pkg.tar.xz
+        sudo pacman -Sy
+    else
+        echo "==> Skipping ${name}-${pkgver}-${pkgrel}"
+    fi
+done
+cd ..
+

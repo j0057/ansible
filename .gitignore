@@ -1,7 +1,9 @@
 env
 *.swp
-install/arch
-install/aur
+install/aur_x86_64
+install/aur_armv6h
+install/aur_armv6l
 install/pypkg27
 install/*.pub
 group_vars/arch.yml
+install/arch
