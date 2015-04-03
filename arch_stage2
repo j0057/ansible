@@ -1,0 +1,51 @@
+#!/bin/bash -e
+
+message "Setting hostname to ${INSTALL_HOSTNAME}"
+echo "${INSTALL_HOSTNAME}" > /etc/hostname
+
+message "Setting timezone to ${INSTALL_TZNAME}"
+ln -sf "/usr/share/zoneinfo/${INSTALL_TZNAME}" /etc/localtime
+
+message "Setting locale to ${INSTALL_LOCALE}"
+echo "${INSTALL_LOCALE}" >> /etc/locale.gen
+locale-gen
+
+message "Creating initial ram disk"
+mkinitcpio -p linux
+
+message "Setting password to root"
+echo -en "root\nroot\n" | passwd root
+
+message "Installing GRUB"
+grub-install --target=i386-pc --recheck /dev/sda
+grub-mkconfig -o /boot/grub/grub.cfg
+
+message "Enabling services"
+systemctl enable sshd.service
+
+message "Enabling SSH to root"
+mkdir /root/.ssh
+touch /root/.ssh/authorized_keys
+for pubkey in $INSTALL_PUBKEYS; do
+    curl "http://${INSTALL_HOST}/${pubkey}" >> /root/.ssh/authorized_keys
+done
+chmod 0700 /root/.ssh
+chmod 0600 /root/.ssh/authorized_keys
+
+message "Configuring static interface"
+cat > /etc/netctl/eth0-dhcp << EOF
+Description="Dynamic ethernet connection"
+Interface=enp0s3
+Connection=ethernet
+IP=dhcp
+EOF
+cat > /etc/netctl/eth1-static << EOF
+Description="Static ethernet connection"
+Interface=enp0s8
+Connection=ethernet
+IP=static
+Address=("${INSTALL_ETH1_ADDRESS}")
+EOF
+netctl enable eth0-dhcp
+netctl enable eth1-static
+
