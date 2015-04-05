@@ -26,26 +26,13 @@ systemctl enable sshd.service
 message "Enabling SSH to root"
 mkdir /root/.ssh
 touch /root/.ssh/authorized_keys
-for pubkey in $INSTALL_PUBKEYS; do
-    curl "http://${INSTALL_HOST}/${pubkey}" >> /root/.ssh/authorized_keys
+for ((i=0; i < ${#INSTALL_PUBKEYS[*]}; i++)); do
+    echo "${INSTALL_PUBKEYS[i]}" >> /root/.ssh/authorized_keys
 done
 chmod 0700 /root/.ssh
 chmod 0600 /root/.ssh/authorized_keys
 
-message "Configuring static interface"
-cat > /etc/netctl/eth0-dhcp << EOF
-Description="Dynamic ethernet connection"
-Interface=enp0s3
-Connection=ethernet
-IP=dhcp
-EOF
-cat > /etc/netctl/eth1-static << EOF
-Description="Static ethernet connection"
-Interface=enp0s8
-Connection=ethernet
-IP=static
-Address=("${INSTALL_ETH1_ADDRESS}")
-EOF
-netctl enable eth0-dhcp
-netctl enable eth1-static
-
+message "Installing pip"
+curl -s "https://bootstrap.pypa.io/get-pip.py" > /tmp/get-pip.py
+python2 /tmp/get-pip.py --user
+echo 'PATH=$PATH:$HOME/.local/bin' > '/etc/profile.d/local-bin.sh'

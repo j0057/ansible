@@ -1,0 +1,40 @@
+#!/bin/bash -e
+
+#message "Partitioning" # 2048 sectors/MB, sda1: 256MB, sda2: the rest
+#sfdisk --unit S /dev/sda <<EOF
+#$[1*2048],$[256*2048],L
+#$[257*2048],,L
+#EOF
+#sleep 3
+
+message "Partitioning"
+sgdisk /dev/sda --zap-all
+sgdisk /dev/sda --new 1:1M:+1M --typecode 1:ef02 --change-name=1:bios
+sgdisk /dev/sda --new 2:0:+256M --typecode 2:8300 --change-name=2:boot
+sgdisk /dev/sda --new 3:0:0 --typecode 3:8300 --change-name=3:root
+sgdisk /dev/sda --print
+
+message "Re-reading partition table"
+partprobe /dev/sda
+sleep 3
+
+message "Formatting"
+mkfs.ext4 -L "boot" /dev/sda2
+mkfs.btrfs --force --label "root" /dev/sda3
+
+message "Mounting"
+mount -v /dev/sda3 /mnt
+mkdir -v /mnt/boot
+mount -v /dev/sda2 /mnt/boot
+
+message "Installing reflector"
+pacman --sync --refresh --noconfirm --color always reflector
+
+message "Updating mirror list"
+reflector --country NL --latest 10 --protocol http --sort rate --save /etc/pacman.d/mirrorlist
+
+message "Bootstrapping"
+pacstrap /mnt base $INSTALL_PACKAGES
+
+message "Generating /etc/fstab"
+genfstab -L -p /mnt > /mnt/etc/fstab
