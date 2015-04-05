@@ -1,6 +1,10 @@
 #!/bin/bash -e
-# curl -sv http://j0057.github.io/ansible/arch-vbox-1.txt | bash -e
-# curl -sv http://example.com/arch-vbox-1.txt | bash -es example.com
+
+# run directly from github.io:
+# curl -sv http://j0057.github.io/ansible/arch-vbox-1.txt | bash -e |& tee install.log | less -R
+
+# run from development environment (note repeated hostname to bash invocation):
+# curl -sv http://example.com/arch-vbox-1.txt | bash -es example.com |& tee install.log | less -R
 
 message() { echo ; echo -e "\e[1;37m==> $1\e[0;0m" ; echo ; }
 export -f message
