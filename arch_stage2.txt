@@ -13,6 +13,9 @@ message "Generating locale ${INSTALL_LOCALE}"
 echo "${INSTALL_LOCALE}" >> /etc/locale.gen
 locale-gen
 
+message "Setting locale to ${INSTALL_LOCALE}"
+echo "LANG=${INSTALL_LOCALE}" > /etc/locale.conf
+
 message "Creating initial ram disk"
 mkinitcpio -p linux
 
