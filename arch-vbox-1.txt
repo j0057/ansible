@@ -8,7 +8,7 @@ export -f message
 export INSTALL_HOST="${1:-j0057.github.io/ansible}"
 export INSTALL_HOSTNAME="arch-vbox-1"
 export INSTALL_TZNAME="Europe/Amsterdam"
-export INSTALL_LOCALE="en_US.UTF8"
+export INSTALL_LOCALE="en_US.UTF-8 UTF-8"
 export INSTALL_PACKAGES="btrfs-progs grub openssh python2 lsb-release git"
 export INSTALL_PUBKEYS=(
     "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDimLdgtdlheQ01ma2VVcDzzE1bsaL58RumZa7IPri5o1MhNlKVwLYumz6lTLuoLS/CU4UOKWtafISo6tQSQZH4Wjz/B/sz6ken2W6LSjiAwahgcONSsrxIAYykXyLoYPifmQDdm6Fic5L9WVfJI8H69hxmCQv+6WIorsLCGMZ4+hjWwrRcbQjNGCzqEWbszpphJ21ZlW3WCYafSm4o7u0aCWPjW8ln3BhdogO4A061nYtCZxtU3dqiLyuhzRkXxAjtUsjqRpOTFxBwn3xgoXomhIcKJSFeKVRH0PmoZOWfp+l8KIiztc3dYVrh6eIsk/efbSk5x4q9L8vw+KPQ2cZRf/CIY6sC9n5Zodyu2LxDPmJQOea1s+LgmXExtkVfM0q5UJc4Kqifz2aCHlbkhvBV+Mjx50eBe9otHO0G7ebJMDRqF0aTUYJDABz/LaqnkoerHYmN2iPEsiqVgI0K1AsFrPDtrr41b6dtGkcc0t+SJkN+QeSWq3AUi4LG4PcHHLi9w5W2RSOIMooCqWTUGTSAKrBDUwCpaOc/ict2//kNcHjYGB3uj4FHkOXGvyAt3Zk7HQa79vqjzsEaMBetkcxbrwF0gO1RFbiccBUZnM2VLbplE+53SSlyymVUZ2rFVo0qr0r1fGWiit0k0G9cCCmuRzas+CeJx2JDZDU2A6tGnw== j.j.molenaar@gmail.com"
