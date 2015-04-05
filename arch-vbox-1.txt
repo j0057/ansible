@@ -30,5 +30,14 @@ IP=dhcp
 EOF
 arch-chroot /mnt netctl enable eth0-dhcp
 
+message "Configuring enp0s8"
+cat > /mnt/etc/netctl/eth1-static<< EOF
+Interface=enp0s8
+Connection=ethernet
+IP=static
+Address=("10.101.0.66/16")
+EOF
+arch-chroot /mnt netctl enable eth1-static
+
 message "Unmounting"
 umount -R /mnt
