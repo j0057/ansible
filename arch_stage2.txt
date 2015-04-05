@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+message "Environment:"
+set
+
 message "Setting hostname to ${INSTALL_HOSTNAME}"
 echo "${INSTALL_HOSTNAME}" > /etc/hostname
 

@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+message "Environment:"
+set
 
 message "Partitioning"
 sgdisk /dev/sda --zap-all
