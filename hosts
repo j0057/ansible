@@ -1,8 +1,12 @@
-arch-vbox
+arch-vbox-1
+arch-vbox-2
 arch-qemu
 tau
 
-[arch]
-arch-vbox
+[config]
+arch-vbox-1
+
+[server]
+arch-vbox-2
 arch-qemu
 tau

@@ -1,13 +1,22 @@
-- hosts: 
-  - arch-vbox
-  - arch-qemu
-  - tau
+- hosts:
+  - config
+  roles:
+  - role: arch-common
+    users:
+    - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar" }
+    packages:
+    - rsync
+
+- hosts:
+  - server
 
   roles:
 
   - role: arch-common
     users:
     - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar" }
+    packages:
+    - rsync
 
   - role: ntp
     servers:

@@ -21,10 +21,11 @@
   with_items: users
   tags: arch-common
 
-- name: "install rsync"
+- name: "install packages"
   pacman: 
-    name: rsync
+    name: "{{ item }}"
     state: installed
+  with_items: packages
   tags: arch-common
 
 - name: "add AUR repository"
