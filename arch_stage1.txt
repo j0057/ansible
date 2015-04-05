@@ -1,11 +1,5 @@
 #!/bin/bash -e
 
-#message "Partitioning" # 2048 sectors/MB, sda1: 256MB, sda2: the rest
-#sfdisk --unit S /dev/sda <<EOF
-#$[1*2048],$[256*2048],L
-#$[257*2048],,L
-#EOF
-#sleep 3
 
 message "Partitioning"
 sgdisk /dev/sda --zap-all
