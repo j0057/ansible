@@ -10,11 +10,11 @@ message "Setting timezone to ${INSTALL_TZNAME}"
 ln -sf "/usr/share/zoneinfo/${INSTALL_TZNAME}" /etc/localtime
 
 message "Generating locale ${INSTALL_LOCALE}"
-echo "${INSTALL_LOCALE}" >> /etc/locale.gen
+echo "${INSTALL_LOCALE}" > /etc/locale.gen
 locale-gen
 
 message "Setting locale to ${INSTALL_LOCALE}"
-echo "LANG=${INSTALL_LOCALE}" > /etc/locale.conf
+echo "LANG=${INSTALL_LOCALE/ */}" > /etc/locale.conf
 
 message "Creating initial ram disk"
 mkinitcpio -p linux
