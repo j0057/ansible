@@ -9,7 +9,7 @@ echo "${INSTALL_HOSTNAME}" > /etc/hostname
 message "Setting timezone to ${INSTALL_TZNAME}"
 ln -sf "/usr/share/zoneinfo/${INSTALL_TZNAME}" /etc/localtime
 
-message "Setting locale to ${INSTALL_LOCALE}"
+message "Generating locale ${INSTALL_LOCALE}"
 echo "${INSTALL_LOCALE}" >> /etc/locale.gen
 locale-gen
 
