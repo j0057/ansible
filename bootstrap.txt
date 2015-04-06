@@ -1,0 +1,33 @@
+steps for bootstrapping config server:
+
+1. aur from root (build-aur.conf [0A] and pacman.conf [0B])
+2. apply config from other machine (--ask-pass to use sshpass)
+3. change passwords
+4. clone dotfiles & aur (copy build-aur.conf from root) [3] 
+5. create directories and bootstrap pip 
+6. install & patch ansible ... [4]
+7. clone config
+8. apply config from arch-vbox-1 to config host
+9. build python packages
+10. apply config from arch-vbox-1 to server host or all hosts
+
+[0A] /root/aur/build-aur.conf @ config :
+
+    PKGS=(python2-pydns python2-pyspf python2-postfix-policyd-spf)
+    REPO=/var/lib/aur_x86_64
+
+[0B] /etc/pacman.conf @ config :
+
+    [aur_x86_64]
+    SigLevel = Never
+    Server = file:///var/lib/aur_x86_64
+
+[4] /home/jjm/git/dotfiles/bin/pip-config.conf @ config :
+
+    PKG=/var/lib/pypkg27/x86_64
+    SRC=/var/lib/pypkg27/src
+
+[6] /home/jjm/.local/lib/python2.7/site-packages/ansible/module_utils/basic.py @ config : (line 184)
+
+    supported_dists = platform._supported_dists + ('arch',)
+    distribution = platform.linux_distribution(supported_dists=supported_dists)[0].capitalize()
