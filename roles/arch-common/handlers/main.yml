@@ -1,3 +1,9 @@
 - name: "update pacman"
   shell: pacman --sync --refresh
   tags: arch-common
+
+- name: "restart sshd"
+  service:
+    name: sshd
+    state: restarted
+  tags: arch-common

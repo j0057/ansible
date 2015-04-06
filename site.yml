@@ -5,15 +5,15 @@
   roles:
   - role: arch-common
     users:
-    - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar" }
+    - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar", groups: "wheel" }
     ssh:
     - user: root
       pubkeys: [ j.j.molenaar@gmail.com.pub, jjm@nexus5.pub, joost@ws-nuc41.schoolmaster.nl.pub ]
     - user: jjm
       pubkeys: [ j.j.molenaar@gmail.com.pub, jjm@nexus5.pub, joost@ws-nuc41.schoolmaster.nl.pub ]
-    packages: [ rsync, vim, htop ]
     arch_repo:
     - { name: aur_x86_64, url: "file:///var/lib/aur_x86_64" }
+    packages: [ rsync, vim, htop, mc ]
   - role: ntp
     servers: [ "ntp.xs4all.nl" ]
 
