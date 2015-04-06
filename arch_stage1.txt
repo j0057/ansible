@@ -16,7 +16,8 @@ sleep 3
 
 message "Formatting"
 mkfs.ext4 -L "boot" /dev/sda2
-mkfs.btrfs --force --label "root" /dev/sda3
+mkfs.ext4 -L "root" /dev/sda3
+#mkfs.btrfs --force --label "root" /dev/sda3
 
 message "Mounting"
 mount -v /dev/sda3 /mnt

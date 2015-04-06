@@ -29,13 +29,6 @@ grub-mkconfig -o /boot/grub/grub.cfg
 message "Enabling services"
 systemctl enable sshd.service
 
-message "Enabling SSH to root"
-mkdir /root/.ssh
-touch /root/.ssh/authorized_keys
-echo "${INSTALL_PUBKEYS}" > /root/.ssh/authorized_keys
-chmod 0700 /root/.ssh
-chmod 0600 /root/.ssh/authorized_keys
-
 message "Installing pip"
 curl -s "https://bootstrap.pypa.io/get-pip.py" > /tmp/get-pip.py
 python2 /tmp/get-pip.py --user
