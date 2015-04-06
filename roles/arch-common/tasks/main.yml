@@ -8,11 +8,11 @@
     name: "{{ hostname }}"
   tags: arch-common
 
-- name: "disable root login"
-  shell: passwd -l root ; touch /root/.root-login-disabled 
-  args:
-    creates: /root/.root-login-disabled
-  tags: arch-common
+# name: "disable root login"
+# shell: passwd -l root ; touch /root/.root-login-disabled 
+# args:
+#   creates: /root/.root-login-disabled
+# tags: arch-common
 
 - name: "create users"
   user:
@@ -28,16 +28,15 @@
   with_items: packages
   tags: arch-common
 
-- name: "add AUR repository"
-  ini_file: 
-    backup: yes
-    dest: "/etc/pacman.conf"
-    section: "aur_{{ ansible_architecture }}"
-    option: "{{ item.option }}"
-    value: "{{ item.value }}"
-  with_items:
-  - { option: SigLevel, value: Never }
-  - { option: Server, value: "{{ aur_url }}_{{ ansible_architecture }}" }
+- name: "add Arch repo"
+  ini_file: "backup=yes dest=/etc/pacman.conf section={{ item.name }} option=SigLevel value=Never"
+  with_items: arch_repo
+  notify: "update pacman"
+  tags: arch-common
+
+- name: "add Arch repo"
+  ini_file: "backup=yes dest=/etc/pacman.conf section={{ item.name }} option=Server value={{ item.url }}"
+  with_items: arch_repo
   notify: "update pacman"
   tags: arch-common
 

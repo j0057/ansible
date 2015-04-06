@@ -1,26 +1,21 @@
 - hosts:
   - config
+  - server
+
   roles:
   - role: arch-common
     users:
     - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar" }
-    packages:
-    - rsync
+    packages: [ rsync, vim, htop ]
+    arch_repo:
+    - { name: x86_64, url: "file:///root/aur/x86_64" }
+  - role: ntp
+    servers: [ "ntp.xs4all.nl" ]
 
 - hosts:
   - server
 
   roles:
-
-  - role: arch-common
-    users:
-    - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar" }
-    packages:
-    - rsync
-
-  - role: ntp
-    servers:
-    - ntp.xs4all.nl
 
   - role: data
     files:
@@ -91,12 +86,3 @@
     shares:
     - dir: "/mnt/usb2t/music"
       name: "music"
-
-  - role: haproxy
-
-- hosts:
-  - arch-vbox
-  - arch-qemu
-  roles:
-  - role: build-slave
-
