@@ -8,17 +8,29 @@
     name: "{{ hostname }}"
   tags: arch-common
 
-# name: "disable root login"
-# shell: passwd -l root ; touch /root/.root-login-disabled 
-# args:
-#   creates: /root/.root-login-disabled
-# tags: arch-common
-
 - name: "create users"
   user:
     name: "{{ item.name }}"
     comment: "{{ item.comment }}"
   with_items: users
+  tags: arch-common
+
+- name: "set authorized keys"
+  authorized_key:
+    user: "{{ item.0.user}}"
+    key: "{{ lookup('file', 'data/' + item.1) }}"
+    state: present
+    manage_dir: yes
+  with_subelements: [ ssh, pubkeys ]
+  tags: arch-common
+
+- name: "install ssh config file"
+  copy:
+    src: ssh-config
+    dest: "~{{ item.user }}/.ssh/config"
+    owner: "{{ item.user }}"
+    group: "{{ item.user }}"
+  with_items: ssh
   tags: arch-common
 
 - name: "install packages"
