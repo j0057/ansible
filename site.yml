@@ -93,8 +93,8 @@
       main_cf:
         myhostname: j0057.nl
         mydomain: j0057.nl
-        mydestination: [j0057.nl, punosqnp.nl, arch-vbox]
-        ssl_cert: /etc/ssl/certs/j0057.nl.chained.crt
+        mydestination: [j0057.nl, punosqnp.nl, xi.j0057.nl]
+        ssl_cert: /etc/ssl/private/j0057.nl.chained.crt
         ssl_key: /etc/ssl/private/j0057.nl.key
 
     dovecot:
