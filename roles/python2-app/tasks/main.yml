@@ -9,8 +9,9 @@
 
 - name: "{{ name }} | configure"
   copy:
-    src: "{{ item.src }}"
     dest: "{{ item.dest }}"
+    src: "{{ item.src }}"
+    content: "{{ item.content }}"
   with_items: cfg
   notify: 
   - "{{ name }} | reload systemd units"
