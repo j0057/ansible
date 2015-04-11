@@ -4,7 +4,7 @@
 
 - name: "set hostname"
   hostname: 
-    name: "{{ hostname }}"
+    name: "{{ ansible_hostname }}"
   tags: arch-common
 
 - name: "create wheel group"
@@ -31,10 +31,10 @@
 - name: "set authorized keys"
   authorized_key:
     user: "{{ item.0.user}}"
-    key: "{{ lookup('file', 'data/' + item.1) }}"
+    key: "{{ ssh[item.1] }}"
     state: present
     manage_dir: yes
-  with_subelements: [ ssh, pubkeys ]
+  with_subelements: [ authorized_keys, pubkeys ]
   tags: arch-common
 
 - name: "install ssh config file"
@@ -43,7 +43,7 @@
     dest: "~{{ item.user }}/.ssh/config"
     owner: "{{ item.user }}"
     group: "{{ item.user }}"
-  with_items: ssh
+  with_items: authorized_keys
   tags: arch-common
 
 - name: "disable ssh password login"
