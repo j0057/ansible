@@ -10,8 +10,14 @@ export geoblocks=/usr/local/sbin/geoblocks
 create_allowed_chain() {
     allow tcp    22 # ssh
 
+    allow tcp    53 # dns
+    allow udp    53
+    allow tcp  5353 # mdns
+    allow udp  5353
+
     allow tcp    80 # http
     allow tcp   443 # https
+    allow tcp  8443 # https proxied
 
     allow tcp    25 # smtp
     allow tcp   110 # pop3
@@ -36,6 +42,8 @@ create_allowed_chain() {
 
     allow tcp 32764:32769 # other nfs stuff
     allow udp 32764:32769 # other nfs stuff
+
+    allow tcp   631 # cupsd
 }
 
 export -f create_allowed_chain
