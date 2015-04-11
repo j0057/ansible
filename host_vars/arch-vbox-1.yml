@@ -1,7 +1,0 @@
-ansible_ssh_host: 10.101.0.66
-ansible_ssh_user: root
-ansible_python_interpreter: /usr/bin/python2
-
-hostname: arch-vbox-1
-
-aur_url: file:///root/aur/x86_64
