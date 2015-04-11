@@ -37,9 +37,12 @@
     - { dest: "/etc/ssl/private/j0057.nl.key",          mode: "0600", user: root, group: root, content: "{{ ssl['j0057.nl.key'] }}" }
 
   - role: nginx
-    # TODO: missing servers
     servers:
-    - nl.j0057.conf
+    - nl.j0057
+    - nl.j0057.www
+    - nl.j0057.dev
+    - nl.stomrin
+    - nl.stomrin.www
 
   - role: python2
 
