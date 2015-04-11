@@ -2,7 +2,7 @@
   - config
   - server
 
-  vars_files: [secrets.yaml]
+  vars_files: [secrets.yml]
 
   roles:
 
@@ -26,7 +26,7 @@
 - hosts:
   - server
 
-  vars_files: [secrets.yaml]
+  vars_files: [secrets.yml]
 
   roles:
 
