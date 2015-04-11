@@ -1,6 +1,6 @@
 - name: "copy secret files"
   copy:
-    content: "{{ item.content }}
+    content: "{{ item.content }}"
     dest: "{{ item.dest }}"
     mode: "{{ item.mode }}"
     owner: "{{ item.user }}"
