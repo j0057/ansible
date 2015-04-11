@@ -11,9 +11,9 @@
     users:
     - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar", groups: "wheel" }
 
-    ssh:
-    - { user: root, pubkeys: [ j.j.molenaar@gmail.com.pub, jjm@nexus5.pub, joost@ws-nuc41.schoolmaster.nl.pub ] }
-    - { user: jjm, pubkeys: [ j.j.molenaar@gmail.com.pub, jjm@nexus5.pub, joost@ws-nuc41.schoolmaster.nl.pub ] }
+    authorized_keys:
+    - { user: root, pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
+    - { user: jjm,  pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
 
     arch_repo:
     - { name: aur_x86_64, url: "file:///var/lib/aur_x86_64" }
