@@ -39,7 +39,7 @@
   - role: nginx
     # TODO: missing servers
     servers:
-    - j0057.nl
+    - nl.j0057.conf
 
   - role: python2
 

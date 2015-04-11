@@ -1,15 +1,11 @@
 - name: "install nginx"
   pacman: name=nginx state=present
-  tags: nginx
-
-- name: "enable and start nginx"
-  service: name=nginx.service enabled=yes state=started
+  notify: "restart nginx"
   tags: nginx
 
 - name: "put configuration file"
-  template:
-  args:
-    src: nginx.conf.j2
+  copy:
+    src: nginx.conf
     dest: /etc/nginx/nginx.conf
     backup: yes
   notify: "restart nginx"
@@ -21,8 +17,11 @@
   tags: nginx
 
 - name: "create servers"
-  template: "src={{ item }}.conf.j2 dest=/etc/nginx/servers/{{ item }}.conf"
+  copy:
+    src: "{{ item }}.conf"
+    dest: "/etc/nginx/servers"
   with_items: servers
   notify: "restart nginx"
   tags: nginx
 
+- meta: flush_handlers
