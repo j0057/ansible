@@ -38,11 +38,11 @@
 
   - role: nginx
     servers:
-    - nl.j0057
-    - nl.j0057.www
-    - nl.j0057.dev
-    - nl.stomrin
-    - nl.stomrin.www
+    - j0057.nl
+    - www.j0057.nl
+    - dev.j0057.nl
+    - stomrin.nl
+    - www.stomrin.nl
 
   - role: python2
 
