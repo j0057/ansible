@@ -1,0 +1,8 @@
+tau
+    ansible_connection=ssh
+    ansible_ssh_user=root
+    ansible_ssh_host=127.0.0.1
+    ansible_ssh_port=22
+
+[server]
+tau
