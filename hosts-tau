@@ -1,8 +1,4 @@
-tau
-    ansible_connection=ssh
-    ansible_ssh_user=root
-    ansible_ssh_host=127.0.0.1
-    ansible_ssh_port=22
+tau ansible_python_interpreter=/usr/bin/python2 ansible_connection=local ansible_sudo=true
 
 [server]
 tau
