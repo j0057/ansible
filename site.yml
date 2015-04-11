@@ -8,7 +8,7 @@
     - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar" }
     packages: [ rsync, vim, htop ]
     arch_repo:
-    - { name: x86_64, url: "file:///root/aur/x86_64" }
+    - { name: aur_x86_64, url: "file:///var/lib/aur_x86_64" }
   - role: ntp
     servers: [ "ntp.xs4all.nl" ]
 
