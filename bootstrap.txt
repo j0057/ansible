@@ -1,4 +1,4 @@
-steps for bootstrapping config server:
+-- steps for bootstrapping config server :
 
 1. aur from root (build-aur.conf [0A] and pacman.conf [0B])
 2. apply config from other machine (--ask-pass to use sshpass)
@@ -10,6 +10,8 @@ steps for bootstrapping config server:
 8. apply config from arch-vbox-1 to config host
 9. build python packages
 10. apply config from arch-vbox-1 to server host or all hosts
+
+-- config files :
 
 [0A] /root/aur/build-aur.conf @ config :
 
@@ -31,3 +33,21 @@ steps for bootstrapping config server:
 
     supported_dists = platform._supported_dists + ('arch',)
     distribution = platform.linux_distribution(supported_dists=supported_dists)[0].capitalize()
+
+-- building packages :
+
+# sh
+(git clone -o github github.com:j0057/sh && cd sh && pip-release)
+
+# xmlist
+(git clone -o github github.com:j0057/xmlist && cd xmlist && pip-release)
+
+# xhttp
+(git clone -o github github.com:j0057/xhttp && cd xhttp && setup.py -q metadata -k x_dist_names > requirements.txt && pip-download -r requirements.txt && pip-build -r requirements.txt && pip-release)
+
+# mp3
+
+# musicdb
+# twitter
+# dns
+# hello
