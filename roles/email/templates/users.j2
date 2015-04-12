@@ -1,5 +1,3 @@
 {% for u in dovecot.users %}
-{{ u.name }}:{PLAIN}{{ u.password }}:{{ u.uid }}:{{ u.gid }}::{{ u.home }}
+{{ u.name }}:{PLAIN}{{ passwords[u.name].mail }}:{{ u.uid }}:{{ u.gid }}::{{ u.home }}
 {% endfor %}
-
-

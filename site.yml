@@ -99,8 +99,8 @@
 
     dovecot:
       users:
-      - { name: jjm, uid: 1000, gid: 1000, password: mail-password, home: /home/jjm }
-      ssl_cert: /etc/ssl/certs/j0057.nl.chained.crt
+      - { name: jjm, uid: 1000, gid: 1000, home: /home/jjm }
+      ssl_cert: /etc/ssl/private/j0057.nl.chained.crt
       ssl_key: /etc/ssl/private/j0057.nl.key
 
   - role: fileserver
