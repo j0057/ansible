@@ -1,8 +1,10 @@
 arch-vbox-1 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root ansible_ssh_host=10.101.0.66 ansible_ssh_port=22
+arch-qemu-1 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root ansible_ssh_host=10.102.0.10 ansible_ssh_port=22
 arch-vbox-2 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root ansible_ssh_host=10.101.0.67 ansible_ssh_port=22
 
 [config]
 arch-vbox-1
+arch-qemu-1
 
 [server]
 arch-vbox-2
