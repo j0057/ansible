@@ -1,23 +1,17 @@
 - hosts:
   - config
   - server
-
-  vars_files: [secrets.yml]
-
+  vars_files:
+  - secrets.yml
   roles:
-
   - role: arch-common
-
     users:
     - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar", groups: "wheel" }
-
     authorized_keys:
     - { user: root, pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
     - { user: jjm,  pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
-
     arch_repo:
     - { name: aur_x86_64, url: "file:///var/lib/aur_x86_64" }
-
     packages:
     - vim-minimal
     - tmux
@@ -31,17 +25,15 @@
     - libxslt
     - libmariadbclient
     - graphviz
-
   - role: ntp
-    servers: [ "ntp.xs4all.nl" ]
+    servers:
+    - ntp.xs4all.nl
 
 - hosts:
   - server
-
-  vars_files: [secrets.yml]
-
+  vars_files:
+  - secrets.yml
   roles:
-
   - role: data
     vault_files:
     - { dest: "/etc/ssl/private/j0057.nl.crt",          mode: "0644", user: root, group: root, content: "{{ ssl['j0057.nl.crt'] }}" }
@@ -68,7 +60,7 @@
     svc:
       enable: { name: uwsgi@hello.socket, state: started }
       update: { name: uwsgi@hello.service, state: stopped }
- 
+
   - role: python2-app
     name: mp3-dev
     pkg: mp3==2.0dev-83-g6d2f451
@@ -108,7 +100,6 @@
         mydestination: [j0057.nl, punosqnp.nl, xi.j0057.nl]
         ssl_cert: /etc/ssl/private/j0057.nl.chained.crt
         ssl_key: /etc/ssl/private/j0057.nl.key
-
     dovecot:
       users:
       - { name: jjm, uid: 1000, gid: 1000, home: /home/jjm }
