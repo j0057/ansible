@@ -34,7 +34,7 @@ cat > /mnt/etc/netctl/eth1 << EOF
 Interface=eth1
 Connection=ethernet
 IP=static
-Address=("10.101.0.10/16")
+Address=("10.102.0.10/16")
 EOF
 arch-chroot /mnt netctl enable eth1
 
