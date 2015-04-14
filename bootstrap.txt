@@ -3,9 +3,9 @@
 1. aur from root (build-aur.conf [0A] and pacman.conf [0B])
 2. apply config from other machine (--ask-pass to use sshpass)
 3. change passwords
-4. clone dotfiles & aur (copy build-aur.conf from root) [3] 
+4. clone dotfiles (submodules!) & aur (copy build-aur.conf from root) [4] 
 5. create directories and bootstrap pip 
-6. install & patch ansible ... [4]
+6. install & patch ansible ... [6]
 7. clone config
 8. apply config from arch-vbox-1 to config host
 9. build python packages
@@ -43,11 +43,22 @@
 (git clone -o github github.com:j0057/xmlist && cd xmlist && pip-release)
 
 # xhttp
-(git clone -o github github.com:j0057/xhttp && cd xhttp && setup.py -q metadata -k x_dist_names > requirements.txt && pip-download -r requirements.txt && pip-build -r requirements.txt && pip-release)
+(git clone -o github github.com:j0057/xhttp && cd xhttp && ./setup.py -q metadata -k x_dist_names > requirements.txt && pip-download -r requirements.txt && pip-build -r requirements.txt && pip-release)
 
 # mp3
+(git clone -o github github.com:j0057/mp3 && cd mp3 && ./setup.py -q metadata -k x_dist_names > requirements.txt && pip-download -r requirements.txt && pip-build -r requirements.txt && pip-release)
+
+# core
+(git clone -o github github.com:j0057/core && cd core && ./setup.py -q metadata -k install_requires > requirements.txt && pip-download -r requirements.txt && pip-build -r requirements.txt && pip-release)
 
 # musicdb
+(git clone -o github github.com:j0057/musicdb && cd musicdb && ./setup.py -q metadata -k x_dist_names > requirements.txt && pip-download -r requirements.txt && pip-build -r requirements.txt && pip-release)
+
 # twitter
+(git clone -o github github.com:j0057/twitter && cd twitter && git checkout package && pip-download -r requirements.txt && pip-build -r requirements.txt && pip-release)
+
 # dns
+(git clone -o github github.com:j0057/dns && cd dns && ./setup.py -q metadata -k x_dist_names > requirements.txt && pip-download -r requirements.txt && pip-build -r requirements.txt && pip-release)
+
 # hello
+(git clone -o bitbucket bitbucket.org:JoostMolenaar/hello && cd hello && pip-release)
