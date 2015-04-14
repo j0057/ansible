@@ -18,7 +18,19 @@
     arch_repo:
     - { name: aur_x86_64, url: "file:///var/lib/aur_x86_64" }
 
-    packages: [ rsync, vim-minimal, htop, mc ]
+    packages:
+    - vim-minimal
+    - tmux
+    - htop
+    - mc
+    - rsync
+    - libpng
+    - libjpeg-turbo
+    - libtiff
+    - libxml2
+    - libxslt
+    - libmariadbclient
+    - graphviz
 
   - role: ntp
     servers: [ "ntp.xs4all.nl" ]
