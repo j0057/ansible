@@ -43,7 +43,7 @@
 (git clone -o github github.com:j0057/xmlist && cd xmlist && pip-release)
 
 # xhttp
-(git clone -o github github.com:j0057/xhttp && cd xhttp && pip-metadata && pip-build -r requirements.txt && pip-release)
+(git clone -o github github.com:j0057/xhttp && cd xhttp && pip-metadata && pip-release)
 
 # mp3
 (git clone -o github github.com:j0057/mp3 && cd mp3 && pip-metadata && pip-release)

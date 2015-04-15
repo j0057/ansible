@@ -34,7 +34,7 @@
 #
 
 - name: "create pypkg27 dirs"
-  file: name={{ item }} state=directory
+  file: name={{ item }} state=directory owner=root group=wheel mode=0775
   with_items:
   - "{{ path.src }}"
   - "{{ path.whl }}"
@@ -62,3 +62,9 @@
   tags: [build-server, pypkg27]
 
 - meta: flush_handlers
+
+- name: "install pip/virtualenv config files"
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+  - { src: pip.conf.j2, dest: /etc/pip.conf }
+  tags: [build-server, pypkg27]
