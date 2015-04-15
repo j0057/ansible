@@ -4,12 +4,13 @@
   vars_files:
   - secrets.yml
   roles:
-  - role: arch-common
+  - role: accounts
     users:
     - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar", groups: "wheel" }
     authorized_keys:
     - { user: root, pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
     - { user: jjm,  pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
+  - role: packages
     packages:
     - vim-minimal
     - tmux
