@@ -62,3 +62,17 @@
 
 # hello
 (git clone -o bitbucket bitbucket.org:JoostMolenaar/hello && cd hello && pip-release)
+
+-- deps:
+sh : ~
+xmlist : coverage
+xhttp : python-dayteutil | xmlist
+mp3 : pillow mutagen unidecode fusepy | xhttp sh xmlist
+core : mysql-python lxml pytz webob
+musicdb : pygraphviz | core
+twitter : pyephem pytz python-dateutil requests mock coverage unidecode pillow python-prctl
+dns : pygraphviz | xmlist xhttp
+hello : ~
+
+pip-bootstrap : coverage githubrelease pip setuptools setuptools-metadata setuptools-version-command tox twine virtualenv wheel
+s
