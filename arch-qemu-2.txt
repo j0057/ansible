@@ -1,0 +1,42 @@
+#!/bin/bash -e
+
+# run directly from github.io:
+# curl -sv j0057.github.io/ansible/arch-vbox-1.txt | bash -e |& tee install.log
+
+# run from development environment (note repeated hostname to bash invocation):
+# curl -sv example.com/arch-vbox-1.txt | bash -es example.com |& tee install.log
+
+message() { echo ; echo -e "\e[1;37m==> $1\e[0;0m" ; echo ; }
+export -f message
+
+export INSTALL_HOST="${1:-j0057.github.io/ansible}"
+export INSTALL_HOSTNAME="arch-qemu-2"
+export INSTALL_TZNAME="Europe/Amsterdam"
+export INSTALL_LOCALE="en_US.UTF-8 UTF-8"
+export INSTALL_PACKAGES="grub openssh python2 lsb-release"
+
+message "Starting stage 1"
+curl -sv "http://${INSTALL_HOST}/arch_stage1.txt" | bash -e
+
+message "Starting stage 2 in chroot"
+arch-chroot /mnt bash -c "curl -sv \"http://${INSTALL_HOST}/arch_stage2.txt\" | bash -e"
+
+message "Configuring eth0"
+cat > /mnt/etc/netctl/eth0 << EOF
+Interface=eth0
+Connection=ethernet
+IP=dhcp
+EOF
+arch-chroot /mnt netctl enable eth0
+
+message "Configuring eth1"
+cat > /mnt/etc/netctl/eth1 << EOF
+Interface=eth1
+Connection=ethernet
+IP=static
+Address=("10.102.0.11/16")
+EOF
+arch-chroot /mnt netctl enable eth1
+
+message "Unmounting"
+umount -R /mnt
