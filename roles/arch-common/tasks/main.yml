@@ -61,18 +61,6 @@
   with_items: packages
   tags: arch-common
 
-- name: "add Arch repo"
-  ini_file: "backup=yes dest=/etc/pacman.conf section={{ item.name }} option=SigLevel value=Never"
-  with_items: arch_repo
-  notify: "update pacman"
-  tags: arch-common
-
-- name: "add Arch repo"
-  ini_file: "backup=yes dest=/etc/pacman.conf section={{ item.name }} option=Server value={{ item.url }}"
-  with_items: arch_repo
-  notify: "update pacman"
-  tags: arch-common
-
 - name: "flush handlers"
   meta: flush_handlers
   tags: arch-common

@@ -1,0 +1,31 @@
+#!/bin/bash
+
+message() { echo -e "\e[1;32m==>\e[1;33m $1\e[0;0m" ; }
+
+. /etc/default/build-pypkg27.conf
+
+export PATH=$PATH:$HOME/.local/bin
+
+for dist in pip setuptools wheel virtualenv; do
+    pip2 list --no-cache-dir --disable-pip-version-check --isolated --user | grep $dist &> /dev/null || { 
+        message "Bootstrapping $dist"
+        pip2 install --no-cache-dir --disable-pip-version-check --isolated --download $WHLDIR $dist ;
+        pip2 install --no-cache-dir --disable-pip-version-check --isolated --no-index --find-links $WHLDIR --user --upgrade $dist ;
+    }
+done
+
+for (( i=0 ; i < ${#DIST[*]} ; i++ )); do
+    # download sdist
+    message "downloading ${DIST[i]}"
+    pip2 install --no-cache-dir --disable-pip-version-check --isolated --download $SRCDIR --no-use-wheel ${DIST[i]}
+
+    # build whl from sdist
+    message "compiling ${DIST[i]}"
+    pip2 wheel --no-cache-dir --disable-pip-version-check --isolated --no-index --find-links $SRCDIR --find-links $WHLDIR --wheel-dir $WHLDIR ${DIST[i]}
+done
+
+for (( i=0 ; i < ${#WHL_BLACKLIST[*]} ; i++ )); do
+    message "checking for blacklisted ${WHL_BLACKLIST[i]} wheel"
+    # remove blacklisted whl files (looking at you, ansible)
+    find $WHLDIR -name "${WHL_BLACKLIST[i]}*.whl" -type f -delete
+done

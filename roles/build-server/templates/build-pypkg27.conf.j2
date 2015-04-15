@@ -1,0 +1,14 @@
+SRCDIR="{{ path.src }}"
+WHLDIR="{{ path.whl }}"
+
+DIST=(
+    {% for dist in py27 %}
+    "{{ dist }}"
+    {% endfor %}
+)
+
+WHL_BLACKLIST=(
+    {% for dist in whl_blacklist %}
+    "{{ dist }}"
+    {% endfor %}
+)

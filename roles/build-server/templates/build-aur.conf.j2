@@ -1,0 +1,6 @@
+PKGS=(
+    {% for pkg in aur %}
+    "{{ pkg }}"
+    {% endfor %}
+)
+REPO="{{ path.aur }}"

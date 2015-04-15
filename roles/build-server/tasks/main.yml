@@ -1,0 +1,64 @@
+#
+# aur
+#
+
+- name: "create aur dir"
+  file: name={{ path.aur }} state=directory
+  notify: "run build-aur"
+  tags: [build-server, aur]
+
+- name: "configure build-aur"
+  template: src=build-aur.conf.j2 dest=/etc/default/build-aur.conf
+  notify: "run build-aur"
+  tags: [build-server, aur]
+
+- name: "pacman: add aur repo siglevel"
+  ini_file: backup=yes dest=/etc/pacman.conf section={{ path.aur | basename }} option=SigLevel value=Never
+  notify: "run build-aur"
+  tags: [build-server, aur]
+
+- name: "pacman: add aur repo server"
+  ini_file: backup=yes dest=/etc/pacman.conf section={{ path.aur | basename }} option=Server value=file://{{ path.aur }}
+  notify: "run build-aur"
+  tags: [build-server, aur]
+
+- name: "install build-aur script"
+  copy: src=build-aur dest=/usr/local/bin/build-aur mode=0755
+  notify: "run build-aur"
+  tags: [build-server, aur]
+
+- meta: flush_handlers
+
+#
+# pypkg27
+#
+
+- name: "create pypkg27 dirs"
+  file: name={{ item }} state=directory
+  with_items:
+  - "{{ path.src }}"
+  - "{{ path.whl }}"
+  notify: "run build-pypkg27"
+  tags: [build-server, pypkg27]
+
+- name: "download get-pip.py"
+  get_url: dest=/root url=https://bootstrap.pypa.io/get-pip.py
+  tags: [build-server, pypkg27]
+
+- name: "install pip"
+  shell: python2 /root/get-pip.py --user
+  args:
+    creates: /root/.local/bin/pip2
+  tags: [build-server, pypkg27]
+
+- name: "configure build-pypkg27"
+  template: src=build-pypkg27.conf.j2 dest=/etc/default/build-pypkg27.conf
+  notify: "run build-pypkg27"
+  tags: [build-server, pypkg27]
+
+- name: "install build-pypkg27 script"
+  copy: src=build-pypkg27 dest=/usr/local/bin/build-pypkg27 mode=0755
+  notify: "run build-pypkg27"
+  tags: [build-server, pypkg27]
+
+- meta: flush_handlers

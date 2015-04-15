@@ -10,8 +10,6 @@
     authorized_keys:
     - { user: root, pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
     - { user: jjm,  pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
-    arch_repo:
-    - { name: aur_x86_64, url: "file:///var/lib/aur_x86_64" }
     packages:
     - vim-minimal
     - tmux
@@ -28,6 +26,50 @@
   - role: ntp
     servers:
     - ntp.xs4all.nl
+
+- hosts:
+  - config
+  vars_files:
+  - secrets.yml
+  roles:
+  - role: build-server
+    path:
+      aur: "/var/lib/aur_x86_64"
+      src: "/var/lib/pypkg27/src"
+      whl: "/var/lib/pypkg27/x86_64"
+    aur:
+    - python2-pydns
+    - python2-pyspf
+    - python2-postfix-policyd-spf   
+    py27:
+    - ansible
+    - coverage
+    - fusepy
+    - githubrelease
+    - lxml
+    - mock
+    - mutagen
+    - mysql-python
+    - pillow
+    - pip
+    - pyephem
+    - pygraphviz
+    - pytest
+    - python-dateutil
+    - python-prctl
+    - pytz
+    - requests
+    - setuptools
+    - setuptools-metadata
+    - setuptools-version-command
+    - tox
+    - twine
+    - unidecode
+    - virtualenv
+    - webob
+    - wheel
+    whl_blacklist:
+    - ansible
 
 - hosts:
   - server

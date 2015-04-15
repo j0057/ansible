@@ -1,0 +1,7 @@
+- name: "run build-aur"
+  shell: /usr/local/bin/build-aur
+  tags: [build-server, aur]
+
+- name: "run build-pypkg27"
+  shell: /usr/local/bin/build-pypkg27
+  tags: [build-server, pypkg27]

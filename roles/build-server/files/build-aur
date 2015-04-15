@@ -1,0 +1,63 @@
+#!/bin/bash -e
+
+. /etc/default/build-aur.conf
+
+message() { echo -e "\e[1;32m==>\e[1;33m $1\e[0;0m" ; }
+
+ARCH=$(uname -m)
+NAME=$(basename $REPO)
+
+mkdir -p "${REPO}"
+mkdir -p /tmp/build-$$
+
+message "Giving user 'nobody' privilege to run pacman"
+echo 'nobody ALL=(ALL) NOPASSWD: /usr/bin/pacman' > /etc/sudoers.d/nobody-pacman-$$
+
+if [ ! -f "${REPO}/${NAME}.db.tar.gz" ]; then
+    message "Initializing empty repository in ${REPO}"
+    tar cvfT "${REPO}/${NAME}.db.tar.gz" /dev/null
+    ln -s "${NAME}.db.tar.gz" "${REPO}/${NAME}.db"
+    pacman --sync --refresh
+    pacman --sync --clean --noconfirm
+fi
+
+cd /tmp/build-$$
+for (( i=0 ; i < ${#PKGS[*]} ; i++ )); do
+    name="${PKGS[i]}"
+    prefix="${name:0:2}"
+    url="https://aur.archlinux.org/packages/${prefix}/${name}/${name}.tar.gz"
+
+    message "Downloading pkgbuild for ${name}"
+    message "URL: ${url}"
+
+    curl --silent "${url}" > "${name}.tar.gz"
+    tar xzf "${name}.tar.gz"
+    rm "${name}.tar.gz"
+    chown nobody.nobody ${name}
+
+    pkgver=$(sed -n '/^pkgver=/ s/pkgver=// p' "${name}/PKGBUILD")
+    pkgrel=$(sed -n '/^pkgrel=/ s/pkgrel=// p' "${name}/PKGBUILD")
+
+    if [ ! -f ${REPO}/${name}-${pkgver}-${pkgrel}-*.pkg.tar.xz ]; then
+        message "Building ${name}-${pkgver}-${pkgrel}"
+        cd "${name}"
+        sudo -u nobody makepkg --force --syncdeps --rmdeps --noconfirm --ignorearch
+        mv ${name}-${pkgver}-${pkgrel}-*.pkg.tar.xz "${REPO}"
+        cd ..
+        repo-add --new "${REPO}/${NAME}.db.tar.gz" ${REPO}/${name}-${pkgver}-${pkgrel}-*.pkg.tar.xz
+        pacman --sync --refresh
+    else
+        message "Skipping ${name}-${pkgver}-${pkgrel}"
+    fi
+
+    message "Deleting downloaded pkgbuild file"
+    rm -rfv "${name}"
+
+    echo
+done
+
+message "Removing pacman privilege from user nobody"
+rm -v /etc/sudoers.d/nobody-pacman-$$
+
+message "Removing build directory /tmp/build-$$"
+rm -rfv /tmp/build-$$
