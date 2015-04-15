@@ -1,3 +1,0 @@
-- hosts: arch
-  roles:
-  - role: build-slave
