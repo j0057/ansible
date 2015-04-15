@@ -43,22 +43,22 @@
 (git clone -o github github.com:j0057/xmlist && cd xmlist && pip-release)
 
 # xhttp
-(git clone -o github github.com:j0057/xhttp && cd xhttp && ./setup.py -q metadata -k x_dist_names > requirements.txt && pip-download -r requirements.txt && pip-build -r requirements.txt && pip-release)
+(git clone -o github github.com:j0057/xhttp && cd xhttp && pip-metadata && pip-build -r requirements.txt && pip-release)
 
 # mp3
-(git clone -o github github.com:j0057/mp3 && cd mp3 && ./setup.py -q metadata -k x_dist_names > requirements.txt && pip-download -r requirements.txt && pip-build -r requirements.txt && pip-release)
+(git clone -o github github.com:j0057/mp3 && cd mp3 && pip-metadata && pip-release)
 
 # core
-(git clone -o github github.com:j0057/core && cd core && ./setup.py -q metadata -k install_requires > requirements.txt && pip-download -r requirements.txt && pip-build -r requirements.txt && pip-release)
+(git clone -o github github.com:j0057/core && cd core && pip-release)
 
 # musicdb
-(git clone -o github github.com:j0057/musicdb && cd musicdb && ./setup.py -q metadata -k x_dist_names > requirements.txt && pip-download -r requirements.txt && pip-build -r requirements.txt && pip-release)
+(git clone -o github github.com:j0057/musicdb && cd musicdb && pip-metadata && pip-release)
 
 # twitter
-(git clone -o github github.com:j0057/twitter && cd twitter && git checkout package && pip-download -r requirements.txt && pip-build -r requirements.txt && pip-release)
+(git clone -o github github.com:j0057/twitter && cd twitter && git checkout package && pip-release)
 
 # dns
-(git clone -o github github.com:j0057/dns && cd dns && ./setup.py -q metadata -k x_dist_names > requirements.txt && pip-download -r requirements.txt && pip-build -r requirements.txt && pip-release)
+(git clone -o github github.com:j0057/dns && cd dns && pip-metadata && pip-release)
 
 # hello
 (git clone -o bitbucket bitbucket.org:JoostMolenaar/hello && cd hello && pip-release)
