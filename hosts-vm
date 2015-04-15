@@ -1,4 +1,12 @@
 arch-qemu-1 ansible_python_interpreter=/usr/bin/python2 ansible_connection=local ansible_sudo=true
+arch-qemu-2 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root ansible_ssh_host=10.102.0.11 ansible_ssh_port=22
+arch-qemu-3 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root ansible_ssh_host=10.102.0.13 ansible_ssh_port=22
 
 [config]
 arch-qemu-1
+
+[server]
+arch-qemu-2
+
+[workstation]
+arch-qemu-3
