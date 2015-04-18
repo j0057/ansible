@@ -1,8 +1,3 @@
 - name: "restart firewall"
-  service:
-    name: firewall.target
-    state: restarted
-    enabled: yes
+  service: name=firewall.target state=restarted enabled=yes
   tags: firewall
-
-

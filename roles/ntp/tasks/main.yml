@@ -1,14 +1,10 @@
 - name: "install ntpd"
-  pacman:
-    name: ntp
-    state: installed
+  pacman: name=ntp state=installed
   notify: "restart ntpd"
   tags: ntp
 
 - name: "conifgure ntpd"
-  template:
-    src: "ntp.conf.j2"
-    dest: "/etc/ntp.conf"
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf
   notify: "restart ntpd"
   tags: ntp
 

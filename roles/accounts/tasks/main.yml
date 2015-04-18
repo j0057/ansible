@@ -1,39 +1,26 @@
 - name: "create wheel group"
-  group:
-    name: wheel
-    state: present
+  group: name=wheel state=present
   tags: accounts
 
 - name: "create users"
-  user:
-    name: "{{ item.name }}"
-    comment: "{{ item.comment }}"
-    groups: "{{ item.groups }}"
+  user: name={{ item.name }} comment={{ item.comment }} groups={{ item.groups }}
   with_items: users
   tags: accounts
 
 - name: "allow sudo to wheel users"
   lineinfile:
-    line: "%wheel ALL=(ALL) ALL"
+    line: %wheel ALL=(ALL) ALL
     dest: "/etc/sudoers.d/wheel"
     create: yes
   tags: accounts
 
 - name: "set authorized keys"
-  authorized_key:
-    user: "{{ item.0.user}}"
-    key: "{{ ssh[item.1] }}"
-    state: present
-    manage_dir: yes
+  authorized_key: user={{ item.0.user}} key={{ ssh[item.1] }} state=present manage_dir=yes
   with_subelements: [ authorized_keys, pubkeys ]
   tags: accounts
 
 - name: "install ssh config file"
-  copy:
-    src: ssh-config
-    dest: "~{{ item.user }}/.ssh/config"
-    owner: "{{ item.user }}"
-    group: "{{ item.user }}"
+  copy: src=ssh-config dest=~{{ item.user }}/.ssh/config owner={{ item.user }} group={{ item.user }}
   with_items: authorized_keys
   tags: accounts
 

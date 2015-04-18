@@ -1,18 +1,12 @@
 - name: "samba | restart"
-  service:
-    name: "{{ item }}"
-    state: restarted
-    enabled: true
+  service: name={{ item }} state=restarted enabled=true
   with_items:
   - smbd.service
   - nmbd.service
   tags: [fileserver, samba]
 
 - name: "nfs | restart"
-  service:
-    name: "{{ item }}"
-    enabled: yes
-    state: restarted
+  service: name={{ item }} enabled=yes state=restarted
   with_items:
   - rpcbind.service
   - nfs-config.service
@@ -21,10 +15,7 @@
   tags: [fileserver, nfs]
 
 - name: "cups | restart"
-  service:
-    name: "{{ item }}"
-    state: restarted
-    enabled: true
+  service: name={{ item }} state=restarted enabled=true
   with_items:
   - cups.service
   tags: [fileserver, cups]

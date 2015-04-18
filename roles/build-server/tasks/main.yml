@@ -3,44 +3,27 @@
 #
 
 - name: "create aur dir"
-  file:
-    name: "{{ path.aur }}"
-    state: directory
+  file: name={{ path.aur }} state=directory
   notify: "run build-aur"
   tags: [build-server, aur]
 
 - name: "configure build-aur"
-  template:
-    src: "build-aur.conf.j2"
-    dest: "/etc/default/build-aur.conf"
+  template: src=build-aur.conf.j2 dest=/etc/default/build-aur.conf
   notify: "run build-aur"
   tags: [build-server, aur]
 
 - name: "pacman: add aur repo siglevel"
-  ini_file:
-    backup: yes
-    dest: "/etc/pacman.conf"
-    section: "{{ path.aur | basename }}"
-    option: SigLevel
-    value: Never
+  ini_file: backup=yes dest=/etc/pacman.conf section={{ path.aur | basename }} option=SigLevel value=Never
   notify: "run build-aur"
   tags: [build-server, aur]
 
 - name: "pacman: add aur repo server"
-  ini_file:
-    backup: yes
-    dest: "/etc/pacman.conf"
-    section: "{{ path.aur | basename }}"
-    option: Server
-    value: "file://{{ path.aur }}"
+  ini_file: backup=yes dest=/etc/pacman.conf section={{ path.aur | basename }} option=Server value=file://{{ path.aur }}
   notify: "run build-aur"
   tags: [build-server, aur]
 
 - name: "install build-aur script"
-  copy:
-    src: build-aur
-    dest: "/usr/local/bin/build-aur"
-    mode: "0755"
+  copy: src=build-aur dest=/usr/local/bin/build-aur mode=0755
   notify: "run build-aur"
   tags: [build-server, aur]
 
@@ -51,12 +34,7 @@
 #
 
 - name: "create pypkg27 dirs"
-  file:
-    name: "{{ item }}"
-    state: directory
-    owner: root
-    group: wheel
-    mode: "0775"
+  file: name={{ item }} state=directory owner=root group=wheel mode=0775
   with_items:
   - "{{ path.src }}"
   - "{{ path.whl }}"
@@ -64,9 +42,7 @@
   tags: [build-server, pypkg27]
 
 - name: "download get-pip.py"
-  get_url:
-    dest: "/root"
-    url: "https://bootstrap.pypa.io/get-pip.py"
+  get_url: dest=/root url=https://bootstrap.pypa.io/get-pip.py
   tags: [build-server, pypkg27]
 
 - name: "install pip"
@@ -76,26 +52,19 @@
   tags: [build-server, pypkg27]
 
 - name: "configure build-pypkg27"
-  template:
-    src: "build-pypkg27.conf.j2"
-    dest: "/etc/default/build-pypkg27.conf"
+  template: src=build-pypkg27.conf.j2 dest=/etc/default/build-pypkg27.conf
   notify: "run build-pypkg27"
   tags: [build-server, pypkg27]
 
 - name: "install build-pypkg27 script"
-  copy:
-    src: "build-pypkg27"
-    dest: "/usr/local/bin/build-pypkg27"
-    mode: "0755"
+  copy: src=build-pypkg27 dest=/usr/local/bin/build-pypkg27 mode=0755
   notify: "run build-pypkg27"
   tags: [build-server, pypkg27]
 
 - meta: flush_handlers
 
 - name: "install pip/virtualenv config files"
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+  template: src={{ item.src }} dest={{ item.dest }}
   with_items:
   - { src: "pip.conf.j2", dest: "/etc/pip.conf" }
   tags: [build-server, pypkg27]

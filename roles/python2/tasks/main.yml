@@ -3,21 +3,17 @@
 #
 
 - name: ensure get-pip.py is available
-  get_url:
-    url: https://bootstrap.pypa.io/get-pip.py
-    dest: /root/get-pip.py
+  get_url: dest=/root/get-pip.py url=https://bootstrap.pypa.io/get-pip.py
   tags: python2
 
 - name: ensure pip is installed
   shell: python2.7 /root/get-pip.py
-  args:
-    creates: /usr/bin/pip
+  args: creates=/usr/bin/pip
   tags: python2
 
 - name: install packages
-  pip:
-    name: "{{ item }}"
-    state: latest
+  pip: name={{ item }} state=latest
+  args:
     extra_args: "--no-index --find-links {{ pypkg_url }}/{{ ansible_architecture }}/"
   with_items:
   - pip
@@ -34,18 +30,14 @@
 #
 
 - name: "install uwsgi"
-  pacman: 
-    name: "{{ item }}"
-    state: present
+  pacman: name={{ item }} state=present
   with_items:
   - uwsgi
   - uwsgi-plugin-python2
   tags: [python2, uwsgi]
 
 - name: "install config files"
-  copy:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+  copy: src={{ item.src }} dest={{ item.dest }}
   with_items:
   # { src: run_uwsgi.conf,  dest: /etc/tmpfiles.d/run_uwsgi.conf }
   - { src: uwsgi@.service,  dest: /etc/systemd/system/uwsgi@.service }
@@ -53,8 +45,5 @@
   tags: [python2, uwsgi]
 
 - name: "create uwsgi apps-enabled directory"
-  file:
-    path: /etc/uwsgi/apps-enabled
-    state: directory
+  file: path=/etc/uwsgi/apps-enabled state=directory
   tags: [python2, uwsgi]
-

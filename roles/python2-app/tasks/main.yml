@@ -1,17 +1,12 @@
 - name: "{{ name }} | install {{ pkg }}"
-  pip:
-    name: "{{ pkg }}"
-    virtualenv: "/srv/{{ name }}"
+  pip: name={{ pkg }} virtualenv=/srv/{{ name }} state=present
+  args:
     extra_args: "--no-index --find-links {{ pypkg_url }}/{{ ansible_architecture }}/"
-    state: present
   notify: "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
   tags: python2-app
 
 - name: "{{ name }} | configure"
-  copy:
-    dest: "{{ item.dest }}"
-    src: "{{ item.src }}"
-    content: "{{ item.content }}"
+  copy: dest={{ item.dest }} src={{ item.src }} content={{ item.content }}
   with_items: cfg
   notify: 
   - "{{ name }} | reload systemd units"
@@ -19,20 +14,13 @@
   tags: python2-app
 
 - name: "{{ name }} | enable {{ svc.enable.name }}"
-  service:
-    name: "{{ svc.enable.name }}"
-    enabled: yes
-    state: "{{ svc.enable.state }}"
+  service: name={{ svc.enable.name }} enabled=yes state={{ svc.enable.state }}
   with_items: python2.webapps
   notify: "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
   tags: python2-app
 
 - name: "{{ name }} | create /var/lib/{{ name }}"
-  file:
-    name: "/var/lib/{{ name }}"
-    state: directory
-    owner: nobody
-    group: nobody
+  file: name=/var/lib/{{ name }} state=directory owner=nobody group=nobody
   tags: python2-app
 
 - meta: flush_handlers

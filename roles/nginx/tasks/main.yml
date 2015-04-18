@@ -4,10 +4,7 @@
   tags: nginx
 
 - name: "put configuration file"
-  copy:
-    src: nginx.conf
-    dest: /etc/nginx/nginx.conf
-    backup: yes
+  copy: src=nginx.conf dest=/etc/nginx/nginx.conf backup=yes
   notify: "restart nginx"
   tags: nginx
 
@@ -17,11 +14,10 @@
   tags: nginx
 
 - name: "create servers"
-  copy:
-    src: "{{ item }}.conf"
-    dest: "/etc/nginx/servers"
+  copy: src={{ item }}.conf dest=/etc/nginx/servers
   with_items: servers
   notify: "restart nginx"
   tags: nginx
 
 - meta: flush_handlers
+  tags: nginx

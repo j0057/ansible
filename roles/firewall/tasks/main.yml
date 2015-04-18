@@ -1,8 +1,6 @@
 
 - name: "install fail2ban and ipset"
-  pacman:
-    name: "{{ item }}"
-    state: present
+  pacman: name={{ item }} state=present
   with_items:
   - fail2ban
   - ipset
@@ -10,11 +8,7 @@
   tags: firewall
 
 - name: "install firewall scripts"
-  copy:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    mode: "{{ item.mode }}"
-    backup: yes
+  copy: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} backup=yes
   with_items:
   - { src: firewall,            dest: "/usr/local/sbin",        mode: "0700" }
   - { src: geoblocks,           dest: "/usr/local/sbin",        mode: "0700" }
@@ -40,9 +34,7 @@
   tags: firewall
 
 - name: "enable services"
-  service:
-    name: "{{ item }}"
-    enabled: yes
+  service: name={{ item }} enabled=yes
   with_items:
   - fail2ban.service
   - firewall.service

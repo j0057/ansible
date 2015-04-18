@@ -2,7 +2,4 @@
   shell: systemctl daemon-reload
 
 - name: "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
-  service:
-    name: "{{ svc['update'].name }}"
-    enabled: yes
-    state: "{{ svc['update'].state }}"
+  service: name={{ svc['update'].name }} enabled=yes state={{ svc['update'].state }}

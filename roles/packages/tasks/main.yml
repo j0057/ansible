@@ -1,6 +1,4 @@
 - name: "install packages"
-  pacman: 
-    name: "{{ item }}"
-    state: installed
+  pacman: name={{ item }} state=installed
   with_items: packages
   tags: packages
