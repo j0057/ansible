@@ -3,8 +3,14 @@
   notify: "restart nginx"
   tags: nginx
 
-- name: "put configuration file"
+- name: "put configuration files"
   copy: src=nginx.conf dest=/etc/nginx/nginx.conf backup=yes
+  copy: src={{ item.src }} dest={{ item.dest }} backup=yes
+  with_items:
+  - src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+  - src: tls_params
+    dest: /etc/nginx/tls_params
   notify: "restart nginx"
   tags: nginx
 
