@@ -12,6 +12,7 @@
     - { user: jjm,  pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
   - role: packages
     packages:
+    - sshpass
     - vim-minimal
     - tmux
     - htop
