@@ -3,19 +3,23 @@
   tags: accounts
 
 - name: "create users"
-  user: name={{ item.name }} comment={{ item.comment }} groups={{ item.groups }}
+  user: name={{ item.name }} groups={{ item.groups }}
+  args:
+    comment: "{{ item.comment }}"
   with_items: users
   tags: accounts
 
 - name: "allow sudo to wheel users"
   lineinfile:
-    line: %wheel ALL=(ALL) ALL
+    line: "%wheel ALL=(ALL) ALL"
     dest: "/etc/sudoers.d/wheel"
     create: yes
   tags: accounts
 
 - name: "set authorized keys"
-  authorized_key: user={{ item.0.user}} key={{ ssh[item.1] }} state=present manage_dir=yes
+  authorized_key: user={{ item.0.user}} state=present manage_dir=yes
+  args:
+    key: "{{ ssh[item.1] }}"
   with_subelements: [ authorized_keys, pubkeys ]
   tags: accounts
 
