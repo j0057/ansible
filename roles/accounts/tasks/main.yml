@@ -24,7 +24,9 @@
   tags: accounts
 
 - name: "install ssh config file"
-  copy: src=ssh-config dest=~{{ item.user }}/.ssh/config owner={{ item.user }} group={{ item.user }}
+  copy: dest=~{{ item.user }}/.ssh/config owner={{ item.user }} group={{ item.user }} mode=0600
+  args:
+    content: "{{ ssh_config }}"
   with_items: authorized_keys
   tags: accounts
 
