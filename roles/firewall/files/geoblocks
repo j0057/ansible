@@ -30,14 +30,22 @@ def deaggregate(start, end):
         yield (base, 32-step)
         base += 1 << step
 
-def get_all_blocks(url):
+def get_url(url):
     _, host, path, _, _, _ = urlparse(url)
     conn = httplib.HTTPConnection(host)
     conn.request('GET', path)
     response = conn.getresponse()
-    if response.stautus != 200:
-        raise Exception(response.reason)
-    with zipfile.ZipFile(StringIO.StringIO(response.read())) as geolite_zip:
+    if response.status != 200:
+        raise Exception('Status {} {} when opening url {!r}'.format(response.status, response.reason, url))
+    return response.read()
+
+def open_zip(data):
+    stream = StringIO.StringIO(data)
+    return zipfile.ZipFile(stream)
+
+def get_all_blocks(url):
+    data = get_url(url)
+    with open_zip(data) as geolite_zip:
         with geolite_zip.open('GeoIPCountryWhois.csv') as geolite_csv:
             reader = csv.reader(geolite_csv)
             for row in reader:
