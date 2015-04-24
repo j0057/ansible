@@ -30,6 +30,6 @@ message "Enabling services"
 systemctl enable sshd.service
 
 message "Installing pip"
-curl -s "https://bootstrap.pypa.io/get-pip.py" > /tmp/get-pip.py
+curl -v "https://bootstrap.pypa.io/get-pip.py" > /tmp/get-pip.py
 python2 /tmp/get-pip.py --user
 echo 'PATH=$PATH:$HOME/.local/bin' > '/etc/profile.d/local-bin.sh'
