@@ -1,45 +1,15 @@
 #!/bin/bash -e
 
-# run directly from github.io:
-# curl -sv j0057.github.io/ansible/arch-vbox-1.txt | bash -e |& tee install.log
+# to run:
+#   { curl -sv j0057.github.io/ansible/arch-qemu.txt | bash -e |& tee install.log } 4<&0
+# or:
+#   { curl -sv example.com/ansible/arch-qemu.txt | bash -es example.com |& tee install.log } 4<&0
 
-# run from development environment (note repeated hostname to bash invocation):
-# curl -sv example.com/arch-vbox-1.txt | bash -es example.com |& tee install.log
+export INSTALL_HOST="${1:-j0057.github.io/ansible}"
+export INSTALL_HOSTNAME="arch-qemu"
+export INSTALL_TZNAME="Europe/Amsterdam"
+export INSTALL_LOCALE="en_US.UTF-8 UTF-8"
+export INSTALL_PACKAGES="base grub lsb-release python2 openssh git base-devel"
+export INSTALL_ETH1_IP="10.102.0.10/16"
 
-message() { echo ; echo -e "\e[1;37m==> $1\e[0;0m" ; echo ; }
-export -f message
-
-read -e -p "Install host: " -i "j0057.github.io/ansible" INSTALL_HOST
-read -e -p "Hostname: " -i "arch-qemu" INSTALL_HOSTNAME
-read -e -p "Timezone: " -i "Europe/Amsterdam" INSTALL_TZNAME
-read -e -p "Locale: " -i "en_US.UTF-8 UTF-8" INSTALL_LOCALE
-read -e -p "Packages to install: " -i "base grub lsb-release python2 openssh git base-devel" INSTALL_PACKAGES
-read -e -p "Static address for eth1: " -i "10.102.0.10/16" INSTALL_ETH1_IP
-
-export INSTALL_HOST INSTALL_HOSTNAME INSTALL_TZNAME INSTALL_LOCALE INSTALL_PACKAGES INSTALL_ETH1_IP
-
-message "Starting stage 1"
-curl -sv "http://${INSTALL_HOST}/arch_stage1.txt" | bash -ex
-
-message "Starting stage 2 in chroot"
-arch-chroot /mnt bash -c "curl -sv \"http://${INSTALL_HOST}/arch_stage2.txt\" | bash -ex"
-
-message "Configuring eth0"
-cat > /mnt/etc/netctl/eth0 << EOF
-Interface=eth0
-Connection=ethernet
-IP=dhcp
-EOF
-arch-chroot /mnt netctl enable eth0
-
-message "Configuring eth1"
-cat > /mnt/etc/netctl/eth1 << EOF
-Interface=eth1
-Connection=ethernet
-IP=static
-Address=("${INSTALL_ETH1_IP}")
-EOF
-arch-chroot /mnt netctl enable eth1
-
-message "Unmounting"
-umount -R /mnt
+bash -e <(curl -s "http://${INSTALL_HOST}/arch_stage0.txt")

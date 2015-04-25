@@ -1,17 +1,20 @@
 #!/bin/bash -e
 
 message "Environment:"
-set
+set | grep ^INSTALL_
 
 message "Partitioning"
-sgdisk /dev/sda --zap-all
-sgdisk /dev/sda --new 1:1M:+1M --typecode 1:ef02 --change-name=1:bios
-sgdisk /dev/sda --new 2:0:+256M --typecode 2:8300 --change-name=2:boot
-sgdisk /dev/sda --new 3:0:+16G --typecode 3:8300 --change-name=3:root
-sgdisk /dev/sda --new 4:0:0 --typecode 4:8300 --change-name=4:home
-sgdisk /dev/sda --print
+sgdisk /dev/sda \
+    --zap-all \
+    --new 1:1M:+1M --typecode 1:ef02 --change-name=1:bios \
+    --new 2:0:+256M --typecode 2:8300 --change-name=2:boot \
+    --new 3:0:+16G --typecode 3:8300 --change-name=3:root \
+    --new 4:0:0 --typecode 4:8300 --change-name=4:home \
+    --mbrtogpt \
+    --print
 
 message "Re-reading partition table"
+sleep 3
 partprobe /dev/sda
 sleep 3
 

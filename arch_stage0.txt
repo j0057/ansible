@@ -1,0 +1,37 @@
+#!/bin/bash
+
+message() { echo ; echo -e "\e[1;37m==> $1\e[0;0m" ; echo ; }
+export -f message
+
+read -p "Install host: " -e -i "$INSTALL_HOST" INSTALL_HOST 0<&4
+read -p "Hostname: " -e -i "$INSTALL_HOSTNAME" INSTALL_HOSTNAME 0<&4
+read -p "Timezone: " -e -i "$INSTALL_TZNAME" INSTALL_TZNAME 0<&4
+read -p "Locale: " -e -i "$INSTALL_LOCALE" INSTALL_LOCALE 0<&4
+read -p "Packages to install: " -e -i "$INSTALL_PACKAGES" INSTALL_PACKAGES 0<&4
+read -p "Static address for eth1: " -e -i "$INSTALL_ETH1_IP" INSTALL_ETH1_IP 0<&4
+
+message "Starting stage 1"
+bash -e <(curl -sv "http://${INSTALL_HOST}/arch_stage1.txt")
+
+message "Starting stage 2 in chroot"
+arch-chroot /mnt bash -e <(curl -sv "http://${INSTALL_HOST}/arch_stage2.txt")
+
+message "Configuring eth0"
+cat > /mnt/etc/netctl/eth0 << EOF
+Interface=eth0
+Connection=ethernet
+IP=dhcp
+EOF
+arch-chroot /mnt netctl enable eth0
+
+message "Configuring eth1"
+cat >/mnt/etc/netctl/eth1 <<EOF
+Interface=eth1
+Connection=ethernet
+IP=static
+Address=("${INSTALL_ETH1_IP}")
+EOF
+arch-chroot /mnt netctl enable eth1
+
+message "Unmounting"
+umount -R /mnt
