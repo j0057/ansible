@@ -1,0 +1,21 @@
+[global]
+no-cache-dir = no
+disable-pip-version-check = yes
+
+[install]
+no-index = yes
+find-links =
+    {{ path.whl }}
+    {{ path.src }}
+
+[wheel]
+no-index = yes
+find-links =
+    {{ path.whl }}
+    {{ path.src }}
+wheel-dir = {{ path.whl }}
+
+[virtualenv]
+extra-search-dirs =
+    {{ path.whl }}
+    {{ path.src }}

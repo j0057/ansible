@@ -2,19 +2,28 @@
 # python, pip, setuptools etc
 #
 
-- name: ensure get-pip.py is available
-  get_url: dest=/root/get-pip.py url=https://bootstrap.pypa.io/get-pip.py
+- name: configure pip
+  template: src=pip.conf.j2 dest=/etc/pip.conf
   tags: python2
 
-- name: ensure pip is installed
-  shell: python2.7 /root/get-pip.py
-  args: creates=/usr/bin/pip
+- name: configure virtualenv (1)
+  file: dest=/root/.virtualenv state=directory
+  tags: python2
+
+- name: configure virtualenv (2)
+  file: dest=/root/.virtualenv/virtualenv.ini src=/etc/pip.conf state=link
+  tags: python2
+
+- name: copy packages
+  synchronize: src=/var/lib/pypkg27 dest=/var/lib
   tags: python2
 
 - name: install packages
-  pip: name={{ item }} state=latest
-  args:
-    extra_args: "--no-index --find-links {{ pypkg_url }}/{{ ansible_architecture }}/"
+  pip:
+    name: "{{ item }}"
+    state: latest
+    executable: /root/.local/bin/pip2
+    extra_args: --user
   with_items:
   - pip
   - setuptools

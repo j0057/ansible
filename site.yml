@@ -135,10 +135,13 @@
   - role: firewall
 
   - role: python2
+    path:
+      src: "/var/lib/pypkg27/src"
+      whl: "/var/lib/pypkg27/x86_64"
 
   - role: python2-app
     name: hello
-    pkg: hello==1.2-5-g8159f75
+    pkg: hello==1.2.dev9
     cfg: 
     - { dest: "/etc/uwsgi/apps-enabled/hello.yml", src: "hello.yml", content: ~ }
     svc:
@@ -147,7 +150,7 @@
 
   - role: python2-app
     name: mp3-dev
-    pkg: mp3==2.0dev-83-g6d2f451
+    pkg: mp3==2.0dev-87-gd40d5b1
     cfg: 
     - { dest: "/etc/uwsgi/apps-enabled/mp3-dev.yml", src: "mp3-dev.yml", content: ~ }
     svc:
@@ -156,7 +159,7 @@
 
   - role: python2-app
     name: twitter
-    pkg: twitter==0.1-106-gf16523a
+    pkg: twitter==0.1-108-g7253234
     cfg:
     - { dest: "/etc/systemd/system/twitter.service",    src: "twitter.service", content: ~ }
     - { dest: "/etc/twitter/casio_f91w.json",           src: ~,                 content: "{{ twitter.casio_f91w | to_nice_json }}" }

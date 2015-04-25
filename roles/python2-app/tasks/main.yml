@@ -1,12 +1,14 @@
 - name: "{{ name }} | install {{ pkg }}"
   pip: name={{ pkg }} virtualenv=/srv/{{ name }} state=present
   args:
-    extra_args: "--no-index --find-links {{ pypkg_url }}/{{ ansible_architecture }}/"
+    executable: /root/.local/bin/pip2
+    virtualenv_command: /root/.local/bin/virtualenv
   notify: "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
   tags: python2-app
 
 - name: "{{ name }} | configure"
-  copy: dest={{ item.dest }} src={{ item.src }} content={{ item.content }}
+  copy: dest={{ item.dest }} src={{ item.src }}
+  when: "{{ item.src }}"
   with_items: cfg
   notify: 
   - "{{ name }} | reload systemd units"
