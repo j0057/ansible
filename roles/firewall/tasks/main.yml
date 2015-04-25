@@ -41,3 +41,6 @@
   - firewall.target
   notify: "restart firewall"
   tags: firewall
+
+- meta: flush_handlers
+  tags: firewall
