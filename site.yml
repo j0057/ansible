@@ -1,17 +1,42 @@
+#
+# common tasks
+#
+
 - hosts:
   - config
   - server
+
   vars_files:
   - secrets.yml
+
   roles:
+
   - role: accounts
     users:
     - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar", groups: "wheel" }
     authorized_keys:
     - { user: root, pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
     - { user: jjm,  pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
+
+  - role: ntp
+    servers:
+    - ntp.xs4all.nl
+
+#
+# config host
+#
+
+- hosts:
+  - config
+
+  vars_files:
+  - secrets.yml
+
+  roles:
+
   - role: packages
     packages:
+    - sudo
     - sshpass
     - vim-minimal
     - tmux
@@ -25,15 +50,7 @@
     - libxslt
     - libmariadbclient
     - graphviz
-  - role: ntp
-    servers:
-    - ntp.xs4all.nl
 
-- hosts:
-  - config
-  vars_files:
-  - secrets.yml
-  roles:
   - role: build-server
     path:
       aur: "/var/lib/aur_x86_64"
@@ -73,11 +90,34 @@
     whl_blacklist:
     - ansible
 
+#
+# server host
+#
+
 - hosts:
   - server
+
   vars_files:
   - secrets.yml
+
   roles:
+
+  - role: packages
+    packages:
+    - sudo
+    - vim-minimal
+    - tmux
+    - htop
+    - mc
+    - rsync
+    - libpng
+    - libjpeg-turbo
+    - libtiff
+    - libxml2
+    - libxslt
+    - libmariadbclient
+    - graphviz
+
   - role: data
     vault_files:
     - { dest: "/etc/ssl/private/j0057.nl.crt",          mode: "0644", user: root, group: root, content: "{{ ssl['j0057.nl.crt'] }}" }
@@ -92,9 +132,9 @@
     - stomrin.nl
     - www.stomrin.nl
 
-  - role: python2
-
   - role: firewall
+
+  - role: python2
 
   - role: python2-app
     name: hello
