@@ -80,7 +80,7 @@ create_INPUT_chain() {
             $iptables --table filter --append INPUT --protocol udp --source 127.0.0.1 --destination 127.0.0.1 --jump ACCEPT
 
             # allow dns responses
-            $iptables --table filter --append INPUT --protocol udp --source 192.168.178.1 --sport 53 --jump ACCEPT
+            $iptables --table filter --append INPUT --protocol udp --sport 53 --jump ACCEPT
 
             # allow multicasts
             $iptables --table filter --append INPUT --destination 224.0.0.0/8 --jump ACCEPT
