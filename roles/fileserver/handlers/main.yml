@@ -17,5 +17,5 @@
 - name: "cups | restart"
   service: name={{ item }} state=restarted enabled=true
   with_items:
-  - cups.service
+  - org.cups.cupsd.socket
   tags: [fileserver, cups]

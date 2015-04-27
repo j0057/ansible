@@ -27,6 +27,9 @@
   notify: "samba | restart"
   tags: [fileserver, samba]
 
+- meta: flush_handlers
+  tags: [fileserver, samba]
+
 #
 # nfs
 #
@@ -49,6 +52,9 @@
   notify: "nfs | restart"
   tags: [fileserver, nfs]
 
+- meta: flush_handlers
+  tags: [fileserver, nfs]
+
 #
 # cups
 #
@@ -62,15 +68,15 @@
   - hplip
   - python2-dbus
   - python2-gobject2
+  - nss-mdns
   notify: "cups | restart"
+  tags: [fileserver, cups]
+
+- meta: flush_handlers
   tags: [fileserver, cups]
 
 #
 # sane
 #
 
-###
-
-- meta: flush_handlers
-  tags: [fileserver, samba]
-
+# TODO
