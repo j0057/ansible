@@ -1,28 +1,41 @@
 - name: "{{ name }} | install {{ pkg }}"
   pip: name={{ pkg }} virtualenv=/srv/{{ name }} state=present
   args:
-    executable: /root/.local/bin/pip2
+    executable: /srv/{{ name }}/bin/pip
     virtualenv_command: /root/.local/bin/virtualenv
   notify: "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
   tags: python2-app
 
 - name: "{{ name }} | configure"
   copy: dest={{ item.dest }} src={{ item.src }}
-  when: "{{ item.src }}"
+  with_items: src
+  notify:
+  - "{{ name }} | reload systemd units"
+  - "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
+  tags: python2-app
+
+- name: "{{ name }} | create directories"
+  file: name={{ item }} state=directory owner=nobody group=nobody mode=700
+  with_items:
+  - "/var/lib/{{ name }}"
+  - "/etc/{{ name }}"
+  tags: python2-app
+
+- name: "{{ name }} | configure"
+  copy:
+    dest: "{{ item.dest }}"
+    content: "{{ item.content }}"
   with_items: cfg
   notify: 
   - "{{ name }} | reload systemd units"
   - "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
+  no_log: yes
   tags: python2-app
 
 - name: "{{ name }} | enable {{ svc.enable.name }}"
   service: name={{ svc.enable.name }} enabled=yes state={{ svc.enable.state }}
   with_items: python2.webapps
   notify: "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
-  tags: python2-app
-
-- name: "{{ name }} | create /var/lib/{{ name }}"
-  file: name=/var/lib/{{ name }} state=directory owner=nobody group=nobody
   tags: python2-app
 
 - meta: flush_handlers

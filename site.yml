@@ -142,8 +142,9 @@
   - role: python2-app
     name: hello
     pkg: hello==1.2.dev9
-    cfg: 
-    - { dest: "/etc/uwsgi/apps-enabled/hello.yml", src: "hello.yml", content: ~ }
+    src:
+    - { dest: "/etc/uwsgi/apps-enabled/hello.yml", src: "hello.yml" }
+    cfg: []
     svc:
       enable: { name: uwsgi@hello.socket, state: started }
       update: { name: uwsgi@hello.service, state: stopped }
@@ -151,8 +152,9 @@
   - role: python2-app
     name: mp3-dev
     pkg: mp3==2.0dev-87-gd40d5b1
-    cfg: 
-    - { dest: "/etc/uwsgi/apps-enabled/mp3-dev.yml", src: "mp3-dev.yml", content: ~ }
+    src: 
+    - { dest: "/etc/uwsgi/apps-enabled/mp3-dev.yml", src: "mp3-dev.yml" }
+    cfg: []
     svc:
       enable: { name: uwsgi@mp3-dev.socket, state: started }
       update: { name: uwsgi@mp3-dev.service, state: stopped }
@@ -160,15 +162,18 @@
   - role: python2-app
     name: twitter
     pkg: twitter==0.1-108-g7253234
+    src:
+    - { dest: "/etc/systemd/system/twitter.service",    src: "twitter.service" }
     cfg:
-    - { dest: "/etc/systemd/system/twitter.service",    src: "twitter.service", content: ~ }
-    - { dest: "/etc/twitter/casio_f91w.json",           src: ~,                 content: "{{ twitter.casio_f91w | to_nice_json }}" }
-    - { dest: "/etc/twitter/convertbot.json",           src: ~,                 content: "{{ twitter.convertbot | to_nice_json }}" }
-    - { dest: "/etc/twitter/deoldehove.json",           src: ~,                 content: "{{ twitter.deoldehove | to_nice_json }}" }
-    - { dest: "/etc/twitter/grotebroer1.json",          src: ~,                 content: "{{ twitter.grotebroer1 | to_nice_json }}" }
-    - { dest: "/etc/twitter/hetluchtalarm.json",        src: ~,                 content: "{{ twitter.hetluchtalarm | to_nice_json }}" }
-    - { dest: "/etc/twitter/maanfase.json",             src: ~,                 content: "{{ twitter.maanfase | to_nice_json }}" }
-    - { dest: "/etc/twitter/msvlieland.json",           src: ~,                 content: "{{ twitter.msvlieland | to_nice_json }}" }
+    - { dest: "/etc/twitter/casio_f91w.json",           content: "{{ twitter.casio_f91w | to_nice_json }}" }
+    - { dest: "/etc/twitter/convertbot.json",           content: "{{ twitter.convertbot | to_nice_json }}" }
+    - { dest: "/etc/twitter/deoldehove.json",           content: "{{ twitter.deoldehove | to_nice_json }}" }
+    - { dest: "/etc/twitter/grotebroer1.json",          content: "{{ twitter.grotebroer1 | to_nice_json }}" }
+    - { dest: "/etc/twitter/hetluchtalarm.json",        content: "{{ twitter.hetluchtalarm | to_nice_json }}" }
+    - { dest: "/etc/twitter/johndoeveloper.json",       content: "{{ twitter.johndoeveloper | to_nice_json }}" }
+    - { dest: "/etc/twitter/maanfase.json",             content: "{{ twitter.maanfase | to_nice_json }}" }
+    - { dest: "/etc/twitter/msvlieland.json",           content: "{{ twitter.msvlieland | to_nice_json }}" }
+    - { dest: "/etc/twitter/y2k38warning.json",         content: "{{ twitter.y2k38warning | to_nice_json }}" }
     svc:
       enable: { name: twitter.service, state: started }
       update: { name: twitter.service, state: restarted }
