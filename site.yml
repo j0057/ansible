@@ -205,7 +205,7 @@
 
   - role: fileserver
     fstab:
-    - { dev: "LABEL=USB2T", dir: "/mnt/usb2t", fstype: ext4, opts: nofail }
+    - { dev: "LABEL=data", dir: "/mnt/usb2t", fstype: ext4, opts: nofail }
     shares:
     - dir: "/mnt/usb2t/music"
       name: "music"
