@@ -42,6 +42,9 @@
   notify: "run postmap"
   tags: [email, postfix]
 
+- meta: flush_handlers
+  tags: [email, postfix]
+
 #
 # dovecot
 #
@@ -60,6 +63,9 @@
   notify: "restart dovecot"
   tags: [email, dovecot]
 
+- meta: flush_handlers
+  tags: [email, dovecot]
+
 #
 # mutt
 #
@@ -74,8 +80,6 @@
   template: src=muttrc.j2 dest=/etc/Muttrc
   tags: [email, mutt]
 
-#####
-
 - meta: flush_handlers
-  tags: [email, postfix, dovecot, mutt]
+  tags: [email, mutt]
 
