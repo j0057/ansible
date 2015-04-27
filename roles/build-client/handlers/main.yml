@@ -1,0 +1,2 @@
+- name: "refresh pacman"
+  shell: pacman --sync --refresh

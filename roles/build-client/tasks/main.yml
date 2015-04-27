@@ -1,0 +1,19 @@
+- name: "copy packages"
+  synchronize: src={{ item }} dest={{ item | dirname }}
+  with_items:
+  - "{{ path.aur }}"
+  - "{{ path.pkg }}"
+  tags: build-client
+
+- name: "pacman: add aur repo siglevel"
+  ini_file: backup=yes dest=/etc/pacman.conf section={{ path.aur | basename }} option=SigLevel value=Never
+  notify: "refresh pacman"
+  tags: build-client
+
+- name: "pacman: add aur repo server"
+  ini_file: backup=yes dest=/etc/pacman.conf section={{ path.aur | basename }} option=Server value=file://{{ path.aur }}
+  notify: "refresh pacman"
+  tags: build-client
+
+- meta: flush_handlers
+  tags: build-client

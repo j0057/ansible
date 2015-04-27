@@ -14,10 +14,6 @@
   file: dest=/root/.virtualenv/virtualenv.ini src=/etc/pip.conf state=link
   tags: python2
 
-- name: copy packages
-  synchronize: src=/var/lib/pypkg27 dest=/var/lib
-  tags: python2
-
 - name: install packages
   pip:
     name: "{{ item }}"

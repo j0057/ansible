@@ -124,6 +124,11 @@
     - { dest: "/etc/ssl/private/j0057.nl.chained.crt",  mode: "0644", user: root, group: root, content: "{{ ssl['j0057.nl.chained.crt'] }}" }
     - { dest: "/etc/ssl/private/j0057.nl.key",          mode: "0600", user: root, group: root, content: "{{ ssl['j0057.nl.key'] }}" }
 
+  - role: build-client
+    path:
+      aur: "/var/lib/aur_x86_64"
+      pkg: "/var/lib/pypkg27"
+
   - role: nginx
     servers:
     - j0057.nl
@@ -136,8 +141,8 @@
 
   - role: python2
     path:
-      src: "/var/lib/pypkg27/src"
       whl: "/var/lib/pypkg27/x86_64"
+      src: "/var/lib/pypkg27/src"
 
   - role: python2-app
     name: hello
