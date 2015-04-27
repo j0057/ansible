@@ -1,2 +1,3 @@
 [defaults]
 hostfile = ./hosts
+vault_password_file = .vault-password.txt
