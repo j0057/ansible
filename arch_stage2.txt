@@ -16,6 +16,8 @@ locale-gen
 message "Setting locale to ${INSTALL_LOCALE}"
 echo "LANG=${INSTALL_LOCALE/ */}" > /etc/locale.conf
 
+create_netctl_profiles
+
 message "Creating initial ram disk"
 mkinitcpio -p linux
 
@@ -30,6 +32,6 @@ message "Enabling services"
 systemctl enable sshd.service
 
 message "Installing pip"
-curl -sv "https://bootstrap.pypa.io/get-pip.py" > /tmp/get-pip.py
-python2 /tmp/get-pip.py --user
+curl -s "https://bootstrap.pypa.io/get-pip.py" > /tmp/get-pip.py
+python2 /tmp/get-pip.py --user --no-cache-dir --disable-pip-version-check
 echo 'PATH=$PATH:$HOME/.local/bin' > '/etc/profile.d/local-bin.sh'

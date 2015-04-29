@@ -12,4 +12,22 @@ export INSTALL_LOCALE="en_US.UTF-8 UTF-8"
 export INSTALL_PACKAGES="base grub lsb-release python2 openssh git base-devel"
 export INSTALL_ETH1_IP="10.102.0.10/16"
 
+create_partitions() {
+    partition /dev/sda \
+        "1  1M:+1M      ef02    bios    -       -" \
+        "3  0:+16G      8300    root    ext4    /" \
+        "2  0:+256M     8300    boot    ext4    /boot" \
+        "4  0:0         8300    home    ext4    /home"
+}
+export -f create_partitions
+
+create_netctl_profiles() {
+    lines /mnt/etc/netctl/eth0 "Interface=eth0" "Connection=ethernet" "IP=dhcp"
+    lines /mnt/etc/netctl/eth1 "Interface=eth1" "Connection=ethernet" "IP=static" \
+        "Address=(\"${INSTALL_ETH1_IP}\")"
+    arch-chroot /mnt netctl enable eth0
+    arch-chroot /mnt netctl enable eth1
+}
+export -f create_netctl_profiles
+
 bash -e <(curl -s "http://${INSTALL_HOST}/arch_stage0.txt")
