@@ -1,0 +1,33 @@
+#!/bin/bash -e
+
+create_partitions() {
+    # D945GCLF2 does not support GPT partition tables ...
+
+    message "Partitioning"
+    echo -e "$[1*2048],$[256*2048],83\n,$[16640*2048],83\n,,83\n" | sfdisk /dev/sda --unit S 
+
+    message "Formatting"
+    mkfs.ext4 -L boot /dev/sda1
+    mkfs.ext4 -L root /dev/sda2
+    mkfs.ext4 -L home /dev/sda3
+
+    message "Mounting"
+    mount LABEL=root /mnt       ; mkdir -p /mnt/{boot,home}
+    mount LABEL=boot /mnt/boot
+    mount LABEL=home /mnt/home
+}
+export -f create_partitions
+
+create_netctl_profiles() {
+    lines /etc/netctl/eth0 "Interface=eth0" "Connection=ethernet" "IP=dhcp"
+    netctl enable eth0
+}
+export -f create_netctl_profiles
+
+export INSTALL_HOST="${1:-j0057.github.io/ansible}"
+export INSTALL_HOSTNAME="muon"
+export INSTALL_TZNAME="Europe/Amsterdam"
+export INSTALL_LOCALE="en_US.UTF-8 UTF-8"
+export INSTALL_PACKAGES="base grub lsb-release python2 openssh git base-devel"
+
+source <(curl -s "http://${INSTALL_HOST}/arch_stage0.txt")
