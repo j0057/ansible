@@ -1,0 +1,3 @@
+- name: "restart mariadb"
+  service: name=mysqld.service enabled=yes state=restarted
+  tags: mariadb

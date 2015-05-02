@@ -215,3 +215,5 @@
     - { name: "music", dir: "/mnt/usb2t/music" }
     - { name: "films", dir: "/mnt/usb2t/films" }
     - { name: "series", dir: "/mnt/usb2t/series" }
+
+  - role: mariadb
