@@ -1,0 +1,12 @@
+muon   ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root ansible_ssh_host=muon.fritz.box ansible_ssh_port=22
+photon ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root ansible_ssh_host=photon.fritz.box ansible_ssh_port=22
+proton ansible_python_interpreter=/usr/bin/python2 ansible_connection=local ansible_sudo=true
+
+[config]
+muon
+
+[server]
+photon
+
+[workstation]
+proton
