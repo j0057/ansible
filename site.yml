@@ -144,6 +144,8 @@
 
   - role: firewall
 
+  - role: mariadb
+
   - role: python2
     path:
       whl: "/var/lib/pypkg27/x86_64"
@@ -168,6 +170,17 @@
     svc:
       enable: { name: uwsgi@mp3-dev.socket, state: started }
       update: { name: uwsgi@mp3-dev.service, state: stopped }
+
+  - role: python2-app
+    name: musicdb
+    pkg: musicdb==0.1.0
+    src:
+    - { dest: "/etc/uwsgi/apps-enabled/musicdb.yml", src: "musicdb.yml" }
+    - { dest: "/etc/musicdb.ini", src: "musicdb.ini" }
+    cfg: []
+    svc:
+      enable: { name: uwsgi@musicdb.socket, state: started }
+      update: { name: uwsgi@musicdb.service, state: stopped }
 
   - role: python2-app
     name: twitter
@@ -215,5 +228,3 @@
     - { name: "music", dir: "/mnt/usb2t/music" }
     - { name: "films", dir: "/mnt/usb2t/films" }
     - { name: "series", dir: "/mnt/usb2t/series" }
-
-  - role: mariadb

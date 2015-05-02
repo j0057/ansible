@@ -10,4 +10,3 @@ uwsgi:
   callable: app
   env: MP3_PREFIX=/mp3-dev
   env: MP3_STATE=/var/lib/mp3-dev
-

@@ -1,0 +1,11 @@
+uwsgi:
+  plugins: python2
+  master: true
+  workers: 1
+  auto-procname: true
+  procname-prefix-spaced: musicdb
+  chdir: /srv/musicdb
+  virtualenv: /srv/musicdb
+  module: musicdb.main
+  callable: app
+  env: CORE_CONFIG=/etc/musicdb.ini
