@@ -50,6 +50,7 @@
     - libxslt
     - libmariadbclient
     - graphviz
+    - strace
 
   - role: build-server
     path:
@@ -120,6 +121,7 @@
     - wol
     - dnsutils
     - tcpdump
+    - strace
 
   - role: data
     vault_files:
