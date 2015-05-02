@@ -90,6 +90,8 @@ create_INPUT_chain() {
             # allow link-local (fe80::/10) ping and broadcast (ff02::1) ping
             $iptables --table filter --append INPUT --protocol icmpv6 --source fe80::/10 --destination ff02::/16 --jump ACCEPT
             $iptables --table filter --append INPUT --protocol icmpv6 --source fe80::/10 --destination fe80::/10 --jump ACCEPT
+            $iptables --table filter --append INPUT --protocol icmpv6 --source 2001:0980:e8e5::/48 --destination ff02::/16 --jump ACCEPT
+            $iptables --table filter --append INPUT --protocol icmpv6 --source 2001:0980:e8e5::/48 --destination fe80::/10 --jump ACCEPT
             ;;
     esac
 
