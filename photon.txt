@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+create_partitions() {
+    partition /dev/sda \
+        "1  1M:+1M      ef02    bios    -       -" \
+        "3  0:+16G      8300    root    ext4    /" \
+        "2  0:+256M     8300    boot    ext4    /boot" \
+        "4  0:0         8300    home    ext4    /home"
+}
+export -f create_partitions
+
+create_netctl_profiles() {
+    lines /etc/netctl/eth0 "Interface=eth0" "Connection=ethernet" "IP=dhcp"
+    netctl enable eth0
+}
+export -f create_netctl_profiles
+
+export INSTALL_HOST="${1:-j0057.github.io/ansible}"
+export INSTALL_HOSTNAME="photon"
+export INSTALL_TZNAME="Europe/Amsterdam"
+export INSTALL_LOCALE="en_US.UTF-8 UTF-8"
+export INSTALL_PACKAGES="base grub lsb-release python2 openssh"
+
+bash -e <(curl -s "http://${INSTALL_HOST}/arch_stage0.txt")
