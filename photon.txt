@@ -10,8 +10,18 @@ create_partitions() {
 export -f create_partitions
 
 create_netctl_profiles() {
-    lines /etc/netctl/eth0 "Interface=eth0" "Connection=ethernet" "IP=dhcp"
-    netctl enable eth0
+    lines "/etc/udev/rules.d/10-network.rules" \
+        "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"00:01:c0:18:06:39\", NAME=\"net0\"" \
+        "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"00:01:c0:18:27:84\", NAME=\"net1\"" \
+        "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"00:01:c0:18:27:85\", NAME=\"net2\"" \
+        "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"00:01:c0:18:27:86\", NAME=\"net3\""
+
+    lines "/etc/netctl/net0" \
+        "Interface=net0" \
+        "Connection=ethernet" \
+        "IP=dhcp"
+
+    netctl enable net0
 }
 export -f create_netctl_profiles
 

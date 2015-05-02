@@ -4,7 +4,7 @@ create_partitions() {
     # D945GCLF2 does not support GPT partition tables ...
 
     message "Partitioning"
-    echo -e "$[1*2048],$[256*2048],83\n,$[16640*2048],83\n,,83\n" | sfdisk /dev/sda --unit S 
+    echo -e "size=256MiB type=83 start=1MiB bootable\nsize=16Gib type=83\ntype=83" | sfdisk /dev/sda --unit S
 
     message "Formatting"
     mkfs.ext4 -L boot /dev/sda1
@@ -19,8 +19,15 @@ create_partitions() {
 export -f create_partitions
 
 create_netctl_profiles() {
-    lines /etc/netctl/eth0 "Interface=eth0" "Connection=ethernet" "IP=dhcp"
-    netctl enable eth0
+    lines "/etc/udev/rules.d/10-network.rules" \
+        "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"00:27:0e:01:9c:0c\", NAME=\"net0\""
+
+    lines "/etc/netctl/net0" \
+        "Interface=net0" \
+        "Connection=ethernet" \
+        "IP=dhcp"
+
+    netctl enable net0
 }
 export -f create_netctl_profiles
 
