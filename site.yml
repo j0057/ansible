@@ -152,6 +152,16 @@
       src: "/var/lib/pypkg27/src"
 
   - role: python2-app
+    name: dns
+    pkg: dns==0.1.dev15
+    src:
+    - { dest: "/etc/uwsgi/apps-enabled/dns.yml", src: "dns.yml" }
+    cfg: []
+    svc:
+      enable: { name: uwsgi@dns.socket, state: started }
+      update: { name: uwsgi@dns.service, state: stopped }
+
+  - role: python2-app
     name: hello
     pkg: hello==1.2.dev9
     src:

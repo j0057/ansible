@@ -1,0 +1,10 @@
+uwsgi:
+  plugins: python2
+  master: true
+  workers: 1
+  auto-procname: true
+  procname-prefix-spaced: dns
+  chdir: /srv/dns
+  virtualenv: /srv/dns
+  module: dns.dnstest
+  callable: app
