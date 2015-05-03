@@ -50,7 +50,10 @@
     - libxslt
     - libmariadbclient
     - graphviz
+    - dnsutils
+    - tcpdump
     - strace
+    - inotify-tools
 
   - role: build-server
     path:
@@ -122,6 +125,7 @@
     - dnsutils
     - tcpdump
     - strace
+    - inotify-tools
 
   - role: data
     vault_files:
