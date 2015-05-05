@@ -197,6 +197,19 @@
       update: { name: uwsgi@musicdb.service, state: stopped }
 
   - role: python2-app
+    name: oauth
+    pkg: oauth==1.0a89
+    src:
+    - { dest: "/etc/uwsgi/apps-enabled/oauth.yml", src: "oauth.yml" }
+    cfg:
+    - dest: "/etc/oauth/keys.json"
+      content: |
+        {{ oauth.keys_json | to_nice_json }}
+    svc:
+      enable: { name: uwsgi@oauth.socket, state: started }
+      update: { name: uwsgi@oauth.service, state: stopped }
+
+  - role: python2-app
     name: twitter
     pkg: twitter==0.1-108-g7253234
     src:

@@ -1,0 +1,11 @@
+uwsgi:
+  plugins: python2
+  master: true
+  workers: 1
+  auto-procname: true
+  procname-prefix-spaced: oauth
+  chdir: /srv/oauth
+  virtualenv: /srv/oauth
+  module: oauth.main
+  callable: app
+  env: OAUTH_KEYS=/etc/oauth/keys.json
