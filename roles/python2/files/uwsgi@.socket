@@ -3,8 +3,8 @@ Description=uWSGI socket for %i
 
 [Socket]
 ListenStream=/run/uwsgi/%i.socket
-User=http
-Group=http
+User=%i
+Group=%i
 
 [Install]
 WantedBy=sockets.target

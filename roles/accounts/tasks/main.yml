@@ -19,14 +19,14 @@
 - name: "set authorized keys"
   authorized_key: user={{ item.0.user}} state=present manage_dir=yes
   args:
-    key: "{{ ssh[item.1] }}"
+    key: "{{ secrets.ssh[item.1] }}"
   with_subelements: [ authorized_keys, pubkeys ]
   tags: accounts
 
 - name: "install ssh config file"
   copy: dest=~{{ item.user }}/.ssh/config owner={{ item.user }} group={{ item.user }} mode=0600
   args:
-    content: "{{ ssh_config }}"
+    content: "{{ secrets.ssh_config }}"
   with_items: authorized_keys
   tags: accounts
 

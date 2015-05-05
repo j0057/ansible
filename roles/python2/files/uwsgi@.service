@@ -9,5 +9,5 @@ Type=notify
 StandardOutput=syslog
 StandardError=syslog
 NotifyAccess=all
-User=http
-Group=http
+User=%i
+Group=%i

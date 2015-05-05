@@ -44,7 +44,6 @@
 - name: "install config files"
   copy: src={{ item.src }} dest={{ item.dest }}
   with_items:
-  # { src: run_uwsgi.conf,  dest: /etc/tmpfiles.d/run_uwsgi.conf }
   - { src: uwsgi@.service,  dest: /etc/systemd/system/uwsgi@.service }
   - { src: uwsgi@.socket,   dest: /etc/systemd/system/uwsgi@.socket }
   tags: [python2, uwsgi]

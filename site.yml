@@ -129,9 +129,9 @@
 
   - role: data
     vault_files:
-    - { dest: "/etc/ssl/private/j0057.nl.crt",          mode: "0644", user: root, group: root, content: "{{ ssl['j0057.nl.crt'] }}" }
-    - { dest: "/etc/ssl/private/j0057.nl.chained.crt",  mode: "0644", user: root, group: root, content: "{{ ssl['j0057.nl.chained.crt'] }}" }
-    - { dest: "/etc/ssl/private/j0057.nl.key",          mode: "0600", user: root, group: root, content: "{{ ssl['j0057.nl.key'] }}" }
+    - { dest: "/etc/ssl/private/j0057.nl.crt",          mode: "0644", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_j0057_nl_crt" }
+    - { dest: "/etc/ssl/private/j0057.nl.chained.crt",  mode: "0644", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_j0057_nl_chained_crt" }
+    - { dest: "/etc/ssl/private/j0057.nl.key",          mode: "0600", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_j0057_nl_key" }
 
   - role: build-client
     path:
@@ -158,9 +158,8 @@
   - role: python2-app
     name: dns
     pkg: dns==0.1.dev15
-    src:
-    - { dest: "/etc/uwsgi/apps-enabled/dns.yml", src: "dns.yml" }
-    cfg: []
+    cfg:
+    - { src: "dns.yml", dest: "/etc/uwsgi/apps-enabled/dns.yml", keys: ~ }
     svc:
       enable: { name: uwsgi@dns.socket, state: started }
       update: { name: uwsgi@dns.service, state: stopped }
@@ -168,9 +167,8 @@
   - role: python2-app
     name: hello
     pkg: hello==1.2.dev9
-    src:
-    - { dest: "/etc/uwsgi/apps-enabled/hello.yml", src: "hello.yml" }
-    cfg: []
+    cfg:
+    - { src: "hello.yml", dest: "/etc/uwsgi/apps-enabled/hello.yml", key: ~ }
     svc:
       enable: { name: uwsgi@hello.socket, state: started }
       update: { name: uwsgi@hello.service, state: stopped }
@@ -178,9 +176,8 @@
   - role: python2-app
     name: mp3-dev
     pkg: mp3==2.0dev-87-gd40d5b1
-    src: 
-    - { dest: "/etc/uwsgi/apps-enabled/mp3-dev.yml", src: "mp3-dev.yml" }
-    cfg: []
+    cfg:
+    - { src: "mp3-dev.yml", dest: "/etc/uwsgi/apps-enabled/mp3-dev.yml", key: ~ }
     svc:
       enable: { name: uwsgi@mp3-dev.socket, state: started }
       update: { name: uwsgi@mp3-dev.service, state: stopped }
@@ -188,10 +185,9 @@
   - role: python2-app
     name: musicdb
     pkg: musicdb==0.1.0
-    src:
-    - { dest: "/etc/uwsgi/apps-enabled/musicdb.yml", src: "musicdb.yml" }
-    - { dest: "/etc/musicdb.ini", src: "musicdb.ini" }
-    cfg: []
+    cfg:
+    - { src: "musicdb.yml", dest: "/etc/uwsgi/apps-enabled/musicdb.yml", key: ~ }
+    - { src: "musicdb.ini", dest: "/etc/musicdb.ini",                    key: ~ }
     svc:
       enable: { name: uwsgi@musicdb.socket, state: started }
       update: { name: uwsgi@musicdb.service, state: stopped }
@@ -199,12 +195,9 @@
   - role: python2-app
     name: oauth
     pkg: oauth==1.0a89
-    src:
-    - { dest: "/etc/uwsgi/apps-enabled/oauth.yml", src: "oauth.yml" }
     cfg:
-    - dest: "/etc/oauth/keys.json"
-      content: |
-        {{ oauth.keys_json | to_nice_json }}
+    - { src: "oauth.yml",      dest: "/etc/uwsgi/apps-enabled/oauth.yml", key: ~ }
+    - { src: "secret_json.j2", dest: "/etc/oauth/keys.json",              key: "oauth_keys_json" }
     svc:
       enable: { name: uwsgi@oauth.socket, state: started }
       update: { name: uwsgi@oauth.service, state: stopped }
@@ -212,18 +205,17 @@
   - role: python2-app
     name: twitter
     pkg: twitter==0.1-108-g7253234
-    src:
-    - { dest: "/etc/systemd/system/twitter.service",    src: "twitter.service" }
     cfg:
-    - { dest: "/etc/twitter/casio_f91w.json",           content: "{{ twitter.casio_f91w | to_nice_json }}" }
-    - { dest: "/etc/twitter/convertbot.json",           content: "{{ twitter.convertbot | to_nice_json }}" }
-    - { dest: "/etc/twitter/deoldehove.json",           content: "{{ twitter.deoldehove | to_nice_json }}" }
-    - { dest: "/etc/twitter/grotebroer1.json",          content: "{{ twitter.grotebroer1 | to_nice_json }}" }
-    - { dest: "/etc/twitter/hetluchtalarm.json",        content: "{{ twitter.hetluchtalarm | to_nice_json }}" }
-    - { dest: "/etc/twitter/johndoeveloper.json",       content: "{{ twitter.johndoeveloper | to_nice_json }}" }
-    - { dest: "/etc/twitter/maanfase.json",             content: "{{ twitter.maanfase | to_nice_json }}" }
-    - { dest: "/etc/twitter/msvlieland.json",           content: "{{ twitter.msvlieland | to_nice_json }}" }
-    - { dest: "/etc/twitter/y2k38warning.json",         content: "{{ twitter.y2k38warning | to_nice_json }}" }
+    - { src: "twitter.service", dest: "/etc/systemd/system/twitter.service", key: ~ }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/casio_f91w.json",        key: "twitter_casio_f91w" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/convertbot.json",        key: "twitter_convertbot" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/deoldehove.json",        key: "twitter_deoldehove" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/grotebroer1.json",       key: "twitter_grotebroer1" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/hetluchtalarm.json",     key: "twitter_hetluchtalarm" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/johndoeveloper.json",    key: "twitter_johndoeveloper" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/maanfase.json",          key: "twitter_maanfase" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/msvlieland.json",        key: "twitter_msvlieland" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/y2k38warning.json",      key: "twitter_y2k38warning" }
     svc:
       enable: { name: twitter.service, state: stopped }
       update: { name: twitter.service, state: stopped }

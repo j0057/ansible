@@ -1,10 +1,4 @@
 - name: "copy secret files"
-  copy:
-    content: "{{ item.content }}"
-    dest: "{{ item.dest }}"
-    mode: "{{ item.mode }}"
-    owner: "{{ item.user }}"
-    group: "{{ item.group }}"
+  template: src={{ item.template }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
   with_items: vault_files
-  no_log: yes
   tags: data
