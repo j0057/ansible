@@ -38,6 +38,14 @@
   notify: "restart sshd"
   tags: accounts
 
+- name: "disable password login for root"
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    line: "PermitRootLogin without-password"
+    regexp: "^#?PermitRootLogin (?:yes|no|without-password)$"
+  notify: "restart sshd"
+  tags: accounts
+
 - name: "flush handlers"
   meta: flush_handlers
   tags: accounts
