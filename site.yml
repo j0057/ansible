@@ -132,6 +132,8 @@
     - { dest: "/etc/ssl/private/j0057.nl.crt",          mode: "0644", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_j0057_nl_crt" }
     - { dest: "/etc/ssl/private/j0057.nl.chained.crt",  mode: "0644", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_j0057_nl_chained_crt" }
     - { dest: "/etc/ssl/private/j0057.nl.key",          mode: "0600", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_j0057_nl_key" }
+    - { dest: "/etc/ssl/private/dev.j0057.nl.crt",      mode: "0644", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_dev_j0057_nl_crt" }
+    - { dest: "/etc/ssl/private/dev.j0057.nl.key",      mode: "0644", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_dev_j0057_nl_key" }
 
   - role: build-client
     path:
