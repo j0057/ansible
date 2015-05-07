@@ -135,7 +135,9 @@
     - { dest: "/etc/ssl/private/j0057.nl.chained.crt",  mode: "0644", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_j0057_nl_chained_crt" }
     - { dest: "/etc/ssl/private/j0057.nl.key",          mode: "0600", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_j0057_nl_key" }
     - { dest: "/etc/ssl/private/dev.j0057.nl.crt",      mode: "0644", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_dev_j0057_nl_crt" }
-    - { dest: "/etc/ssl/private/dev.j0057.nl.key",      mode: "0644", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_dev_j0057_nl_key" }
+    - { dest: "/etc/ssl/private/dev.j0057.nl.key",      mode: "0600", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_dev_j0057_nl_key" }
+    - { dest: "/etc/ssl/private/punosqnp.nl.crt",       mode: "0644", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_punosqnp_nl_crt" }
+    - { dest: "/etc/ssl/private/punosqnp.nl.key",       mode: "0600", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_punosqnp_nl_key" }
 
   - role: build-client
     path:
@@ -147,6 +149,8 @@
     - nl.j0057
     - nl.j0057.dev
     - nl.j0057.www
+    - nl.punosqnp
+    - nl.punosqnp.www
     - nl.stomrin
     - nl.stonrin.www
 
