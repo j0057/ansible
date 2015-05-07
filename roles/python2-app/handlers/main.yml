@@ -1,5 +1,8 @@
 - name: "{{ name }} | reload systemd units"
   shell: systemctl daemon-reload
+  tags: python2-app
 
-- name: "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
-  service: name={{ svc['update'].name }} enabled=yes state={{ svc['update'].state }}
+- name: "{{ name }} | restart services"
+  service: name={{ item.name }} enabled=yes state={{ item.state }}
+  with_items: update
+  tags: python2-app

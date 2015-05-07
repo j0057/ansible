@@ -3,7 +3,8 @@
   args:
     executable: /srv/{{ name }}/bin/pip
     virtualenv_command: /root/.local/bin/virtualenv
-  notify: "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
+  notify:
+  - "{{ name }} | restart services"
   tags: python2-app
 
 - name: "{{ name }} | create user account"
@@ -22,13 +23,14 @@
   with_items: cfg
   notify:
   - "{{ name }} | reload systemd units"
-  - "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
+  - "{{ name }} | restart services"
   tags: python2-app
 
-- name: "{{ name }} | enable {{ svc.enable.name }}"
-  service: name={{ svc.enable.name }} enabled=yes state={{ svc.enable.state }}
-  with_items: python2.webapps
-  notify: "{{ name }} | set {{ svc['update'].name }} to {{ svc['update'].state }}"
+- name: "{{ name }} | enable services"
+  service: name={{ item.name }} enabled=yes state={{ item.state }}
+  with_items: enable
+  notify:
+  - "{{ name }} | restart services"
   tags: python2-app
 
 - meta: flush_handlers

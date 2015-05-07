@@ -172,36 +172,40 @@
     pkg: cachetest==0.1.0
     cfg:
     - { src: "cachetest.yml", dest: "/etc/uwsgi/apps-enabled/cachetest.yml", keys: ~ }
-    svc:
-      enable: { name: uwsgi@cachetest.socket, state: started }
-      update: { name: uwsgi@cachetest.service, state: stopped }
+    enable:
+    - { name: uwsgi@cachetest.socket, state: started }
+    update:
+    - { name: uwsgi@cachetest.service, state: stopped }
 
   - role: python2-app
     name: dns
     pkg: dns==0.1.dev15
     cfg:
     - { src: "dns.yml", dest: "/etc/uwsgi/apps-enabled/dns.yml", keys: ~ }
-    svc:
-      enable: { name: uwsgi@dns.socket, state: started }
-      update: { name: uwsgi@dns.service, state: stopped }
+    enable:
+    - { name: uwsgi@dns.socket, state: started }
+    update:
+    - { name: uwsgi@dns.service, state: stopped }
 
   - role: python2-app
     name: hello
     pkg: hello==1.2.dev9
     cfg:
     - { src: "hello.yml", dest: "/etc/uwsgi/apps-enabled/hello.yml", key: ~ }
-    svc:
-      enable: { name: uwsgi@hello.socket, state: started }
-      update: { name: uwsgi@hello.service, state: stopped }
+    enable:
+    - { name: uwsgi@hello.socket, state: started }
+    update:
+    - { name: uwsgi@hello.service, state: stopped }
 
   - role: python2-app
     name: mp3-dev
     pkg: mp3==2.0dev-87-gd40d5b1
     cfg:
     - { src: "mp3-dev.yml", dest: "/etc/uwsgi/apps-enabled/mp3-dev.yml", key: ~ }
-    svc:
-      enable: { name: uwsgi@mp3-dev.socket, state: started }
-      update: { name: uwsgi@mp3-dev.service, state: stopped }
+    enable:
+    - { name: uwsgi@mp3-dev.socket, state: started }
+    update:
+    - { name: uwsgi@mp3-dev.service, state: stopped }
 
   - role: python2-app
     name: musicdb
@@ -209,9 +213,10 @@
     cfg:
     - { src: "musicdb.yml", dest: "/etc/uwsgi/apps-enabled/musicdb.yml", key: ~ }
     - { src: "musicdb.ini", dest: "/etc/musicdb.ini",                    key: ~ }
-    svc:
-      enable: { name: uwsgi@musicdb.socket, state: started }
-      update: { name: uwsgi@musicdb.service, state: stopped }
+    enable:
+    - { name: uwsgi@musicdb.socket, state: started }
+    update:
+    - { name: uwsgi@musicdb.service, state: stopped }
 
   - role: python2-app
     name: oauth
@@ -219,9 +224,10 @@
     cfg:
     - { src: "oauth.yml",      dest: "/etc/uwsgi/apps-enabled/oauth.yml", key: ~ }
     - { src: "secret_json.j2", dest: "/etc/oauth/keys.json",              key: "oauth_keys_json" }
-    svc:
-      enable: { name: uwsgi@oauth.socket, state: started }
-      update: { name: uwsgi@oauth.service, state: stopped }
+    enable:
+    - { name: uwsgi@oauth.socket, state: started }
+    update:
+    - { name: uwsgi@oauth.service, state: stopped }
 
   - role: python2-app
     name: twitter
@@ -237,18 +243,20 @@
     - { src: "secret_json.j2",  dest: "/etc/twitter/maanfase.json",          key: "twitter_maanfase" }
     - { src: "secret_json.j2",  dest: "/etc/twitter/msvlieland.json",        key: "twitter_msvlieland" }
     - { src: "secret_json.j2",  dest: "/etc/twitter/y2k38warning.json",      key: "twitter_y2k38warning" }
-    svc:
-      enable: { name: twitter.service, state: stopped }
-      update: { name: twitter.service, state: stopped }
+    enable:
+    - { name: twitter.service, state: stopped }
+    update:
+    - { name: twitter.service, state: stopped }
 
   - role: python2-app
     name: xhttptest
     pkg: xhttptest==0.1.0
     cfg:
     - { src: "xhttptest.yml", dest: "/etc/uwsgi/apps-enabled/xhttptest.yml", key: ~ }
-    svc:
-      enable: { name: uwsgi@xhttptest.socket, state: started }
-      update: { name: uwsgi@xhttptest.service, state: stopped }
+    enable:
+    - { name: uwsgi@xhttptest.socket, state: started }
+    update:
+    - { name: uwsgi@xhttptest.service, state: stopped }
 
   - role: email
     postfix:
