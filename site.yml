@@ -54,6 +54,7 @@
     - tcpdump
     - strace
     - inotify-tools
+    - ethtool
 
   - role: build-server
     path:
@@ -126,6 +127,7 @@
     - tcpdump
     - strace
     - inotify-tools
+    - ethtool
 
   - role: data
     vault_files:
