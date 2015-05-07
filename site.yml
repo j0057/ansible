@@ -156,7 +156,7 @@
     - nl.punosqnp
     - nl.punosqnp.www
     - nl.stomrin
-    - nl.stonrin.www
+    - nl.stomrin.www
 
   - role: firewall
 
