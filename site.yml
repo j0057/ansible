@@ -160,6 +160,15 @@
       src: "/var/lib/pypkg27/src"
 
   - role: python2-app
+    name: cachetest
+    pkg: cachetest==0.1.0
+    cfg:
+    - { src: "cachetest.yml", dest: "/etc/uwsgi/apps-enabled/cachetest.yml", keys: ~ }
+    svc:
+      enable: { name: uwsgi@cachetest.socket, state: started }
+      update: { name: uwsgi@cachetest.service, state: stopped }
+
+  - role: python2-app
     name: dns
     pkg: dns==0.1.dev15
     cfg:

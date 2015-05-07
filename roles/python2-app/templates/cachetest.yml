@@ -1,0 +1,10 @@
+uwsgi:
+  plugins: python2
+  master: true
+  workers: 1
+  auto-procname: true
+  procname-prefix-spaced: cachetest
+  chdir: /srv/cachetest
+  virtualenv: /srv/cachetest
+  module: cachetest.__main__
+  callable: app
