@@ -224,6 +224,15 @@
       enable: { name: twitter.service, state: stopped }
       update: { name: twitter.service, state: stopped }
 
+  - role: python2-app
+    name: xhttptest
+    pkg: xhttptest==0.1.0
+    cfg:
+    - { src: "xhttptest.yml", dest: "/etc/uwsgi/apps-enabled/xhttptest.yml", key: ~ }
+    svc:
+      enable: { name: uwsgi@xhttptest.socket, state: started }
+      update: { name: uwsgi@xhttptest.service, state: stopped }
+
   - role: email
     postfix:
       aliases:

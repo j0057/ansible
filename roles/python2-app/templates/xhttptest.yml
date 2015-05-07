@@ -1,0 +1,10 @@
+uwsgi:
+  plugins: python2
+  master: true
+  workers: 1
+  auto-procname: true
+  procname-prefix-spaced: xhttptest
+  chdir: /srv/xhttptest
+  virtualenv: /srv/xhttptest
+  module: xhttptest
+  callable: app
