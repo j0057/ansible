@@ -36,25 +36,26 @@
 
   - role: packages
     packages:
-    - sudo
-    - sshpass
-    - vim-minimal
-    - tmux
+    - dnsutils
+    - ethtool
+    - graphviz
     - htop
-    - mc
-    - rsync
-    - libpng
+    - inotify-tools
     - libjpeg-turbo
+    - libmariadbclient
+    - libpng
     - libtiff
     - libxml2
     - libxslt
-    - libmariadbclient
-    - graphviz
-    - dnsutils
-    - tcpdump
+    - mc
+    - mono
+    - rsync
+    - sshpass
     - strace
-    - inotify-tools
-    - ethtool
+    - sudo
+    - tcpdump
+    - tmux
+    - vim-minimal
 
   - role: build-server
     path:
@@ -109,25 +110,26 @@
 
   - role: packages
     packages:
-    - sudo
-    - vim-minimal
-    - tmux
+    - dnsutils
+    - ethtool
+    - graphviz
     - htop
-    - mc
-    - rsync
-    - libpng
+    - inotify-tools
     - libjpeg-turbo
+    - libmariadbclient
+    - libpng
     - libtiff
     - libxml2
     - libxslt
-    - libmariadbclient
-    - graphviz
-    - wol
-    - dnsutils
-    - tcpdump
+    - mc
+    - mono
+    - rsync
     - strace
-    - inotify-tools
-    - ethtool
+    - sudo
+    - tcpdump
+    - tmux
+    - vim-minimal
+    - wol
 
   - role: data
     vault_files:
