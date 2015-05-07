@@ -1,0 +1,11 @@
+uwsgi:
+  plugins: python2
+  master: true
+  workers: 1
+  auto-procname: true
+  procname-prefix-spaced: stomrin
+  chdir: /srv/stomrin
+  virtualenv: /srv/stomrin
+  module: stomrin
+  callable: app
+  env: STOMRIN_DIR=/var/lib/stomrin

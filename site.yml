@@ -230,6 +230,19 @@
     - { name: uwsgi@oauth.service, state: stopped }
 
   - role: python2-app
+    name: stomrin
+    pkg: stomrin==1.0
+    cfg:
+    - { src: "stomrin.yml",     dest: "/etc/uwsgi/apps-enabled/stomrin.yml", key: ~ }
+    - { src: "stomrin.service", dest: "/etc/systemd/system/stomrin.service", key: ~ }
+    enable:
+    - { name: uwsgi@stomrin.socket, state: started }
+    - { name: stomrin.service,      state: started }
+    update:
+    - { name: uwsgi@stomrin.service, state: stopped }
+    - { name: stomrin.service,       state: restarted }
+
+  - role: python2-app
     name: twitter
     pkg: twitter==0.1-108-g7253234
     cfg:

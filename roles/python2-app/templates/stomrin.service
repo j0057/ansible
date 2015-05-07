@@ -1,0 +1,15 @@
+[Unit]
+Description=Stomrin worker process
+Requires=network.target
+After=network.target
+
+[Service]
+Type=simple
+User=stomrin
+Group=stomrin
+WorkingDirectory=/srv/stomrin
+ExecStart=/usr/bin/mono /srv/stomrin/bin/Stomrin.exe /var/lib/stomrin
+SyslogIdentifier=stomrin
+
+[Install]
+WantedBy=multi-user.target
