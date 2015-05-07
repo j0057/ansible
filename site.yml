@@ -55,6 +55,7 @@
     - sudo
     - tcpdump
     - tmux
+    - unzip
     - vim-minimal
 
   - role: build-server
@@ -129,6 +130,7 @@
     - tcpdump
     - tmux
     - vim-minimal
+    - unzip
     - wol
 
   - role: data
