@@ -144,11 +144,11 @@
 
   - role: nginx
     servers:
-    - j0057.nl
-    - www.j0057.nl
-    - dev.j0057.nl
-    - stomrin.nl
-    - www.stomrin.nl
+    - nl.j0057
+    - nl.j0057.dev
+    - nl.j0057.www
+    - nl.stomrin
+    - nl.stonrin.www
 
   - role: firewall
 
