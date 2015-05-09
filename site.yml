@@ -220,7 +220,7 @@
 
   - role: python2-app
     name: oauth
-    pkg: oauth==1.0a89
+    pkg: oauth==1.0.dev89
     cfg:
     - { src: "oauth.yml",      dest: "/etc/uwsgi/apps-enabled/oauth.yml", key: ~ }
     - { src: "secret_json.j2", dest: "/etc/oauth/keys.json",              key: "oauth_keys_json" }
