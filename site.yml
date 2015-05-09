@@ -179,7 +179,7 @@
 
   - role: python2-app
     name: dns
-    pkg: dns==1.0a16
+    pkg: dns==1.0.dev16
     cfg:
     - { src: "dns.yml", dest: "/etc/uwsgi/apps-enabled/dns.yml", keys: ~ }
     enable:
