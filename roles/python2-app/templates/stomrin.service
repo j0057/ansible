@@ -8,7 +8,7 @@ Type=simple
 User=stomrin
 Group=stomrin
 WorkingDirectory=/srv/stomrin
-ExecStart=/usr/bin/mono /srv/stomrin/bin/Stomrin.exe /var/lib/stomrin
+ExecStart=/usr/bin/mono /srv/stomrin/bin/stomrin.exe /var/lib/stomrin
 SyslogIdentifier=stomrin
 
 [Install]
