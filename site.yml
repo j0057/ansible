@@ -209,7 +209,7 @@
 
   - role: python2-app
     name: musicdb
-    pkg: musicdb==0.1.0
+    pkg: musicdb==1.0.dev51
     cfg:
     - { src: "musicdb.yml", dest: "/etc/uwsgi/apps-enabled/musicdb.yml", key: ~ }
     - { src: "musicdb.ini", dest: "/etc/musicdb.ini",                    key: ~ }
