@@ -199,7 +199,7 @@
 
   - role: python2-app
     name: mp3-dev
-    pkg: mp3==2.0dev-87-gd40d5b1
+    pkg: mp3==2.0.dev88
     cfg:
     - { src: "mp3-dev.yml", dest: "/etc/uwsgi/apps-enabled/mp3-dev.yml", key: ~ }
     enable:
