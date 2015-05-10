@@ -8,8 +8,8 @@
 - name: "nfs | restart"
   service: name={{ item }} enabled=yes state=restarted
   with_items:
-  - rpcbind.service
   - nfs-config.service
+  - rpcbind.service
   - rpc-statd.service
   - nfs-server.service
   tags: [fileserver, nfs]
