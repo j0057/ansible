@@ -5,8 +5,8 @@ After=network.target
 
 [Service]
 Type=simple
-User=nobody
-Group=nobody
+User=twitter
+Group=twitter
 WorkingDirectory=/srv/twitter
 ExecStart=/srv/twitter/bin/python -m robot_zoo --no-time
 SyslogIdentifier=twitter
