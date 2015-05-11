@@ -15,7 +15,8 @@
   tags: [fileserver, nfs]
 
 - name: "cups | restart"
-  service: name={{ item }} state=restarted enabled=true
+  service: name={{ item.svc }} state={{ item.state }} enabled=yes
   with_items:
-  - org.cups.cupsd.socket
+  - { svc: org.cups.cupsd.socket, state: started }
+  - { svc: org.cups.cupsd.service, state: restarted }
   tags: [fileserver, cups]

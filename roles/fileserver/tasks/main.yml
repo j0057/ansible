@@ -66,9 +66,14 @@
   - ghostscript
   - gsfonts
   - hplip
-  - python2-dbus
-  - python2-gobject2
+  - python-dbus
+  - python-gobject2
   - nss-mdns
+  notify: "cups | restart"
+  tags: [fileserver, cups]
+
+- name: "cups | configure"
+  template: src=cupsd.conf.j2 dest=/etc/cups/cupsd.conf
   notify: "cups | restart"
   tags: [fileserver, cups]
 
