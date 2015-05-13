@@ -85,3 +85,11 @@
 #
 
 # TODO
+
+#
+# transmission
+#
+
+- name: "transmission | install"
+  pacman: name=transmission-cli state=installed
+  tags: [fileserver, transmission]
