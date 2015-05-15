@@ -1,6 +1,5 @@
 [Unit]
 Description=Firewall settings
-Before=fail2ban.service
 
 [Service]
 Type=oneshot
@@ -10,4 +9,3 @@ ExecStop=/usr/local/sbin/firewall stop
 
 [Install]
 WantedBy=firewall.target
-RequiredBy=fail2ban.service

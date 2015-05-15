@@ -1,3 +1,6 @@
 - name: "restart firewall"
-  service: name=firewall.target state=restarted enabled=yes
+  service: name={{ item }} state=restarted
+  with_items:
+  - fail2ban.service
+  - firewall.service
   tags: firewall

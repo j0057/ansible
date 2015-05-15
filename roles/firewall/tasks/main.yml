@@ -36,8 +36,6 @@
 - name: "enable services"
   service: name={{ item }} enabled=yes
   with_items:
-  - fail2ban.service
-  - firewall.service
   - firewall.target
   notify: "restart firewall"
   tags: firewall
