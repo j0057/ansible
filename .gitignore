@@ -1,9 +1,2 @@
 ansible.cfg
-env
-install/aur_x86_64
-install/aur_armv6h
-install/aur_armv6l
-install/pypkg27
-install/*.pub
-install/arch
 .vault-password.txt
