@@ -39,6 +39,7 @@ create_allowed_chain() {
     allow udp  2049 # nfsd
 
     allow udp 20048 # nfs
+    allow tcp 20048
 
     allow tcp 32764:32769 # other nfs stuff
     allow udp 32764:32769 # other nfs stuff

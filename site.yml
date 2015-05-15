@@ -12,11 +12,16 @@
   roles:
 
   - role: accounts
-    users:
-    - { name: jjm, uid: 1000, gid: 1000, comment: "Joost Molenaar", groups: "wheel" }
-    authorized_keys:
-    - { user: root, pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
-    - { user: jjm,  pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
+    account:
+      groups:
+      - { name: jjm,   gid: 1000 }
+      - { name: usb2t, gid: 60000 }
+      users:
+      - { name: jjm,   uid: 1000,  group: "jjm",   comment: "Joost Molenaar", groups: "usb2t,users,wheel", system: false }
+      - { name: usb2t, uid: 60000, group: "usb2t", comment: ~,                groups: ~,                   system: true }
+      authorized_keys:
+      - { user: root, pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
+      - { user: jjm,  pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
 
   - role: ntp
     servers:
@@ -295,6 +300,6 @@
     fstab:
     - { dev: "LABEL=USB2T", dir: "/mnt/usb2t", fstype: ext4, opts: nofail }
     shares:
-    - { name: "music", dir: "/mnt/usb2t/music" }
-    - { name: "films", dir: "/mnt/usb2t/films" }
-    - { name: "series", dir: "/mnt/usb2t/series" }
+    - { name: "music", dir: "/mnt/usb2t/music", uid: "60000", gid: "60000" }
+    - { name: "films", dir: "/mnt/usb2t/films", uid: "60000", gid: "60000" }
+    - { name: "series", dir: "/mnt/usb2t/series", uid: "60000", gid: "60000" }

@@ -1,3 +1,3 @@
 {% for s in shares %}
-{{ s.dir }} *(fsid=root,no_subtree_check,rw)
+{{ s.dir }} *(rw,all_squash,anonuid={{ s.uid }},anongid={{ s.gid }},fsid=0,no_subtree_check)
 {% endfor %}
