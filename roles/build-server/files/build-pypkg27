@@ -36,5 +36,5 @@ done
 
 for (( i=0 ; i < ${#WHL_BLACKLIST[*]} ; i++ )); do
     message0 "${WHL_BLACKLIST[i]}: checking for blacklisted wheel"
-    find "$WHLDIR" -name "${WHL_BLACKLIST[i]}*.whl" -type f -delete
+    find "$WHLDIR" -name "${WHL_BLACKLIST[i]}*.whl" -type f -exec rm -v '{}' ';'
 done
