@@ -25,7 +25,7 @@ for (( i=0 ; i < ${#DIST[*]} ; i++ )); do
 
     message1 "${DIST[i]}: downloading wheel"
     pip2 install --download "$WHLDIR" "${DIST[i]}"
-    find "$WHLDIR" -type f -not -name '*.whl' -exec mv -v '{}' "$SRCDIR" ';'
+    find "$WHLDIR" -type f -not -name '*.whl' -exec mv -vf '{}' "$SRCDIR" ';'
 
     message1 "${DIST[i]}: downloading sdist"
     pip2 install --download "$SRCDIR" --no-use-wheel "${DIST[i]}"
