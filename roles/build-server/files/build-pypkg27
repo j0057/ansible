@@ -7,13 +7,16 @@ message1() { echo -e "\e[1;32m==>\e[1;36m $1\e[0;0m" ; }
 
 export PATH=$PATH:$HOME/.local/bin
 
-PIP_OPTS="--no-cache-dir --disable-pip-version-check --isolated"
+export PIP_CONFIG_FILE=/dev/null
+export PIP_NO_CACHE_DIR=no
+export PIP_DISABLE_PIP_VERSION_CHECK=yes
+export PIP_ISOLATED=yes
 
 for dist in pip setuptools wheel virtualenv; do
-    pip2 list $PIP_OPTS --user | grep "$dist" &> /dev/null || { 
+    pip2 list --user | grep "$dist" &> /dev/null || { 
         message0 "Bootstrapping $dist" ;
-        pip2 install $PIP_OPTS --download "$WHLDIR" "$dist" ;
-        pip2 install $PIP_OPTS --no-index --find-links "$WHLDIR" --user --upgrade "$dist" ;
+        pip2 install --download "$WHLDIR" "$dist" ;
+        pip2 install --no-index --find-links "$WHLDIR" --user --upgrade "$dist" ;
     }
 done
 
@@ -21,14 +24,14 @@ for (( i=0 ; i < ${#DIST[*]} ; i++ )); do
     message0 "${DIST[i]}"
 
     message1 "${DIST[i]}: downloading wheel"
-    pip2 install $PIP_OPTS --download "$WHLDIR" "${DIST[i]}"
+    pip2 install --download "$WHLDIR" "${DIST[i]}"
     find "$WHLDIR" -type f -not -name '*.whl' -exec mv -v '{}' "$SRCDIR" ';'
 
     message1 "${DIST[i]}: downloading sdist"
-    pip2 install $PIP_OPTS --download "$SRCDIR" --no-use-wheel "${DIST[i]}"
+    pip2 install --download "$SRCDIR" --no-use-wheel "${DIST[i]}"
 
     message1 "${DIST[i]}: building wheel"
-    pip2 wheel $PIP_OPTS --no-index --find-links "$SRCDIR" --find-links "$WHLDIR" --wheel-dir "$WHLDIR" "${DIST[i]}"
+    pip2 wheel --no-index --find-links "$SRCDIR" --find-links "$WHLDIR" --wheel-dir "$WHLDIR" "${DIST[i]}"
 done
 
 for (( i=0 ; i < ${#WHL_BLACKLIST[*]} ; i++ )); do
