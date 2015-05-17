@@ -83,6 +83,7 @@
     - mysql-python
     - pillow
     - pip
+    - pudb
     - pyephem
     - pygraphviz
     - pytest
