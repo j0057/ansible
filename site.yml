@@ -66,8 +66,8 @@
   - role: build-server
     path:
       aur: "/var/lib/aur_x86_64"
-      src: "/var/lib/pypkg27/src"
-      whl: "/var/lib/pypkg27/x86_64"
+      src: "/var/lib/pypkg27"
+      whl: "/var/lib/pypkg27"
     aur:
     - python2-pydns
     - python2-pyspf
@@ -170,8 +170,8 @@
 
   - role: python2
     path:
-      whl: "/var/lib/pypkg27/x86_64"
-      src: "/var/lib/pypkg27/src"
+      whl: "/var/lib/pypkg27"
+      src: "/var/lib/pypkg27"
 
   - role: python2-app
     name: cachetest
