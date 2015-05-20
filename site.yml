@@ -85,8 +85,11 @@
     - pip
     - pudb
     - pyephem
+    - pyflakes
     - pygraphviz
     - pytest
+    - pytest-cov
+    - pytest-flakes
     - python-dateutil
     - python-prctl
     - pytz
