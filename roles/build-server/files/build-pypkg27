@@ -12,7 +12,9 @@ export PIP_NO_CACHE_DIR=no
 export PIP_DISABLE_PIP_VERSION_CHECK=yes
 export PIP_ISOLATED=yes
 
+message0 "checking requirements"
 for dist in pip setuptools wheel virtualenv; do
+    message1 "checking requirements: $dist"
     pip2 list --user | grep "$dist" &> /dev/null || { 
         message0 "Bootstrapping $dist" ;
         pip2 install --download "$WHLDIR" "$dist" ;
@@ -24,17 +26,20 @@ for (( i=0 ; i < ${#DIST[*]} ; i++ )); do
     message0 "${DIST[i]}"
 
     message1 "${DIST[i]}: downloading wheel"
-    pip2 install --download "$WHLDIR" "${DIST[i]}"
-    find "$WHLDIR" -type f -not -name '*.whl' -exec mv -vf '{}' "$SRCDIR" ';'
+    pip2 install --download "$WHLDIR" "${DIST[i]}" \
+        | egrep '^  (Downloading .+|File was already downloaded .+)$'
+    #find "$WHLDIR/" -type f -not -name '*.whl' -exec mv -vf '{}' "$SRCDIR" ';'
 
     message1 "${DIST[i]}: downloading sdist"
-    pip2 install --download "$SRCDIR" --no-use-wheel "${DIST[i]}"
+    pip2 install --download "$SRCDIR" --no-use-wheel "${DIST[i]}" \
+        | egrep '^  (Downloading .+|File was already downloaded .+)$'
 
     message1 "${DIST[i]}: building wheel"
-    pip2 wheel --no-index --find-links "$SRCDIR" --find-links "$WHLDIR" --wheel-dir "$WHLDIR" "${DIST[i]}"
+    pip2 wheel --no-index --find-links "$SRCDIR" --find-links "$WHLDIR" --wheel-dir "$WHLDIR" "${DIST[i]}" \
+        | egrep '^(Skipping .+, due to already being wheel\.|  Running setup\.py bdist_wheel for .+|Successfully built .+)$'
 done
 
 for (( i=0 ; i < ${#WHL_BLACKLIST[*]} ; i++ )); do
     message0 "${WHL_BLACKLIST[i]}: checking for blacklisted wheel"
-    find "$WHLDIR" -name "${WHL_BLACKLIST[i]}*.whl" -type f -exec rm -v '{}' ';'
+    find "$WHLDIR/" -name "${WHL_BLACKLIST[i]}*.whl" -type f -exec rm -v '{}' ';'
 done
