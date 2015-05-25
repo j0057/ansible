@@ -53,15 +53,19 @@
     - libxml2
     - libxslt
     - mc
+    - mercurial
     - mono
+    - nmap
     - rsync
     - sshpass
     - strace
     - sudo
     - tcpdump
     - tmux
+    - traceroute
     - unzip
     - vim-minimal
+    - wget
 
   - role: build-server
     path:
@@ -133,11 +137,13 @@
     - libxslt
     - mc
     - mono
+    - nmap
     - rsync
     - strace
     - sudo
     - tcpdump
     - tmux
+    - traceroute
     - vim-minimal
     - unzip
     - wol
