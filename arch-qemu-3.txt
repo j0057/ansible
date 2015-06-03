@@ -10,11 +10,16 @@ create_partitions() {
 export -f create_partitions
 
 create_netctl_profiles() {
-    lines /etc/netctl/eth0 "Interface=eth0" "Connection=ethernet" "IP=dhcp"
-    lines /etc/netctl/eth1 "Interface=eth1" "Connection=ethernet" "IP=static" \
-        "Address=(\"${INSTALL_ETH1_IP}\")"
-    netctl enable eth0
-    netctl enable eth1
+    lines "/etc/udev/rules.d/10-network.rules" \
+        "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"52:54:00:f8:05:bb\", NAME=\"net0\"" \
+        "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"52:54:00:2b:0a:89\", NAME=\"net1\""
+
+    lines "/etc/netctl/net0" "Interface=net0" "Connection=ethernet" "IP=dhcp"
+
+    lines "/etc/netctl/net1" "Interface=net1" "Connection=ethernet" "IP=static" "Address=(\"${INSTALL_ETH1_IP}\")"
+
+    netctl enable net0
+    netctl enable net1
 }
 export -f create_netctl_profiles
 
@@ -22,7 +27,7 @@ export INSTALL_HOST="${1:-j0057.github.io/ansible}"
 export INSTALL_HOSTNAME="arch-qemu-3"
 export INSTALL_TZNAME="Europe/Amsterdam"
 export INSTALL_LOCALE="en_US.UTF-8 UTF-8"
-export INSTALL_PACKAGES="base grub lsb-release python2"
+export INSTALL_PACKAGES="base grub lsb-release python2 openssh rsync"
 export INSTALL_ETH1_IP="10.102.0.13/16"
 
 bash -e <(curl -s "http://${INSTALL_HOST}/arch_stage0.txt")
