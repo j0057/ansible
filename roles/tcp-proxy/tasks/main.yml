@@ -1,0 +1,21 @@
+- name: "install socat"
+  apt: name=socat state=latest
+
+- name: "install proxy"
+  copy: src=proxy@.service dest=/etc/systemd/system
+
+- name: "create proxy@{{ tcp_proxy_name }}.service.d directory"
+  file:
+    dest: "/etc/systemd/system/proxy@{{ tcp_proxy_name }}.service.d"
+    state: directory
+  notify: "restart proxy@{{ tcp_proxy_name }}.service"
+
+- name: "configure proxy@{{ tcp_proxy_name }}.service"
+  template:
+    src: settings.conf.j2 
+    dest: "/etc/systemd/system/proxy@{{ tcp_proxy_name }}.service.d/settings.conf"
+  notify: "restart proxy@{{ tcp_proxy_name }}.service"
+
+- name: "open port 443"
+  ufw: rule=allow proto=any port=443
+  notify: "restart ufw"

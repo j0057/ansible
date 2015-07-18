@@ -1,0 +1,13 @@
+[Unit]
+Description=TCP proxy
+Requires=network.target
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/socat -d -d \
+    "TCP4-LISTEN:${PROXY_SOURCE},bind=0.0.0.0,reuseaddr,fork,su=nobody" \
+    "TCP4:${PROXY_TARGET}"
+
+[Install]
+WantedBy=multi-user.target

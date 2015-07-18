@@ -2,12 +2,9 @@
 # common tasks
 #
 
-- hosts:
-  - config
-  - server
-
-  vars_files:
-  - secrets.yml
+- name: basic arch configuration
+  hosts: [config, server]
+  vars_files: [secrets.yml]
 
   roles:
 
@@ -31,11 +28,9 @@
 # config host
 #
 
-- hosts:
-  - config
-
-  vars_files:
-  - secrets.yml
+- name: management server
+  hosts: [config]
+  vars_files: [secrets.yml]
 
   roles:
 
@@ -114,11 +109,9 @@
 # server host
 #
 
-- hosts:
-  - server
-
-  vars_files:
-  - secrets.yml
+- name: server configuration
+  hosts: [server]
+  vars_files: [secrets.yml]
 
   roles:
 
@@ -313,3 +306,31 @@
     - { name: "music", dir: "/mnt/usb2t/music", uid: "60000", gid: "60000" }
     - { name: "films", dir: "/mnt/usb2t/films", uid: "60000", gid: "60000" }
     - { name: "series", dir: "/mnt/usb2t/series", uid: "60000", gid: "60000" }
+
+#
+# azure hosts
+#
+
+- name: basic ubuntu configuration
+  hosts: [azure]
+  vars_files: [secrets.yml]
+
+  roles:
+
+  - role: ubuntu-common
+    authorized_keys:
+    - user: jjm
+      pubkeys:
+      - j.j.molenaar@gmail.com
+      - jjm@nexus5
+      - joost@ws-nuc41.schoolmaster.nl
+
+- name: socat tcp proxy
+  hosts: [proxy]
+  vars_files: [secrets.yml]
+
+  roles:
+  - role: tcp-proxy
+    tcp_proxy_name: ssh
+    tcp_proxy_source: 443
+    tcp_proxy_target: j0057.nl:22

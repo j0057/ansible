@@ -1,0 +1,25 @@
+- name: "disable password login"
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    line: PasswordAuthentication no
+    regexp: ^PasswordAuthentication .*$
+  notify: "restart sshd"
+
+- name: "open port 22"
+  ufw: name=OpenSSH rule=allow
+  notify: "restart ufw"
+
+- name: "set authorized keys"
+  authorized_key: user={{ item.0.user}} state=present manage_dir=yes
+  args:
+    key: "{{ secrets.ssh[item.1] }}"
+  with_subelements: [ authorized_keys, pubkeys ]
+
+- name: "enable ufw"
+  ufw: state=enabled
+  notify: "restart ufw"
+
+- name: "enable unattended upgrades"
+  copy:
+    src: unattended.conf
+    dest: /etc/apt/apt.conf.d/97unattended
