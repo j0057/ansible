@@ -1,0 +1,68 @@
+#!/bin/bash
+
+case $1 in
+    nuke-keys)
+        rm -vf K*
+        ;;
+
+    gen-ksk)
+        zone="${2?zone missing}"
+        year="${3?year missing}"
+
+        # KSK : publish in december, activate beginning of last week, deactivate after 1st week, delete after 1st month
+        pub="$[year-1]1201"
+        act="$(date -d "${year}0101 - 1 week" +%Y%m%d)"
+        ina="$(date -d "$[year+1]0101 + 1 week" +%Y%m%d)"
+        del="$[year+1]0201"
+
+        key=$(sudo -u named dnssec-keygen -q -3 -a RSASHA256 -b 2048 -f KSK -P $pub -A $act -I $ina -D $del $zone)
+
+        ln -sf ${key}.key ksk-${zone}-${year}.key
+        ln -sf ${key}.private ksk-${zone}-${year}.private
+        ;;
+
+    gen-zsk)
+        zone="${2?zone missing}"
+        month="${3?month missing}"
+
+        # ZSK : publish second last day of month, activate on last day, deactivate after 1st day, delete after 2nd day
+        pub="$(date -d ${month}01-2day +%Y%m%d)"
+        act="$(date -d ${month}01-1day +%Y%m%d)"
+        ina="$(date -d ${month}01+1month+1day +%Y%m%d)"
+        del="$(date -d ${month}01+1month+2day +%Y%m%d)"
+
+        key=$(sudo -u named dnssec-keygen -q -3 -a RSASHA256 -b 1024 -P $pub -A $act -I $ina -D $del $zone)
+
+        ln -sf ${key}.key zsk-${zone}-${month}.key
+        ln -sf ${key}.private zsk-${zone}-${month}.private
+        ;;
+
+    gen-ds)
+        zone="${2?zone missing}"
+        for algo in SHA1 SHA256 GOST SHA384 ; do
+            dig +noall +answer $zone DNSKEY @127.0.0.1 | dnssec-dsfromkey -a $algo -f - $zone
+        done >> ds-${zone}
+        ;;
+
+    enable)
+        zone="${2?zone missing}"
+
+        nsec3=$(cat /dev/random | head -c 32 | sha256sum | cut -b 1-8)
+
+        rndc loadkeys $zone
+        rndc signing -nsec3param 1 0 10 $nsec3 $zone
+        ;;
+
+    cron)
+        # each hour, check if current UTC time t is 00:00:00 <= t < 00:10:00, if not: done
+        # for every configured hostname:
+        #   take care of KSK:
+        #       if current UTC date is xxxx1201, generate KSK for next year
+        #   take care of ZSK:
+        #       if current UTC date is equal to 1st day of next month minus 2 days: generate zsk
+        #   clean out "really old" [as in years] key files - just "find ctime delete" is ok
+
+        # issue : should maybe do a few extra attempts in case moment is missed - key generation should be idempotent
+        # issue : should mail ds records in december
+        ;;
+esac

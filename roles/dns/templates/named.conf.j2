@@ -1,0 +1,52 @@
+options {
+    directory "/var/named";
+    pid-file "/run/named/named.pid";
+
+    allow-recursion { 127.0.0.1; };
+    allow-transfer { none; };
+    allow-update { none; };
+
+    version none;
+    hostname none;
+    server-id none;
+
+{% if dnssec %}
+    dnssec-enable yes;
+    dnssec-validation yes;
+    dnssec-lookaside auto;
+{% endif %}
+};
+
+zone "localhost" IN {
+    type master;
+    file "localhost.zone";
+};
+
+zone "0.0.127.in-addr.arpa" IN {
+    type master;
+    file "127.0.0.zone";
+};
+
+zone "1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa" {
+    type master;
+    file "localhost.ip6.zone";
+};
+
+zone "255.in-addr.arpa" IN {
+    type master;
+    file "empty.zone";
+};
+
+zone "0.in-addr.arpa" IN {
+    type master;
+    file "empty.zone";
+};
+
+zone "." IN {
+    type hint;
+    file "root.hint";
+};
+
+{% for zone in zones %}
+include "/var/named/{{ zone }}.conf";
+{% endfor %}

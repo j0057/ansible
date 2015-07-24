@@ -1,0 +1,25 @@
+- name: "install packages"
+  pacman: name=bind state=present
+  notify: "restart named"
+  tags: [dns, dns-master]
+
+- name: "configure named"
+  template: src=named.conf.j2 dest=/etc/named.conf owner=root group=named
+  notify: "restart named"
+  tags: [dns, dns-master]
+
+- name: "zone configs"
+  copy: src={{ item }}.conf dest=/var/named owner=named group=named
+  with_items: zones
+  notify: "reload zones"
+  tags: [dns, dns-master]
+
+- name: "zone files"
+  copy: src={{ item }}.zone dest=/var/named owner=named group=named
+  with_items: zones
+  notify: "reload zones"
+  tags: [dns, dns-master]
+
+- name: "dnssec-tool script"
+  copy: src=dnssec-tool dest=/usr/local/bin owner=root group=root mode=755
+  tags: [dns, dns-master]

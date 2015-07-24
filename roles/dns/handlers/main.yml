@@ -1,0 +1,7 @@
+- name: "restart named"
+  service: name=named enabled=yes state=restarted
+  tags: [dns, dns-master]
+
+- name: "reload zones"
+  shell: /usr/bin/rndc reload
+  tags: [dns, dns-master]

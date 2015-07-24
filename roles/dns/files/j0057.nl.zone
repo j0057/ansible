@@ -1,0 +1,27 @@
+$ORIGIN j0057.nl.
+$TTL    300
+
+@       IN      SOA     ns0 admin (2015072301 28800 1800 604800 86400)
+        IN      NS      ns1
+        IN      NS      ns2
+        IN      NS      ns3
+        IN      NS      ns4
+        IN      A       80.100.222.7
+        IN      MX      10 mx
+        IN      TXT     "v=spf1 mx a ip4:80.100.222.7 -all"
+        IN      TXT     "MS=ms95516336"
+
+dev     IN      CNAME   @
+dev2    IN      CNAME   @
+
+mx      IN      A       80.100.222.7
+
+ns0     IN      A       80.100.222.7
+ns1     IN      A       191.233.77.62
+ns2     IN      A       137.117.154.227
+ns3     IN      A       137.135.32.68
+ns4     IN      A       168.61.12.89
+
+ssh     IN      A       104.47.161.139
+
+www     IN      CNAME   @

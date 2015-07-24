@@ -168,6 +168,12 @@
 
   - role: firewall
 
+  - role: dns
+    dnssec: true
+    zones:
+    - j0057.nl
+    - punosqnp.nl
+
   - role: mariadb
 
   - role: python2
