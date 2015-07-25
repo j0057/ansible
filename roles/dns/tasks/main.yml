@@ -1,4 +1,4 @@
-- name: "install packages"
+- name: "install named"
   pacman: name=bind state=present
   notify: "restart named"
   tags: [dns, dns-master]
@@ -9,7 +9,7 @@
   tags: [dns, dns-master]
 
 - name: "zone configs"
-  copy: src={{ item }}.conf dest=/var/named owner=named group=named
+  template: src=zone.conf.j2 dest=/var/named/{{ item }}.conf owner=named group=named
   with_items: zones
   notify: "reload zones"
   tags: [dns, dns-master]

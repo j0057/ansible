@@ -2,8 +2,15 @@ options {
     directory "/var/named";
     pid-file "/run/named/named.pid";
 
+    notify yes;
+
     allow-recursion { 127.0.0.1; };
-    allow-transfer { none; };
+    allow-transfer {
+        191.233.77.62;
+        137.117.154.227;
+        137.135.32.68;
+        168.61.12.89;
+    };
     allow-update { none; };
 
     version none;
@@ -48,5 +55,5 @@ zone "." IN {
 };
 
 {% for zone in zones %}
-include "/var/named/{{ zone }}.conf";
+include "{{ zone }}.conf";
 {% endfor %}
