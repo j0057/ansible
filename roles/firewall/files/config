@@ -45,6 +45,9 @@ create_allowed_chain() {
     allow udp 32764:32769 # other nfs stuff
 
     allow tcp   631 # cupsd
+
+    allow tcp 51413 # transmission-cli
+    allow udp 51413
 }
 
 export -f create_allowed_chain

@@ -68,7 +68,7 @@ create_INPUT_chain() {
     $iptables --table filter --append INPUT --jump allowed
 
     # allow packets of established connections
-    $iptables --table filter --append INPUT --protocol tcp --match state --state RELATED,ESTABLISHED --jump ACCEPT
+    $iptables --table filter --append INPUT --match state --state RELATED,ESTABLISHED --jump ACCEPT
 
     case "$iptables" in
         */iptables)
@@ -81,9 +81,13 @@ create_INPUT_chain() {
 
             # allow dns responses
             $iptables --table filter --append INPUT --protocol udp --sport 53 --jump ACCEPT
+            $iptables --table filter --append INPUT --protocol tcp --sport 53 --jump ACCEPT
 
             # allow multicasts
             $iptables --table filter --append INPUT --destination 224.0.0.0/8 --jump ACCEPT
+
+            # drop-but-don't-log spam from router
+            $iptables --table filter --append INPUT --source 192.168.178.1 --protocol tcp --dport 14013 --jump REJECT --reject-with tcp-reset
             ;;
 
         */ip6tables)
@@ -91,6 +95,9 @@ create_INPUT_chain() {
             $iptables --table filter --append INPUT --protocol icmpv6 --source ff02::/16 --jump ACCEPT
             $iptables --table filter --append INPUT --protocol icmpv6 --source fe80::/10 --jump ACCEPT
             $iptables --table filter --append INPUT --protocol icmpv6 --source 2001:0980:e8e5::/48 --jump ACCEPT
+
+            # drop-but-don't-log spam from router
+            $iptables --table filter --append INPUT --source "2001:980:e8e5:1:2665:11ff:feec:d7f7" --protocol tcp --dport 14013 --jump REJECT --reject-with tcp-reset
             ;;
     esac
 
