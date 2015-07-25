@@ -340,3 +340,14 @@
     tcp_proxy_name: ssh
     tcp_proxy_source: 443
     tcp_proxy_target: j0057.nl:22
+
+- name: dns slaves
+  hosts: [dns]
+  vars_files: [secrets.yml]
+
+  roles:
+
+  - role: dns-slave
+    zones:
+    - j0057.nl
+    - punosqnp.nl

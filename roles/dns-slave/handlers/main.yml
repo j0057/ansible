@@ -1,0 +1,11 @@
+- name: "restart bind9"
+  service: name=bind9 enabled=yes state=restarted
+  tags: [dns, dns-slave]
+
+- name: "reload bind9"
+  shell: rndc reload
+  tags: [dns, dns-slave]
+
+- name: "restart ufw"
+  service: name=ufw.service enabled=yes state=restarted
+  tags: [dns, dns-slave]
