@@ -17,8 +17,8 @@
       - { name: jjm,   uid: 1000,  group: "jjm",   comment: "Joost Molenaar", groups: "usb2t,users,wheel", system: false }
       - { name: usb2t, uid: 60000, group: "usb2t", comment: ~,                groups: ~,                   system: true }
       authorized_keys:
-      - { user: root, pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
-      - { user: jjm,  pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41.schoolmaster.nl ] }
+      - { user: root, pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41 ] }
+      - { user: jjm,  pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc41 ] }
 
   - role: ntp
     servers:
