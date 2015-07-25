@@ -1,5 +1,5 @@
 - name: "restart sshd"
-  service: name=sshd.service state=restarted
+  service: name=sshd.service enabled=yes state=restarted
 
 - name: "restart ufw"
-  service: name=ufw.service state=restarted
+  service: name=ufw.service enabled=yes state=restarted

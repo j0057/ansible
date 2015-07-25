@@ -15,10 +15,6 @@
     key: "{{ secrets.ssh[item.1] }}"
   with_subelements: [ authorized_keys, pubkeys ]
 
-- name: "enable ufw"
-  ufw: state=enabled
-  notify: "restart ufw"
-
 - name: "enable unattended upgrades"
   copy:
     src: unattended.conf
