@@ -1,5 +1,7 @@
 
-#Import-Module "C:\Program Files (x86)\Microsoft SDKs\Azure\PowerShell\ResourceManager\AzureResourceManager\AzureResourceManager.psd1"
+<#
+Import-Module "C:\Program Files (x86)\Microsoft SDKs\Azure\PowerShell\ResourceManager\AzureResourceManager\AzureResourceManager.psd1"
+#>
 
 $ErrorActionPreference = "stop"
 
@@ -19,11 +21,11 @@ function Ensure-ResourceGroup
     $ResourceGroup = Get-AzureResourceGroup -Name $Name -ErrorAction Ignore
     if ($ResourceGroup -ne $null)
     {
-        Write-Host -ForegroundColor Green "= Resource group $Name"
+        Write-Host -ForegroundColor Green "= ${Name}: resource group ok"
     }
     else
     {
-        Write-Host -ForegroundColor Yellow "+ Resource Group $Name"
+        Write-Host -ForegroundColor Yellow "+ ${Name}: new resource group"
         $ResourceGroup = New-AzureResourceGroup -Location $Location -Name $Name
     }
 
@@ -44,11 +46,11 @@ function Ensure-StorageAccount
     $StorageAccount = $Context.ResourceGroup | Get-AzureStorageAccount -Name $Name -ErrorAction Ignore
     if ($StorageAccount -ne $null)
     {
-        Write-Host -ForegroundColor Green "= Storage account $Name"
+        Write-Host -ForegroundColor Green "= ${Name}: storage account ok"
     }
     else
     {
-        Write-Host -ForegroundColor Yellow "+ Storage account $Name"
+        Write-Host -ForegroundColor Yellow "+ ${Name}: new storage account"
         $StorageAccount = $Context.ResourceGroup | New-AzureStorageAccount -Name $Name -Type Standard_GRS
     }
 
@@ -69,11 +71,11 @@ function Ensure-PublicIP
     $PublicIP = $Context.ResourceGroup | Get-AzurePublicIpAddress -Name $Name -ErrorAction Ignore
     if ($PublicIP -ne $null)
     {
-        Write-Host -ForegroundColor Green "= Public IP $Name"
+        Write-Host -ForegroundColor Green "= ${Name}: public ip ok"
     }
     else
     {
-        Write-Host -ForegroundColor Yellow "+ Public IP $Name"
+        Write-Host -ForegroundColor Yellow "+ ${Name}: new public ip"
         $PublicIP = $Context.ResourceGroup | New-AzurePublicIpAddress -Name $Name -AllocationMethod Dynamic
     }
 
@@ -94,21 +96,21 @@ function Ensure-VirtualNetwork
         [String] $Prefix,
 
         [Parameter(Mandatory)]
-        [String[]] $Subnets
+        [PSObject[]] $Subnets
     )
     
     $VirtualNetwork = $Context.ResourceGroup | Get-AzureVirtualNetwork -Name $Name -ErrorAction Ignore
     if ($VirtualNetwork -ne $null)
     {
-        Write-Host -ForegroundColor Green "= Virtual network $Name"
+        Write-Host -ForegroundColor Green "= ${Name}: new network ok"
     }
     else
     {
-        Write-Host -ForegroundColor Yellow "+ Virtual network $Name"
+        Write-Host -ForegroundColor Yellow "+ ${Name}: create virtual network"
         $Count = 1
         $VirtualNetwork = $Context.ResourceGroup | New-AzureVirtualNetwork -Name $Name `
-            -AddressPrefix "10.0.0.0/16" `
-            -Subnet ($Subnets | % { New-AzureVirtualNetworkSubnetConfig -Name ("subnet" + $Count++) -AddressPrefix $_ })
+            -AddressPrefix $Prefix `
+            -Subnet ($Subnets | % { New-AzureVirtualNetworkSubnetConfig -Name $_.Name -AddressPrefix $_.Prefix })
     }
 
     $Context | Add-Member -NotePropertyName VirtualNetwork -NotePropertyValue $VirtualNetwork
@@ -131,11 +133,11 @@ function Ensure-NetworkSecurityGroup
     $SecurityGroup = $Context.ResourceGroup | Get-AzureNetworkSecurityGroup -Name $Name -ErrorAction Ignore
     if ($SecurityGroup -ne $null)
     {
-        Write-Host -ForegroundColor Green "= Security group $Name"
+        Write-Host -ForegroundColor Green "= ${Name}: network security group ok"
     }
     else
     {
-        Write-Host -ForegroundColor Yellow "+ Security group $Name"
+        Write-Host -ForegroundColor Yellow "+ ${Name}: new network security group"
 
         $Priority = 1000
         $AllowRules = $Allow |% { 
@@ -169,11 +171,11 @@ function Ensure-LoadBalancer
     $LoadBalancer = $Context.ResourceGroup | Get-AzureLoadBalancer -Name $Name -Verbose -ErrorAction Ignore
     if ($LoadBalancer -ne $null)
     {
-        Write-Host -ForegroundColor Green "= Load balancer $Name"
+        Write-Host -ForegroundColor Green "= ${Name}: load balancer ok"
     }
     else
     {
-        Write-Host -ForegroundColor Yellow "+ Load balancer $Name"
+        Write-Host -ForegroundColor Yellow "+ ${Name}: new load balancer"
 
         # create load balancer
         $LoadBalancer = $Context.ResourceGroup | New-AzureLoadBalancer -Name $Name `
@@ -224,20 +226,24 @@ function Ensure-NetworkInterface
         [PSObject] $Context,
 
         [Parameter(Mandatory)]
-        [String] $Name
+        [String] $Name,
+
+        [Parameter(Mandatory)]
+        [String] $PrivateIP
     )
 
     $NetworkInterface = $Context.ResourceGroup | Get-AzureNetworkInterface -Name $Name -ErrorAction Ignore
     if ($NetworkInterface -ne $null)
     {
-        Write-Host -ForegroundColor Green "= Network interface $Name"
+        Write-Host -ForegroundColor Green "= ${Name}: network interface ok"
     }
     else
     {
-        Write-Host -ForegroundColor Yellow "+ Network interface $Name"
+        Write-Host -ForegroundColor Yellow "+ ${Name}: new network interface"
         $NetworkInterface = $Context.ResourceGroup | New-AzureNetworkInterface -Name $Name `
             -Subnet $Context.VirtualNetwork.Subnets[0] `
             -PublicIpAddress $Context.PublicIP `
+            -PrivateIpAddress $PrivateIP `
             -NetworkSecurityGroup $Context.SecurityGroup
     }
 
@@ -258,11 +264,11 @@ function Ensure-AvailabilitySet
     $AvailabilitySet = $Context.ResourceGroup | Get-AzureAvailabilitySet -Name $Name -ErrorAction Ignore
     if ($AvailabilitySet -ne $Null)
     {
-        Write-Host -ForegroundColor Green "= Availability set $Name"
+        Write-Host -ForegroundColor Green "= ${Name}: availability set ok"
     }
     else
     {
-        Write-Host -ForegroundColor Yellow "+ Availability set $Name"
+        Write-Host -ForegroundColor Yellow "+ ${Name}: new availability set"
         $AvailabilitySet = $Context.ResourceGroup | New-AzureAvailabilitySet -Name $Name -PlatformFaultDomainCount 2 -PlatformUpdateDomainCount 2
     }
 
@@ -292,11 +298,11 @@ function Ensure-VirtualMachine
     $VM = $Context.ResourceGroup | Get-AzureVM -Name $Name -ErrorAction Ignore
     if ($VM -ne $null)
     {
-        Write-Host -ForegroundColor Green "= Virtual machine $Name"
+        Write-Host -ForegroundColor Green "= ${Name}: virtual machine ok"
     }
     else
     {
-        Write-Host -ForegroundColor Yellow "+ Virtual machine $Name"
+        Write-Host -ForegroundColor Yellow "+ ${Name}: new virtual machine"
         $VhdUri = $Context.StorageAccount.PrimaryEndpoints.Blob.ToString() + "vhds/" + $DiskName + ".vhd"
         $VMConfig = New-AzureVMConfig -VMName $Name -VMSize $VMSize -AvailabilitySetId $Context.AvailabilitySet.Id `
             | Set-AzureVMOperatingSystem -Linux -Credential $Context.Credential -ComputerName $Name `
@@ -317,99 +323,106 @@ $Cr = New-Object PSCredential -ArgumentList @("jjm", (ConvertTo-SecureString "Su
 #
 
 New-Object PSObject -Property @{ "Credential"=$Cr } `
-| Ensure-ResourceGroup        -Name jjm-proxy -Location WestEurope `
-| Ensure-AvailabilitySet      -Name jjm-proxy-as `
-| Ensure-StorageAccount       -Name jjmproxy `
-| Ensure-VirtualNetwork       -Name jjm-proxy-vnet -Prefix 10.0.0.0/16 -Subnets @("10.0.0.0/24") `
-| Ensure-NetworkSecurityGroup -Name ubuntu01-sg -Allow @( @{ Name="SSH"; Proto="TCP"; Port=22 }, @{ Name="SSH-PROXY"; Proto="*"; Port=443 } ) `
-| Ensure-PublicIP             -Name ubuntu01-ip `
-| Ensure-NetworkInterface     -Name ubuntu01-if `
-| Ensure-VirtualMachine       -Name ubuntu01 -VMSize Basic_A0 -DiskName ubuntu01 | Out-Null
+| Ensure-ResourceGroup          -Name jjm-proxy -Location WestEurope `
+| Ensure-VirtualNetwork         -Name jjm-proxy-vnet -Prefix 10.0.0.0/16 `
+                                -Subnets @(
+                                    @{name="jjm-proxy-vnet-1"; prefix="10.0.0.0/24"},
+                                    @{name="GatewaySubnet"; prefix="10.0.254.0/24"}) `
+| Ensure-NetworkSecurityGroup   -Name ubuntu01-sg -Allow @(
+                                    @{name="SSH"; proto="TCP"; port=22},
+                                    @{name="SSH-PROXY"; proto="*"; port=443}) `
+| Ensure-PublicIP               -Name ubuntu01-ip `
+| Ensure-NetworkInterface       -Name ubuntu01-if -PrivateIP 10.0.0.101 | Out-Null
+
+New-Object PSObject -Property @{ "Credential"=$Cr } `
+| Ensure-ResourceGroup          -Name jjm-proxy -Location WestEurope `
+| Ensure-AvailabilitySet        -Name jjm-proxy-as `
+| Ensure-StorageAccount         -Name jjmproxy `
+| Ensure-VirtualMachine         -Name ubuntu01 -VMSize Basic_A0 -DiskName ubuntu01 -NICName ubuntu01-nic | Out-Null
 
 #
 # resource group jjm-dns-1
 #
 
 New-Object PSObject -Property @{ "Credential"=$Cr } `
-| Ensure-ResourceGroup        -Name jjm-dns-1 -Location WestEurope `
-| Ensure-AvailabilitySet      -Name jjm-dns-1-as `
-| Ensure-StorageAccount       -Name jjmdnsa `
-| Ensure-VirtualNetwork       -Name jjm-dns-1-vnet -Prefix 10.0.0.0/16 -Subnets @("10.0.0.0/24") `
-| Ensure-NetworkSecurityGroup -Name ubuntu02-sg -Allow @( @{ Name="SSH"; Proto="TCP"; Port=22 }, @{ Name="DNS"; Proto="*"; Port=53 } ) `
-| Ensure-PublicIP             -Name ubuntu02-ip `
-| Ensure-NetworkInterface     -Name ubuntu02-if `
-| Ensure-VirtualMachine       -Name ubuntu02 -VMSize Basic_A0 -DiskName ubuntu02| Out-Null
+| Ensure-ResourceGroup          -Name jjm-dns-1 -Location WestEurope `
+| Ensure-VirtualNetwork         -Name jjm-vnet-1 -Prefix 10.1.0.0/16 `
+                                -Subnets @(
+                                    @{name="jjm-vnet-1a"; prefix="10.1.0.0/24"},
+                                    @{name="GatewaySubnet"; prefix="10.1.254.0/24"}) `
+| Ensure-PublicIP               -Name jjm-dns-1-lb-ip `
+| Ensure-LoadBalancer           -Name jjm-dns-1-lb `
+                                -Interfaces @(
+                                    @{name="ubuntu02-nic"; ip="10.1.0.102"; nat=@(
+                                        @{name="jjm-dns-1-lb-nat-ssh-2"; proto="TCP"; src=2022; dst=22},
+                                        @{name="jjm-dns-1-lb-nat-dns-2"; proto="UDP"; src=2053; dst=35353})},
+                                    @{name="ubuntu03-nic"; ip="10.1.0.103"; nat=@(
+                                        @{name="jjm-dns-1-lb-nat-ssh-3"; proto="TCP"; src=3022; dst=22},
+                                        @{name="jjm-dns-1-lb-nat-dns-3"; proto="UDP"; src=3053; dst=35353})}) `
+                                -LBRules @{name="jjm-dns-1-lb-rule-dns"; proto="UDP"; src=53; dst=53} | Out-Null
 
 New-Object PSObject -Property @{ "Credential"=$Cr } `
-| Ensure-ResourceGroup        -Name jjm-dns-1 -Location WestEurope `
-| Ensure-AvailabilitySet      -Name jjm-dns-1-as `
-| Ensure-StorageAccount       -Name jjmdnsa `
-| Ensure-VirtualNetwork       -Name jjm-dns-1-vnet -Prefix 10.0.0.0/16 -Subnets @("10.0.0.0/24") `
-| Ensure-NetworkSecurityGroup -Name ubuntu03-sg -Allow @( @{ Name="SSH"; Proto="TCP"; Port=22 }, @{ Name="DNS"; Proto="*"; Port=53 } ) `
-| Ensure-PublicIP             -Name ubuntu03-ip `
-| Ensure-NetworkInterface     -Name ubuntu03-if `
-| Ensure-VirtualMachine       -Name ubuntu03 -VMSize Basic_A0 -DiskName ubuntu03| Out-Null
+| Ensure-ResourceGroup          -Name jjm-dns-1 -Location WestEurope `
+| Ensure-AvailabilitySet        -Name jjm-dns-1-as `
+| Ensure-StorageAccount         -Name jjmdnsa `
+| Ensure-VirtualMachine         -Name ubuntu02 -VMSize Standard_A0 -DiskName ubuntu02 -NICName ubuntu02-nic | Out-Null
+
+New-Object PSObject -Property @{ "Credential"=$Cr } `
+| Ensure-ResourceGroup          -Name jjm-dns-1 -Location WestEurope `
+| Ensure-AvailabilitySet        -Name jjm-dns-1-as `
+| Ensure-StorageAccount         -Name jjmdnsa `
+| Ensure-VirtualMachine         -Name ubuntu03 -VMSize Standard_A0 -DiskName ubuntu03 -NICName ubuntu03-nic | Out-Null
+
 
 #
 # resource group jjm-dns-2
 #
 
 New-Object PSObject -Property @{ "Credential"=$Cr } `
-| Ensure-ResourceGroup        -Name jjm-dns-2 -Location WestUS `
-| Ensure-AvailabilitySet      -Name jjm-dns-2-as `
-| Ensure-StorageAccount       -Name jjmdnsb `
-| Ensure-VirtualNetwork       -Name jjm-dns-2-vnet -Prefix 10.0.0.0/16 -Subnets @("10.0.0.0/24") `
-| Ensure-NetworkSecurityGroup -Name ubuntu04-sg -Allow @( @{ Name="SSH"; Proto="TCP"; Port=22 }, @{ Name="DNS"; Proto="*"; Port=53 } ) `
-| Ensure-PublicIP             -Name ubuntu04-ip `
-| Ensure-NetworkInterface     -Name ubuntu04-if `
-| Ensure-VirtualMachine       -Name ubuntu04 -VMSize Basic_A0 -DiskName ubuntu04| Out-Null
-
-New-Object PSObject -Property @{ "Credential"=$Cr } `
-| Ensure-ResourceGroup        -Name jjm-dns-2 -Location WestUS `
-| Ensure-AvailabilitySet      -Name jjm-dns-2-as `
-| Ensure-StorageAccount       -Name jjmdnsb `
-| Ensure-VirtualNetwork       -Name jjm-dns-2-vnet -Prefix 10.0.0.0/16 -Subnets @("10.0.0.0/24") `
-| Ensure-NetworkSecurityGroup -Name ubuntu05-sg -Allow @( @{ Name="SSH"; Proto="TCP"; Port=22 }, @{ Name="DNS"; Proto="*"; Port=53 } ) `
-| Ensure-PublicIP             -Name ubuntu05-ip `
-| Ensure-NetworkInterface     -Name ubuntu05-if `
-| Ensure-VirtualMachine       -Name ubuntu05 -VMSize Basic_A0 -DiskName ubuntu05| Out-Null
-
-#
-# resource group jjm-dns-3 [experiment with load balancer]
-#
-
-New-Object PSObject -Property @{ "Credential"=$Cr } `
-| Ensure-ResourceGroup          -Name jjm-dns-3 -Location WestEurope `
-| Ensure-VirtualNetwork         -Name jjm-dns-3-vnet -Prefix 10.0.0.0/16 -Subnets @("10.0.0.0/24") `
-| Ensure-PublicIP               -Name jjm-dns-3-lb-ip `
-| Ensure-LoadBalancer           -Name jjm-dns-3-lb `
+| Ensure-ResourceGroup          -Name jjm-dns-2 -Location WestUS `
+| Ensure-VirtualNetwork         -Name jjm-vnet-2 -Prefix 10.2.0.0/16 `
+                                -Subnets @(
+                                    @{name="jjm-vnet-2a"; prefix="10.2.0.0/24"},
+                                    @{name="GatewaySubnet"; prefix="10.2.254.0/24"}) `
+| Ensure-PublicIP               -Name jjm-dns-2-lb-ip `
+| Ensure-LoadBalancer           -Name jjm-dns-2-lb `
                                 -Interfaces @( 
-                                    @{ name="ubuntu02-nic"; 
-                                       ip="10.0.0.102"; 
-                                       nat=@(
-                                            @{ name="jjm-dns-1-lb-nat-ssh-2"; proto="TCP"; src=2022; dst=22 },
-                                            @{ name="jjm-dns-1-lb-nat-dns-2"; proto="UDP"; src=2053; dst=35353 })},
-                                    @{ name="ubuntu03-nic";
-                                       ip="10.0.0.103";
-                                       nat=@(
-                                            @{ name="jjm-dns-1-lb-nat-ssh-3"; proto="TCP"; src=3022; dst=22 },
-                                            @{ name="jjm-dns-1-lb-nat-dns-3"; proto="UDP"; src=3053; dst=35353 })}) `
-                                -LBRules @{ name="jjm-dns-1-lb-rule-dns"; proto="UDP"; src=53; dst=53 } | Out-Null
+                                    @{name="ubuntu04-nic"; ip="10.2.0.104"; nat=@(
+                                        @{name="jjm-dns-2-lb-nat-ssh-4"; proto="TCP"; src=4022; dst=22},
+                                        @{name="jjm-dns-2-lb-nat-dns-4"; proto="UDP"; src=4053; dst=35353})},
+                                    @{name="ubuntu05-nic"; ip="10.2.0.105"; nat=@(
+                                        @{name="jjm-dns-2-lb-nat-ssh-5"; proto="TCP"; src=5022; dst=22},
+                                        @{name="jjm-dns-2-lb-nat-dns-5"; proto="UDP"; src=5053; dst=35353})}) `
+                                -LBRules @{name="jjm-dns-2-lb-rule-dns"; proto="UDP"; src=53; dst=53} | Out-Null
 
 New-Object PSObject -Property @{ "Credential"=$Cr } `
-| Ensure-ResourceGroup        -Name jjm-dns-3 -Location WestEurope `
-| Ensure-AvailabilitySet      -Name jjm-dns-3-as `
-| Ensure-StorageAccount       -Name jjmdnsc `
-| Ensure-VirtualMachine       -Name ubuntu02 -VMSize Standard_A0 -DiskName ubuntu02 -NICName ubuntu02-nic | Out-Null
+| Ensure-ResourceGroup          -Name jjm-dns-2 -Location WestUS `
+| Ensure-AvailabilitySet        -Name jjm-dns-2-as `
+| Ensure-StorageAccount         -Name jjmdnsb `
+| Ensure-VirtualMachine         -Name ubuntu04 -VMSize Standard_A0 -DiskName ubuntu04 -NICName ubuntu04-nic | Out-Null
 
 New-Object PSObject -Property @{ "Credential"=$Cr } `
-| Ensure-ResourceGroup        -Name jjm-dns-3 -Location WestEurope `
-| Ensure-AvailabilitySet      -Name jjm-dns-3-as `
-| Ensure-StorageAccount       -Name jjmdnsc `
-| Ensure-VirtualMachine       -Name ubuntu03 -VMSize Standard_A0 -DiskName ubuntu03 -NICName ubuntu03-nic | Out-Null
+| Ensure-ResourceGroup          -Name jjm-dns-2 -Location WestUS `
+| Ensure-AvailabilitySet        -Name jjm-dns-2-as `
+| Ensure-StorageAccount         -Name jjmdnsb `
+| Ensure-VirtualMachine         -Name ubuntu05 -VMSize Standard_A0 -DiskName ubuntu05 -NICName ubuntu05-nic | Out-Null
 
 #
 # print public ip's
 #
 
-Get-AzurePublicIpAddress | select Name,IpAddress | Format-Table
+Get-AzurePublicIpAddress | select Name,IpAddress | sort Name | Format-Table
+
+
+<#
+    AzureVirtualNetwork -> AzureVirtualNetworkSubnetConfig [the second MUST be called "GatewaySubnet"]
+
+    AzurePublicIPAddress
+
+    AzureVirtualNetworkGatewayIPConfig -> AzurePublicIPAddress
+    AzureVirtualNetworkGatewayIPConfig -> AzureVirtualNetworkSubnetConfig
+
+    AzureVirtualNetworkGateway -> AzureVirtualNetworkGatewayIPConfig
+
+    AzureVirtualNetworkGatewayConnection -> AzureVirtualNetworkGateway
+#>
