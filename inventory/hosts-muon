@@ -3,10 +3,10 @@ photon ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansibl
 proton ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root ansible_ssh_host=proton.fritz.box ansible_ssh_port=22
 
 ubuntu01 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=jjm ansible_ssh_host=ssh.j0057.nl ansible_ssh_port=22 ansible_sudo=True
-ubuntu02 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=jjm ansible_ssh_host=ns1.j0057.nl ansible_ssh_port=22 ansible_sudo=True
-ubuntu03 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=jjm ansible_ssh_host=ns2.j0057.nl ansible_ssh_port=22 ansible_sudo=True
-ubuntu04 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=jjm ansible_ssh_host=ns3.j0057.nl ansible_ssh_port=22 ansible_sudo=True
-ubuntu05 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=jjm ansible_ssh_host=ns4.j0057.nl ansible_ssh_port=22 ansible_sudo=True
+ubuntu02 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=jjm ansible_ssh_host=ns1.j0057.nl ansible_ssh_port=2022 ansible_sudo=True
+ubuntu03 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=jjm ansible_ssh_host=ns1.j0057.nl ansible_ssh_port=3022 ansible_sudo=True
+ubuntu04 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=jjm ansible_ssh_host=ns2.j0057.nl ansible_ssh_port=4022 ansible_sudo=True
+ubuntu05 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=jjm ansible_ssh_host=ns2.j0057.nl ansible_ssh_port=5022 ansible_sudo=True
 
 [config]
 muon
