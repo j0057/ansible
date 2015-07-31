@@ -346,20 +346,14 @@ New-Object PSObject -Property @{ "Credential"=$Cr } `
 
 New-Object PSObject -Property @{ "Credential"=$Cr } `
 | Ensure-ResourceGroup          -Name jjm-dns-1 -Location WestEurope `
-| Ensure-VirtualNetwork         -Name jjm-vnet-1 -Prefix 10.1.0.0/16 `
+| Ensure-VirtualNetwork         -Name jjm-dns-1-vnet -Prefix 10.1.0.0/16 `
                                 -Subnets @(
-                                    @{name="jjm-vnet-1a"; prefix="10.1.0.0/24"},
-                                    @{name="GatewaySubnet"; prefix="10.1.254.0/24"}) `
-| Ensure-PublicIP               -Name jjm-dns-1-lb-ip `
-| Ensure-LoadBalancer           -Name jjm-dns-1-lb `
-                                -Interfaces @(
-                                    @{name="ubuntu02-nic"; ip="10.1.0.102"; nat=@(
-                                        @{name="jjm-dns-1-lb-nat-ssh-2"; proto="TCP"; src=2022; dst=22},
-                                        @{name="jjm-dns-1-lb-nat-dns-2"; proto="UDP"; src=2053; dst=35353})},
-                                    @{name="ubuntu03-nic"; ip="10.1.0.103"; nat=@(
-                                        @{name="jjm-dns-1-lb-nat-ssh-3"; proto="TCP"; src=3022; dst=22},
-                                        @{name="jjm-dns-1-lb-nat-dns-3"; proto="UDP"; src=3053; dst=35353})}) `
-                                -LBRules @{name="jjm-dns-1-lb-rule-dns"; proto="UDP"; src=53; dst=53} | Out-Null
+                                    @{name="jjm-dns-1-vnet-1"; prefix="10.1.0.0/24"}) `
+| Ensure-NetworkSecurityGroup   -Name ubuntu02-sg -Allow @(
+                                    @{name="SSH"; proto="TCP"; port=22},
+                                    @{name="DNS"; proto="*"  ; port=53}) `
+| Ensure-PublicIP               -Name ubuntu02-ip `
+| Ensure-NetworkInterface       -Name ubuntu02-nic -PrivateIP 10.1.0.102 | Out-Null
 
 New-Object PSObject -Property @{ "Credential"=$Cr } `
 | Ensure-ResourceGroup          -Name jjm-dns-1 -Location WestEurope `
@@ -367,45 +361,26 @@ New-Object PSObject -Property @{ "Credential"=$Cr } `
 | Ensure-StorageAccount         -Name jjmdnsa `
 | Ensure-VirtualMachine         -Name ubuntu02 -VMSize Standard_A0 -DiskName ubuntu02 -NICName ubuntu02-nic | Out-Null
 
-New-Object PSObject -Property @{ "Credential"=$Cr } `
-| Ensure-ResourceGroup          -Name jjm-dns-1 -Location WestEurope `
-| Ensure-AvailabilitySet        -Name jjm-dns-1-as `
-| Ensure-StorageAccount         -Name jjmdnsa `
-| Ensure-VirtualMachine         -Name ubuntu03 -VMSize Standard_A0 -DiskName ubuntu03 -NICName ubuntu03-nic | Out-Null
-
-
 #
 # resource group jjm-dns-2
 #
 
 New-Object PSObject -Property @{ "Credential"=$Cr } `
 | Ensure-ResourceGroup          -Name jjm-dns-2 -Location WestUS `
-| Ensure-VirtualNetwork         -Name jjm-vnet-2 -Prefix 10.2.0.0/16 `
+| Ensure-VirtualNetwork         -Name jjm-dns-2-vnet -Prefix 10.2.0.0/16 `
                                 -Subnets @(
-                                    @{name="jjm-vnet-2a"; prefix="10.2.0.0/24"},
-                                    @{name="GatewaySubnet"; prefix="10.2.254.0/24"}) `
-| Ensure-PublicIP               -Name jjm-dns-2-lb-ip `
-| Ensure-LoadBalancer           -Name jjm-dns-2-lb `
-                                -Interfaces @( 
-                                    @{name="ubuntu04-nic"; ip="10.2.0.104"; nat=@(
-                                        @{name="jjm-dns-2-lb-nat-ssh-4"; proto="TCP"; src=4022; dst=22},
-                                        @{name="jjm-dns-2-lb-nat-dns-4"; proto="UDP"; src=4053; dst=35353})},
-                                    @{name="ubuntu05-nic"; ip="10.2.0.105"; nat=@(
-                                        @{name="jjm-dns-2-lb-nat-ssh-5"; proto="TCP"; src=5022; dst=22},
-                                        @{name="jjm-dns-2-lb-nat-dns-5"; proto="UDP"; src=5053; dst=35353})}) `
-                                -LBRules @{name="jjm-dns-2-lb-rule-dns"; proto="UDP"; src=53; dst=53} | Out-Null
+                                    @{name="jjm-dns-2-vnet-1"; prefix="10.2.0.0/24"}) `
+| Ensure-NetworkSecurityGroup   -Name ubuntu03-sg -Allow @(
+                                    @{name="SSH"; proto="TCP"; port=22},
+                                    @{name="DNS"; proto="*"  ; port=53}) `
+| Ensure-PublicIP               -Name ubuntu03-ip `
+| Ensure-NetworkInterface       -Name ubuntu03-nic -PrivateIP 10.2.0.103 | Out-Null
 
 New-Object PSObject -Property @{ "Credential"=$Cr } `
 | Ensure-ResourceGroup          -Name jjm-dns-2 -Location WestUS `
 | Ensure-AvailabilitySet        -Name jjm-dns-2-as `
 | Ensure-StorageAccount         -Name jjmdnsb `
-| Ensure-VirtualMachine         -Name ubuntu04 -VMSize Standard_A0 -DiskName ubuntu04 -NICName ubuntu04-nic | Out-Null
-
-New-Object PSObject -Property @{ "Credential"=$Cr } `
-| Ensure-ResourceGroup          -Name jjm-dns-2 -Location WestUS `
-| Ensure-AvailabilitySet        -Name jjm-dns-2-as `
-| Ensure-StorageAccount         -Name jjmdnsb `
-| Ensure-VirtualMachine         -Name ubuntu05 -VMSize Standard_A0 -DiskName ubuntu05 -NICName ubuntu05-nic | Out-Null
+| Ensure-VirtualMachine         -Name ubuntu03 -VMSize Standard_A0 -DiskName ubuntu03 -NICName ubuntu03-nic | Out-Null
 
 #
 # print public ip's
