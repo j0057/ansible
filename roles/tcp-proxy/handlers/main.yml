@@ -1,6 +1,7 @@
 - name: "restart proxy@{{ tcp_proxy_name }}.service"
   service:
     name: proxy@{{ tcp_proxy_name }}.service
+    enabled: yes
     state: restarted
 
 - name: "restart ufw"
