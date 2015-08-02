@@ -92,17 +92,15 @@ function Ensure-VirtualNetwork
         [Parameter(Mandatory)]
         [String] $Name,
 
-        [Parameter(Mandatory)]
         [String] $Prefix,
 
-        [Parameter(Mandatory)]
         [PSObject[]] $Subnets
     )
     
     $VirtualNetwork = $Context.ResourceGroup | Get-AzureVirtualNetwork -Name $Name -ErrorAction Ignore
     if ($VirtualNetwork -ne $null)
     {
-        Write-Host -ForegroundColor Green "= ${Name}: new network ok"
+        Write-Host -ForegroundColor Green "= ${Name}: virtual network ok"
     }
     else
     {
@@ -114,6 +112,39 @@ function Ensure-VirtualNetwork
     }
 
     $Context | Add-Member -NotePropertyName VirtualNetwork -NotePropertyValue $VirtualNetwork
+    return $Context
+}
+
+function Ensure-NetworkGateway
+{
+    param(
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [PSObject] $Context,
+
+        [Parameter(Mandatory)]
+        [String] $Name,
+
+        [String] $PrivateIP
+    )
+
+    $Gateway = $Context.ResourceGroup | Get-AzureVirtualNetworkGateway -Name $Name -ErrorAction Ignore
+    if ($Gateway -ne $null)
+    {
+        Write-Host -ForegroundColor Green "= ${Name}: network gateway ok"
+    }
+    else
+    {
+        Write-Host -ForegroundColor Yellow "+ ${Name}: create network gateway"
+        $Subnet = $Context.VirtualNetwork.Subnets |? Name -eq "GatewaySubnet"
+        $GatewayConfig = New-AzureVirtualNetworkGatewayIpConfig -Name ${Name}-config `
+            -PublicIpAddress $Context.PublicIP -PrivateIpAddress $PrivateIP -Subnet $Subnet
+        $Gateway = $Context.ResourceGroup | New-AzureVirtualNetworkGateway -Name $Name `
+            -GatewayType Vpn `
+            -VpnType RouteBased `
+            -IpConfigurations $GatewayConfig
+    }
+
+    $Context | Add-Member -NotePropertyName NetworkGateway -NotePropertyValue $Gateway
     return $Context
 }
 
@@ -319,6 +350,35 @@ function Ensure-VirtualMachine
 $Cr = New-Object PSCredential -ArgumentList @("jjm", (ConvertTo-SecureString "SuperGeheimWachtwoord1" -AsPlainText -Force))
 
 #
+# resource group jjm-jump
+#
+
+New-Object PSObject -Property @{ "Credential"=$Cr } `
+| Ensure-ResourceGroup          -Name jjm-jump -Location WestEurope `
+| Ensure-VirtualNetwork         -Name jjm-jump-vnet -Prefix 10.10.0.0/16 `
+                                -Subnets @(
+                                    @{name="jjm-jump-vnet-1"; prefix="10.10.0.0/24"},
+                                    @{name="GatewaySubnet"; prefix="10.10.254.0/24"}) `
+| Ensure-NetworkSecurityGroup   -Name ubuntu04-sg -Allow @(@{name="SSH"; proto="TCP"; port=22}) `
+| Ensure-PublicIP               -Name ubuntu04-ip `
+| Ensure-NetworkInterface       -Name ubuntu04-if -PrivateIP 10.10.0.104 | Out-Null
+
+New-Object PSObject -Property @{ "Credential"=$Cr } `
+| Ensure-ResourceGroup          -Name jjm-jump -Location WestEurope `
+| Ensure-VirtualNetwork         -Name jjm-jump-vnet `
+| Ensure-PublicIP               -Name jjm-jump-gw-ip `
+| Ensure-NetworkGateway         -Name jjm-jump-gw -PrivateIP 10.10.254.4
+
+Exit 1
+
+New-Object PSObject -Property @{ "Credential"=$Cr } `
+| Ensure-ResourceGroup          -Name jjm-jump -Location WestEurope `
+| Ensure-AvailabilitySet        -Name jjm-jump-as `
+| Ensure-StorageAccount         -Name jjmjump `
+| Ensure-VirtualMachine         -Name ubuntu04 -VMSize Basic_A0 -DiskName ubuntu04 -NICName ubuntu04-nic | Out-Null
+
+
+#
 # resource group jjm-proxy
 #
 
@@ -387,17 +447,3 @@ New-Object PSObject -Property @{ "Credential"=$Cr } `
 #
 
 Get-AzurePublicIpAddress | select Name,IpAddress | sort Name | Format-Table
-
-
-<#
-    AzureVirtualNetwork -> AzureVirtualNetworkSubnetConfig [the second MUST be called "GatewaySubnet"]
-
-    AzurePublicIPAddress
-
-    AzureVirtualNetworkGatewayIPConfig -> AzurePublicIPAddress
-    AzureVirtualNetworkGatewayIPConfig -> AzureVirtualNetworkSubnetConfig
-
-    AzureVirtualNetworkGateway -> AzureVirtualNetworkGatewayIPConfig
-
-    AzureVirtualNetworkGatewayConnection -> AzureVirtualNetworkGateway
-#>
