@@ -9,6 +9,10 @@
   ufw: name=OpenSSH rule=allow
   notify: "restart ufw"
 
+- name: "enable ufw"
+  ufw: state=enabled
+  notify: "restart ufw"
+
 - name: "set authorized keys"
   authorized_key: user={{ item.0.user}} state=present manage_dir=yes
   args:
