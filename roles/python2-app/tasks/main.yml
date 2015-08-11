@@ -8,7 +8,7 @@
   tags: python2-app
 
 - name: "{{ name }} | create user account"
-  user: "name={{ name }} system=yes createhome=no groups=http home=/var/{{ name }} shell=/bin/false state=present"
+  user: "name={{ name }} system=yes createhome=no groups=http home=/var/lib/{{ name }} shell=/sbin/nologin state=present"
   tags: python2-app
 
 - name: "{{ name }} | create directories"
