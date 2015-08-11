@@ -1,5 +1,5 @@
-- include: common.yml
-- include: mgmt-server.yml
-- include: main-server.yml
-- include: media-server.yml
-- include: azure.yml
+- include: tasks/common.yml
+- include: tasks/mgmt-server.yml
+- include: tasks/main-server.yml
+- include: tasks/media-server.yml
+- include: tasks/azure.yml
