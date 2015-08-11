@@ -1,0 +1,76 @@
+- name: management server
+  hosts: [config]
+  vars_files: [secrets.yml]
+
+  roles:
+
+  - role: packages
+    packages:
+    - dnsutils
+    - ethtool
+    - graphviz
+    - htop
+    - inotify-tools
+    - libjpeg-turbo
+    - libmariadbclient
+    - libpng
+    - libtiff
+    - libxml2
+    - libxslt
+    - mc
+    - mercurial
+    - mono
+    - nmap
+    - rsync
+    - sshpass
+    - strace
+    - sudo
+    - tcpdump
+    - tmux
+    - traceroute
+    - unzip
+    - vim-minimal
+    - wget
+
+  - role: build-server
+    path:
+      aur: "/var/lib/aur_x86_64"
+      src: "/var/lib/pypkg27"
+      whl: "/var/lib/pypkg27"
+    aur:
+    - python2-pydns
+    - python2-pyspf
+    - python2-postfix-policyd-spf   
+    py27:
+    - ansible
+    - coverage
+    - fusepy
+    - githubrelease
+    - lxml
+    - mock
+    - mutagen
+    - mysql-python
+    - pillow
+    - pip
+    - pudb
+    - pyephem
+    - pyflakes
+    - pygraphviz
+    - pytest
+    - pytest-cov
+    - pytest-flakes
+    - python-dateutil
+    - python-prctl
+    - pytz
+    - requests
+    - setuptools
+    - setuptools-metadata
+    - setuptools-version-command
+    - tox
+    - twine
+    - unidecode
+    - virtualenv
+    - webob
+    - wheel
+    whl_blacklist:
+    - ansible

@@ -1,0 +1,34 @@
+- name: basic ubuntu configuration
+  hosts: [azure]
+  vars_files: [secrets.yml]
+
+  roles:
+
+  - role: ubuntu-common
+    authorized_keys:
+    - user: jjm
+      pubkeys:
+      - j.j.molenaar@gmail.com
+      - jjm@nexus5
+      - joost@ws-nuc68
+
+- name: socat tcp proxy
+  hosts: [proxy]
+  vars_files: [secrets.yml]
+
+  roles:
+  - role: tcp-proxy
+    tcp_proxy_name: ssh
+    tcp_proxy_source: 443
+    tcp_proxy_target: j0057.nl:22
+
+- name: dns slaves
+  hosts: [dns]
+  vars_files: [secrets.yml]
+
+  roles:
+
+  - role: dns-slave
+    zones:
+    - j0057.nl
+    - punosqnp.nl

@@ -1,0 +1,206 @@
+
+- name: server configuration
+  hosts: [server]
+  vars_files: [secrets.yml]
+
+  roles:
+
+  - role: packages
+    packages:
+    - dnsutils
+    - ethtool
+    - graphviz
+    - htop
+    - inotify-tools
+    - libjpeg-turbo
+    - libmariadbclient
+    - libpng
+    - libtiff
+    - libxml2
+    - libxslt
+    - mc
+    - mono
+    - nmap
+    - rsync
+    - strace
+    - sudo
+    - tcpdump
+    - tmux
+    - traceroute
+    - vim-minimal
+    - unzip
+    - wol
+
+  - role: data
+    vault_files:
+    - { dest: "/etc/ssl/private/j0057.nl.crt",          mode: "0644", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_j0057_nl_crt" }
+    - { dest: "/etc/ssl/private/j0057.nl.chained.crt",  mode: "0644", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_j0057_nl_chained_crt" }
+    - { dest: "/etc/ssl/private/j0057.nl.key",          mode: "0600", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_j0057_nl_key" }
+    - { dest: "/etc/ssl/private/dev.j0057.nl.crt",      mode: "0644", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_dev_j0057_nl_crt" }
+    - { dest: "/etc/ssl/private/dev.j0057.nl.key",      mode: "0600", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_dev_j0057_nl_key" }
+    - { dest: "/etc/ssl/private/punosqnp.nl.crt",       mode: "0644", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_punosqnp_nl_crt" }
+    - { dest: "/etc/ssl/private/punosqnp.nl.key",       mode: "0600", owner: root, group: root, template: secret_plaintext.j2, key: "ssl_punosqnp_nl_key" }
+
+  - role: build-client
+    path:
+      aur: "/var/lib/aur_x86_64"
+      pkg: "/var/lib/pypkg27"
+
+  - role: nginx
+    servers:
+    - nl.j0057
+    - nl.j0057.dev
+    - nl.j0057.www
+    - nl.punosqnp
+    - nl.punosqnp.www
+    - nl.stomrin
+    - nl.stomrin.www
+
+  - role: firewall
+
+  - role: dns
+    dnssec: true
+    zones:
+    - j0057.nl
+    - punosqnp.nl
+
+  - role: mariadb
+
+  - role: python2
+    path:
+      whl: "/var/lib/pypkg27"
+      src: "/var/lib/pypkg27"
+
+  - role: python2-app
+    name: cachetest
+    pkg: cachetest==1.0.dev14
+    cfg:
+    - { src: "cachetest.yml", dest: "/etc/uwsgi/apps-enabled/cachetest.yml", keys: ~ }
+    enable:
+    - { name: uwsgi@cachetest.socket, state: started }
+    update:
+    - { name: uwsgi@cachetest.service, state: stopped }
+
+  - role: python2-app
+    name: dns
+    pkg: dns==1.0.dev16
+    cfg:
+    - { src: "dns.yml", dest: "/etc/uwsgi/apps-enabled/dns.yml", keys: ~ }
+    enable:
+    - { name: uwsgi@dns.socket, state: started }
+    update:
+    - { name: uwsgi@dns.service, state: stopped }
+
+  - role: python2-app
+    name: hello
+    pkg: hello==1.2.dev9
+    cfg:
+    - { src: "hello.yml", dest: "/etc/uwsgi/apps-enabled/hello.yml", key: ~ }
+    enable:
+    - { name: uwsgi@hello.socket, state: started }
+    update:
+    - { name: uwsgi@hello.service, state: stopped }
+
+  - role: python2-app
+    name: mp3-dev
+    pkg: mp3==2.0.dev88
+    cfg:
+    - { src: "mp3-dev.yml", dest: "/etc/uwsgi/apps-enabled/mp3-dev.yml", key: ~ }
+    enable:
+    - { name: uwsgi@mp3-dev.socket, state: started }
+    update:
+    - { name: uwsgi@mp3-dev.service, state: stopped }
+
+  - role: python2-app
+    name: musicdb
+    pkg: musicdb==1.0.dev51
+    cfg:
+    - { src: "musicdb.yml", dest: "/etc/uwsgi/apps-enabled/musicdb.yml", key: ~ }
+    - { src: "musicdb.ini", dest: "/etc/musicdb.ini",                    key: ~ }
+    enable:
+    - { name: uwsgi@musicdb.socket, state: started }
+    update:
+    - { name: uwsgi@musicdb.service, state: stopped }
+
+  - role: python2-app
+    name: oauth
+    pkg: oauth==1.0.dev89
+    cfg:
+    - { src: "oauth.yml",      dest: "/etc/uwsgi/apps-enabled/oauth.yml", key: ~ }
+    - { src: "secret_json.j2", dest: "/etc/oauth/keys.json",              key: "oauth_keys_json" }
+    enable:
+    - { name: uwsgi@oauth.socket, state: started }
+    update:
+    - { name: uwsgi@oauth.service, state: stopped }
+
+  - role: python2-app
+    name: stomrin
+    pkg: stomrin==1.0.post33
+    cfg:
+    - { src: "stomrin.yml",     dest: "/etc/uwsgi/apps-enabled/stomrin.yml", key: ~ }
+    - { src: "stomrin.service", dest: "/etc/systemd/system/stomrin.service", key: ~ }
+    enable:
+    - { name: uwsgi@stomrin.socket, state: started }
+    - { name: stomrin.service,      state: started }
+    update:
+    - { name: uwsgi@stomrin.service, state: stopped }
+    - { name: stomrin.service,       state: restarted }
+
+  - role: python2-app
+    name: twitter
+    pkg: twitter==0.1-108-g7253234
+    cfg:
+    - { src: "twitter.service", dest: "/etc/systemd/system/twitter.service", key: ~ }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/casio_f91w.json",        key: "twitter_casio_f91w" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/convertbot.json",        key: "twitter_convertbot" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/deoldehove.json",        key: "twitter_deoldehove" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/grotebroer1.json",       key: "twitter_grotebroer1" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/hetluchtalarm.json",     key: "twitter_hetluchtalarm" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/johndoeveloper.json",    key: "twitter_johndoeveloper" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/maanfase.json",          key: "twitter_maanfase" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/msvlieland.json",        key: "twitter_msvlieland" }
+    - { src: "secret_json.j2",  dest: "/etc/twitter/y2k38warning.json",      key: "twitter_y2k38warning" }
+    enable:
+    - { name: twitter.service, state: stopped }
+    update:
+    - { name: twitter.service, state: stopped }
+
+  - role: python2-app
+    name: xhttptest
+    pkg: xhttptest==1.0.dev13
+    cfg:
+    - { src: "xhttptest.yml", dest: "/etc/uwsgi/apps-enabled/xhttptest.yml", key: ~ }
+    enable:
+    - { name: uwsgi@xhttptest.socket, state: started }
+    update:
+    - { name: uwsgi@xhttptest.service, state: stopped }
+
+  - role: email
+    postfix:
+      aliases:
+      - { dest: "jjm", name: "root" }
+      - { dest: "jjm", name: "*" }
+      virtuals:
+      - { user: "jjm", domain: "@j0057.nl" }
+      - { user: "jjm", domain: "@punosqnp.nl" }
+      main_cf:
+        myhostname: j0057.nl
+        mydomain: j0057.nl
+        mydestination: [j0057.nl, punosqnp.nl, xi.j0057.nl]
+        ssl_cert: /etc/ssl/private/j0057.nl.chained.crt
+        ssl_key: /etc/ssl/private/j0057.nl.key
+    dovecot:
+      users:
+      - { name: jjm, uid: 1000, gid: 1000, home: /home/jjm }
+      ssl_cert: /etc/ssl/private/j0057.nl.chained.crt
+      ssl_key: /etc/ssl/private/j0057.nl.key
+
+  - role: fileserver
+    fstab:
+    - { dev: "LABEL=USB2T", dir: "/mnt/usb2t", fstype: ext4, opts: nofail }
+    shares:
+    - { name: "music", dir: "/mnt/usb2t/music", uid: "60000", gid: "60000" }
+    - { name: "films", dir: "/mnt/usb2t/films", uid: "60000", gid: "60000" }
+    - { name: "series", dir: "/mnt/usb2t/series", uid: "60000", gid: "60000" }
+
+
