@@ -33,13 +33,16 @@ create_allowed_chain() {
     allow tcp   139 # netbios
     allow tcp   445 # netbios
 
-    allow tcp   111 # rpcbind
-    allow udp   111 # rpcbind
+    allow tcp   111 # nfs portmapper
+    allow udp   111
     allow tcp  2049 # nfsd
-    allow udp  2049 # nfsd
+    allow udp  2049
 
-    allow udp 20048 # nfs
+    allow udp 20048 # nfs mountd
     allow tcp 20048
+
+    allow tcp 32803 # nfs lockd
+    allow udp 32803
 
     allow tcp 32764:32769 # other nfs stuff
     allow udp 32764:32769 # other nfs stuff
@@ -48,6 +51,8 @@ create_allowed_chain() {
 
     allow tcp 51413 # transmission-cli
     allow udp 51413
+
+    allow tcp  9109 # transmissiond
 }
 
 export -f create_allowed_chain
