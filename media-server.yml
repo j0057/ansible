@@ -1,3 +1,50 @@
-- name: media server
+- name: media server (1)
   hosts: mediacenter
-  roles: []
+  vars:
+    services:
+    - kodi.service
+    - ntpd.service
+  tasks:
+ 
+  - name: disable services
+    service: name={{ item }} enabled=no state=stopped
+    with_items: services
+ 
+  # name: install packages
+  # pacman: name={{ item }}
+  # with_items:
+  # - lsb-release
+  # - kodi-rbp
+  # - omxplayer-git
+  # - xorg-xrefresh
+  # - xorg-xset
+  # - htop
+  # - vim-minimal
+  # - ntp
+
+  # name: set hostname
+  # hostname: name={{ ansible_ssh_host }}
+
+  - name: configure udev for kodi
+    file: 
+      dest: /etc/udev/rules.d/local.rules
+      content: |
+        SUBSYSTEM="tty", KERNEL="tty0", GROUP="tty", MODE="0666"
+      state: file
+
+  - name: enable services
+    service: name={{ item }} enabled=yes state=started
+    with_items: services
+
+  - name: configure firmware
+    lineinfile:
+      dest: /boot/config.txt
+      line: "{{ item.line }}"
+      regexp: "{{ item.regexp }}"
+    with_items:
+    - line: gpu_mem=128
+      regexp: "^gpu_mem=.*$"
+    - line: decode_MPG2=0x402ba84
+      regexp: "^decode_MPG2=.*$"
+    - line: decode_WVC1=0x955ae5eb
+      regexp: "decode_WVC1=.*$"

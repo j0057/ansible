@@ -10,7 +10,7 @@
       - { name: jjm,   gid: 1000 }
       - { name: usb2t, gid: 60000 }
       users:
-      - { name: jjm,   uid: 1000,  group: "jjm",   comment: "Joost Molenaar", groups: "usb2t,users,wheel", system: false }
+      - { name: jjm,   uid: 1000,  group: "jjm",   comment: "Joost Molenaar", groups: "usb2t,users,wheel", system: false, createhome: yes }
       - { name: usb2t, uid: 60000, group: "usb2t", comment: ~,                groups: ~,                   system: true }
       authorized_keys:
       - { user: root, pubkeys: [ j.j.molenaar@gmail.com, jjm@nexus5, joost@ws-nuc68 ] }

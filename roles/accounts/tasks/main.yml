@@ -14,7 +14,7 @@
     group: "{{ item.group }}"
     groups: "{{ item.groups }}"
     system: "{{ item.system }}"
-    createhome: "{{ item.system == \"yes\" | ternary('no', 'yes') }}"
+    createhome: "{{ (item.system == \"yes\") | ternary('no', 'yes') }}"
     comment: "{{ item.comment }}"
     state: "present"
   with_items: account.users
@@ -26,6 +26,8 @@
     dest: "/etc/sudoers.d/wheel"
     create: yes
   tags: accounts
+
+# name: "ensure .ssh exists"
 
 - name: "set authorized keys"
   authorized_key: user={{ item.0.user}} state=present manage_dir=yes
