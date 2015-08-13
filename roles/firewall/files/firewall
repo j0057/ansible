@@ -44,8 +44,15 @@ create_geoblocks_chain() {
             sed 's/^/add /' $GEOBLOCKS_DIR/geoblocks | $ipset restore
 
             for cc in $GEOBLOCKS; do
-                $iptables --table filter --append geoblocks --match "set" --match-set $cc src --jump LOG --log-prefix "[GEOBLOCK/${cc}] " -m limit --limit "1/s" --limit-burst 5
-                $iptables --table filter --append geoblocks --match "set" --match-set $cc src --jump DROP
+                $iptables --table filter --append geoblocks \
+                    --match "set" --match-set $cc src \
+                    --match multiport ! --dports 80,443 \
+                    --match limit --limit "1/s" --limit-burst 5
+                    --jump LOG --log-prefix "[GEOBLOCK/${cc}] "
+                $iptables --table filter --append geoblocks \
+                    --match "set" --match-set $cc src
+                    --match multiport ! --dports 80,443 \
+                    --jump DROP
             done
             ;;
     esac
