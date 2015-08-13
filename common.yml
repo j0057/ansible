@@ -19,3 +19,13 @@
   - role: ntp
     servers:
     - ntp.xs4all.nl
+
+- name: odds and ends
+  hosts: [config, server, workstation, mediacenter]
+  tasks:
+  - name: "systemd symlinks"
+    file: dest={{ item.dest }} src={{ item.src }} state=link
+    with_items:
+    - { dest: "/usr/local/bin/sc", src: "/usr/bin/systemctl" }
+    - { dest: "/usr/local/bin/jc", src: "/usr/bin/journalctl" }
+    tags: packages
