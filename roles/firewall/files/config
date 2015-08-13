@@ -15,6 +15,8 @@ create_allowed_chain() {
     allow tcp  5353 # mdns
     allow udp  5353
 
+    allow udp    67:68 # dhcp
+
     allow tcp    80 # http
     allow tcp   443 # https
     allow tcp  8443 # https proxied
