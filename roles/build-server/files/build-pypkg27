@@ -12,26 +12,30 @@ export PIP_NO_CACHE_DIR=no
 export PIP_DISABLE_PIP_VERSION_CHECK=yes
 export PIP_ISOLATED=yes
 
-message0 "checking requirements"
-for dist in pip setuptools wheel virtualenv; do
-    message1 "checking requirements: $dist"
-    pip2 list --user | grep "$dist" &> /dev/null || { 
-        message0 "bootstrapping $dist" ;
-        pip2 install --download "$WHLDIR" "$dist" ;
-        pip2 install --no-index --find-links "$WHLDIR" --user --upgrade "$dist" ;
-    }
-done
+REQ=(pip setuptools wheel virtualenv)
+
+if [ $# -gt 0 ]; then
+    dist=("$@")
+else
+    dist=("${DIST[@]}")
+fi
+
+message0 "downloading requirements"
+pip2 install --download "$WHLDIR" ${REQ[*]} || exit $?
+
+message0 "upgrading requirements"
+pip2 install --user --no-index --find-links "$WHLDIR" --upgrade ${REQ[*]} || exit $?
 
 message0 "downloading wheels"
-pip2 install --download "$WHLDIR" ${DIST[*]}
+pip2 install --download "$WHLDIR" ${dist[*]} || exit $?
 
 message0 "downloading sdists"
-pip2 install --download "$SRCDIR" --no-use-wheel ${DIST[*]}
+pip2 install --download "$SRCDIR" --no-use-wheel ${dist[*]} || exit $?
 
 message0 "building wheels"
-pip2 wheel --no-index --find-links "$SRCDIR" --find-links "$WHLDIR" --wheel-dir "$WHLDIR" ${DIST[*]}
+pip2 wheel --no-index --find-links "$SRCDIR" --find-links "$WHLDIR" --wheel-dir "$WHLDIR" ${dist[*]} || exit $?
 
 for (( i=0 ; i < ${#WHL_BLACKLIST[*]} ; i++ )); do
     message0 "${WHL_BLACKLIST[i]}: checking for blacklisted wheel"
-    find "$WHLDIR/" -name "${WHL_BLACKLIST[i]}*.whl" -type f -exec rm -v '{}' ';'
+    find "$WHLDIR/" -name "${WHL_BLACKLIST[i]}*.whl" -type f -exec rm -v '{}' ';' || exit $?
 done
