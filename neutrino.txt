@@ -2,7 +2,7 @@
 
 create_partitions() {
     message "Partitioning"
-    sfdisk /dev/sda <<< $(echo -e "size=255MiB bootable\nsize=16128MiB\nsize=132147MiB\ntype=S")
+    sfdisk /dev/sda <<< "$(echo -e 'size=255MiB bootable\nsize=16128MiB\nsize=132147MiB\ntype=S')"
 
     message "Formatting"
     mkfs.ext4 -L boot /dev/sda1
