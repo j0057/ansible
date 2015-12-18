@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+create_partitions() {
+    message "Partitioning"
+    sfdisk /dev/sda <<< $(echo -e "size=255MiB bootable\nsize=16128MiB\nsize=132147MiB\ntype=S")
+
+    message "Formatting"
+    mkfs.ext4 -L boot /dev/sda1
+    mkfs.ext4 -L root /dev/sda2
+    mkfs.ext4 -L home /dev/sda3
+    mkswap -L swap /dev/sda4
+
+    message "Mounting"
+    mount LABEL=root /mnt       ; mkdir -p /mnt/{boot,home}
+    mount LABEL=boot /mnt/boot
+    mount LABEL=home /mnt/home
+    swapon -a
+}
+export -f create_partitions
+
+create_netctl_profiles() {
+    lines "/etc/udev/rules.d/10-network.rules" \
+        "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"00:26:22:0f:d3:8f\", NAME=\"net0\"" \
+        "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"00:26:5e:68:0a:39\", NAME=\"wlan0\""
+
+    lines "/etc/netctl/net0" \
+        "Interface=net0" \
+        "Connection=ethernet" \
+        "IP=dhcp"
+
+    netctl enable net0
+}
+export -f create_netctl_profiles
+
+export INSTALL_HOST="${1:-j0057.github.io/ansible}"
+export INSTALL_HOSTNAME="neutrino"
+export INSTALL_TZNAME="Europe/Amsterdam"
+export INSTALL_LOCALE="en_US.UTF-8 UTF-8"
+export INSTALL_PACKAGES="base grub lsb-release"
+
+source <(curl -s "http://${INSTALL_HOST}/arch_stage0.txt")
