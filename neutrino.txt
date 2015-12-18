@@ -44,6 +44,6 @@ export INSTALL_PACKAGES="base grub lsb-release openssh python2 vim-minimal
     xfce4 xfce4-goodies
     chromium
     haveged powertop"
-export INSTALL_SERVICES="sshd.service lightdm.service"
+export INSTALL_SERVICES="sshd.service lightdm.service haveged.service"
 
 source <(curl -s "http://${INSTALL_HOST}/arch_stage0.txt")
