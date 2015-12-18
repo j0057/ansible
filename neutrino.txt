@@ -14,7 +14,7 @@ create_partitions() {
     mount LABEL=root /mnt       ; mkdir -p /mnt/{boot,home}
     mount LABEL=boot /mnt/boot
     mount LABEL=home /mnt/home
-    swapon -a
+    swapon /dev/sda4
 }
 export -f create_partitions
 
@@ -23,7 +23,7 @@ create_netctl_profiles() {
         "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"00:26:22:0f:d3:8f\", NAME=\"net0\"" \
         "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"00:26:5e:68:0a:39\", NAME=\"wlan0\""
 
-    lines "/etc/netctl/net0" \
+    lines "/etc/netctl/net0-dhcp" \
         "Interface=net0" \
         "Connection=ethernet" \
         "IP=dhcp"
@@ -36,6 +36,14 @@ export INSTALL_HOST="${1:-j0057.github.io/ansible}"
 export INSTALL_HOSTNAME="neutrino"
 export INSTALL_TZNAME="Europe/Amsterdam"
 export INSTALL_LOCALE="en_US.UTF-8 UTF-8"
-export INSTALL_PACKAGES="base grub lsb-release wpa_supplicant wpa_actiond openssh python2 vim-minimal"
+export INSTALL_PACKAGES="base grub lsb-release openssh python2 vim-minimal
+    tmux htop bind-tools
+    wpa_supplicant wpa_actiond
+    xorg-server xorg-drivers
+    lightdm lightdm-gtk-greeter
+    xfce4 xfce4-goodies
+    chromium
+    haveged powertop"
+export INSTALL_SERVICES="sshd.service lightdm.service"
 
 source <(curl -s "http://${INSTALL_HOST}/arch_stage0.txt")
