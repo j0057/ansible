@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-message "Environment:"
+message "Environment"
 set | grep ^INSTALL_
 
 create_partitions
