@@ -30,5 +30,6 @@ export INSTALL_HOSTNAME="photon"
 export INSTALL_TZNAME="Europe/Amsterdam"
 export INSTALL_LOCALE="en_US.UTF-8 UTF-8"
 export INSTALL_PACKAGES="base grub lsb-release python2 openssh"
+export INSTALL_SERVICES="sshd.service"
 
 bash -e <(curl -s "http://${INSTALL_HOST}/arch_stage0.txt")

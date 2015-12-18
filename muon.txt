@@ -36,5 +36,6 @@ export INSTALL_HOSTNAME="muon"
 export INSTALL_TZNAME="Europe/Amsterdam"
 export INSTALL_LOCALE="en_US.UTF-8 UTF-8"
 export INSTALL_PACKAGES="base grub lsb-release python2 openssh git base-devel"
+export INSTALL_SERVICES="sshd.service"
 
 source <(curl -s "http://${INSTALL_HOST}/arch_stage0.txt")

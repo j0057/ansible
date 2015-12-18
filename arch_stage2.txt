@@ -29,7 +29,9 @@ grub-install --target=i386-pc --recheck /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
 
 message "Enabling services"
-systemctl enable sshd.service
+for service in ${INSTALL_SERVICES}; do
+    systemctl enable $service
+done
 
 message "Installing pip"
 curl -s "https://bootstrap.pypa.io/get-pip.py" > /tmp/get-pip.py

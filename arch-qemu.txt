@@ -11,6 +11,7 @@ export INSTALL_TZNAME="Europe/Amsterdam"
 export INSTALL_LOCALE="en_US.UTF-8 UTF-8"
 export INSTALL_PACKAGES="base grub lsb-release python2 openssh git base-devel"
 export INSTALL_ETH1_IP="10.102.0.10/16"
+export INSTALL_SERVICES="sshd.service"
 
 create_partitions() {
     partition /dev/sda \
