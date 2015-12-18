@@ -17,7 +17,6 @@ lines() {
 export -f lines
 
 partition() {
-    # 0:index ; 1:size ; 2:typecode ; 3:label ; 4:filesystem ; 5:mountpoint
     disk=$1 ; shift
     i=0 ; while [ "$#" -gt 0 ]; do args[i++]=$1 ; shift ; done
 
@@ -25,9 +24,9 @@ partition() {
     sgdisk $disk --zap-all
     for (( i=1 ; i <= ${#args[*]} ; i++ )) ; do
         for (( j=0 ; j < ${#args[*]} ; j++ )) ; do
-            read -a a <<< "${args[j]}"
-            if [ "${a[0]}" = "${i}" ]; then
-                sgdisk $disk --new ${i}:${a[1]} --typecode ${i}:${a[2]} --change-name ${i}:${a[3]}
+            read index size typecode label fstype mountpoint <<< "${args[j]}"
+            if [ "${index}" = "${i}" ]; then
+                sgdisk ${disk} --new ${i}:${size} --typecode ${i}:${typecode} --change-name ${i}:${label}
                 break
             fi
         done
@@ -36,25 +35,32 @@ partition() {
 
     message "Formatting"
     for (( j=0 ; j < ${#args[*]} ; j++ )) ; do
-        read -a a <<< "${args[j]}"
-        case ${a[4]} in
+        read index size typecode label fstype mountpoint <<< "${args[j]}"
+        case ${fstype} in
             ext4)
-                mkfs.ext4 -L ${a[3]} ${disk}${a[0]}
+                mkfs.ext4 -L ${label} ${disk}${index}
                 ;;
             btrfs)
-                mkfs.btrfs -L ${a[3]} ${disk}${a[0]}
+                mkfs.btrfs -L ${label} ${disk}${index}
+                ;;
+            swap)
+                mkswap -L ${label} ${disk}${index}
                 ;;
         esac
     done
 
     message "Mounting"
     for (( j=0 ; j < ${#args[*]} ; j++ )) ; do
-        read -a a <<< "${args[j]}"
-        if [ "${a[5]}" = "-" ]; then
-            continue
-        fi
-        mkdir -v -p /mnt${a[5]}
-        mount -v LABEL=${a[3]} /mnt${a[5]}
+        read index size typecode label fstype mountpoint <<< "${args[j]}"
+        case ${fstype} in
+            swap)
+                swapon /dev/${disk}${index}
+                ;;
+            *)
+                mkdir -v -p /mnt${mountpoint}
+                mount -v LABEL=${label} /mnt${mountpoint}
+                ;;
+        esac
     done
 }
 export -f partition
