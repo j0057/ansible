@@ -12,7 +12,7 @@ message "Updating mirror list"
 reflector --country NL --fastest 10 --protocol http --sort rate --save /etc/pacman.d/mirrorlist
 
 message "Bootstrapping"
-pacstrap /mnt $INSTALL_PACKAGES
+pacstrap /mnt ${INSTALL_PACKAGES}
 
 message "Generating /etc/fstab"
 genfstab -L -p /mnt > /mnt/etc/fstab

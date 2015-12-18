@@ -65,6 +65,9 @@ partition() {
 }
 export -f partition
 
+INSTALL_PACKAGES=$(sed 's/\s\+/ /g' <<< "${INSTALL_PACKAGES//$'\n'/ }")
+INSTALL_SERVICES=$(sed 's/\s\+/ /g' <<< "${INSTALL_SERVICES//$'\n'/ }")
+
 for var in `set | sed -n '/^INSTALL_/s/=.*//p'`; do
     read -p "$var: " -e -i "${!var}" $var 0<&4
 done
