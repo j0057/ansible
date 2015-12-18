@@ -9,7 +9,7 @@ message "Installing reflector"
 pacman --sync --refresh --noconfirm --color always reflector
 
 message "Updating mirror list"
-reflector --country NL --latest 10 --protocol http --sort rate --save /etc/pacman.d/mirrorlist
+reflector --country NL --fastest 10 --protocol http --sort rate --save /etc/pacman.d/mirrorlist
 
 message "Bootstrapping"
 pacstrap /mnt $INSTALL_PACKAGES
