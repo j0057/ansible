@@ -80,3 +80,4 @@ arch-chroot /mnt bash -e <(curl -sv "http://${INSTALL_HOST}/arch_stage2.txt")
 
 message "Unmounting"
 umount -R /mnt
+swapoff -a
