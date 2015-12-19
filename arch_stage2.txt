@@ -30,7 +30,14 @@ grub-mkconfig -o /boot/grub/grub.cfg
 
 message "Enabling services"
 for service in ${INSTALL_SERVICES}; do
-    systemctl enable $service
+    case "${service}" in
+        *.target)
+            systemctl set-default ${service}
+            ;;
+        *)
+            systemctl enable ${service}
+            ;;
+    esac
 done
 
 message "Installing pip"
