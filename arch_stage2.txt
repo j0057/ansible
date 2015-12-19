@@ -44,3 +44,8 @@ message "Installing pip"
 curl -s "https://bootstrap.pypa.io/get-pip.py" > /tmp/get-pip.py
 python2 /tmp/get-pip.py --user --no-cache-dir --disable-pip-version-check
 echo 'PATH=$PATH:$HOME/.local/bin' > '/etc/profile.d/local-bin.sh'
+
+message "Running post_install"
+if [ "$(type -t post_install)" = "function" ]; then
+    post_install
+fi
