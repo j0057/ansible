@@ -16,54 +16,71 @@ lines() {
 }
 export -f lines
 
-partition() {
-    disk=$1 ; shift
-    i=0 ; while [ "$#" -gt 0 ]; do args[i++]=$1 ; shift ; done
-
-    message "Partitioning"
-    sgdisk $disk --zap-all
-    for (( i=1 ; i <= ${#args[*]} ; i++ )) ; do
-        for (( j=0 ; j < ${#args[*]} ; j++ )) ; do
-            read index size typecode label fstype mountpoint <<< "${args[j]}"
-            if [ "${index}" = "${i}" ]; then
+partition-with-sgdisk() {
+    local i j num size typecode label fstype mountpoint
+    sgdisk ${disk} --zap-all
+    for i in {1..$#}; do
+        for j in {1..$#}; do
+            read num size typecode label fstype mountpoint <<< "${!j}"
+            if [ "${num}" = "${i}" ]; then
                 sgdisk ${disk} --new ${i}:${size} --typecode ${i}:${typecode} --change-name ${i}:${label}
-                break
             fi
         done
     done
     sgdisk --print
+}
 
-    message "Formatting"
-    for (( j=0 ; j < ${#args[*]} ; j++ )) ; do
-        read index size typecode label fstype mountpoint <<< "${args[j]}"
+partition-format() {
+    local i num size typecode label fstype mountpoint
+    for i in {1..$#}; do
+        read num size typecode label fstype mountpoint <<< "${!i}"
         case ${fstype} in
             ext4)
-                mkfs.ext4 -L ${label} ${disk}${index}
+                mkfs.ext4 -L ${label} ${disk}${num}
                 ;;
             btrfs)
-                mkfs.btrfs -L ${label} ${disk}${index}
+                mkfs.btrfs -L ${label} ${disk}${num}
                 ;;
             swap)
-                mkswap -L ${label} ${disk}${index}
-                ;;
-        esac
-    done
-
-    message "Mounting"
-    for (( j=0 ; j < ${#args[*]} ; j++ )) ; do
-        read index size typecode label fstype mountpoint <<< "${args[j]}"
-        case ${fstype} in
-            swap)
-                swapon /dev/${disk}${index}
+                mkswap -L ${label} ${disk}${num}
                 ;;
             *)
-                mkdir -v -p /mnt${mountpoint}
+                echo "unknown fstype ${fstype}, bailing out"
+                exit 1
+        esac
+    done
+}
+
+partition-mount() {
+    local i num size typecode label fstype mountpoint
+    for i in {1..$#}; do
+        read index size typecode label fstype mountpoint <<< "${!i}"
+        case ${fstype} in
+            swap)
+                swapon /dev/${disk}${num}
+                ;;
+            *)
+                mkdir -vp /mnt${mountpoint}
                 mount -v LABEL=${label} /mnt${mountpoint}
                 ;;
         esac
     done
 }
-export -f partition
+
+partition() {
+    disk=$1
+    shift
+
+    message "Partitioning with sgdisk"
+    partition-with-sgdisk "$@"
+
+    message "Formatting"
+    partition-format "$@"
+
+    message "Mounting"
+    partition-mount "$@"
+}
+export -f partition partition-with-sgdisk partition-format partition-mount
 
 INSTALL_PACKAGES=$(sed 's/\s\+/ /g' <<< "${INSTALL_PACKAGES//$'\n'/ }")
 INSTALL_SERVICES=$(sed 's/\s\+/ /g' <<< "${INSTALL_SERVICES//$'\n'/ }")
