@@ -18,21 +18,31 @@ export -f lines
 
 partition-with-sgdisk() {
     local i j num size typecode label fstype mountpoint
-    sgdisk ${disk} --zap-all
-    for i in {1..$#}; do
-        for j in {1..$#}; do
+    case ${parttype} in
+        mbr) sgdisk ${disk} --mbrtogpt --zap-all ;;
+        gpt) sgdisk ${disk} --zap-all ;;
+    esac
+    for i in $(eval echo "{1..$#}"); do
+        for j in $(eval echo "{1..$#}"); do
             read num size typecode label fstype mountpoint <<< "${!j}"
             if [ "${num}" = "${i}" ]; then
                 sgdisk ${disk} --new ${i}:${size} --typecode ${i}:${typecode} --change-name ${i}:${label}
             fi
         done
     done
-    sgdisk --print
+    if [ ${parttype} = mbr ]; then
+        sgdisk ${disk} --gpttombr 1:2:3:4
+    fi
+    partprobe
+    case ${parttype} in
+        mbr) sfdisk ${disk} --list ;;
+        gpt) sgdisk --print ;;
+    esac
 }
 
 partition-format() {
     local i num size typecode label fstype mountpoint
-    for i in {1..$#}; do
+    for i in $(eval echo "{1..$#}"); do
         read num size typecode label fstype mountpoint <<< "${!i}"
         case ${fstype} in
             ext4)
@@ -53,7 +63,7 @@ partition-format() {
 
 partition-mount() {
     local i num size typecode label fstype mountpoint
-    for i in {1..$#}; do
+    for i in $(eval echo "{1..$#}"); do
         read index size typecode label fstype mountpoint <<< "${!i}"
         case ${fstype} in
             swap)
@@ -69,7 +79,8 @@ partition-mount() {
 
 partition() {
     disk=$1
-    shift
+    parttype=$2
+    shift 2
 
     message "Partitioning with sgdisk"
     partition-with-sgdisk "$@"

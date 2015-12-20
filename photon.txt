@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 create_partitions() {
-    partition "/dev/sda" \
+    partition "/dev/sda" "gpt" \
         "1  1M:+1M      ef02    bios    -       -" \
         "3  0:+16G      8300    root    ext4    /" \
         "2  0:+256M     8300    boot    ext4    /boot" \

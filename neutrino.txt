@@ -1,20 +1,11 @@
 #!/bin/bash -e
 
 create_partitions() {
-    message "Partitioning"
-    sfdisk /dev/sda <<< "$(echo -e 'size=255MiB bootable\nsize=16128MiB\nsize=132147MiB\ntype=S')"
-
-    message "Formatting"
-    mkfs.ext4 -L boot /dev/sda1
-    mkfs.ext4 -L root /dev/sda2
-    mkfs.ext4 -L home /dev/sda3
-    mkswap -L swap /dev/sda4
-
-    message "Mounting"
-    mount LABEL=root /mnt       ; mkdir -p /mnt/{boot,home}
-    mount LABEL=boot /mnt/boot
-    mount LABEL=home /mnt/home
-    swapon /dev/sda4
+    partition "/dev/sda" "mbr" \
+        "2  +0:+16384M  8300    root    ext4    /" \
+        "1  1M:+1023M   8300    boot    ext4    /boot" \
+        "3  +0:+131072M 8300    home    ext4    /home" \
+        "4  +0:+4096M   8200    swap    swap    -"
 }
 export -f create_partitions
 
