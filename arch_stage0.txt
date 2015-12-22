@@ -6,12 +6,10 @@ message() {
 export -f message
 
 lines() {
-    target="$1"
-    message "Configuring $target"
-    shift
-    while [ -n "$1" ]; do
-        echo "$1" >> "$target"
-        shift
+    local target="$1"
+    message "Configuring ${target}"
+    for i in $(seq 2 ${#}); do
+        echo "${!i}" >> "${target}"
     done
 }
 export -f lines
