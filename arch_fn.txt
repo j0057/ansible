@@ -1,0 +1,114 @@
+#!/bin/bash
+
+message() {
+    echo -en "\n\e[1;33m==> ${1}\e[0;0m\n\n" 1>&2
+}
+export -f message
+
+_cmd_() {
+    echo -en "\n\e[1;32m${@}\e[0;0m\n\n" 1>&2
+    "${@}"
+}
+export -f _cmd_
+
+lines() {
+    local target="$1"
+    echo -en "\n\e[1;32mconfiguring ${target}\e[0;0m\n\n" 1>&2
+    for i in $(seq 2 ${#}); do
+        echo "${!i}" >> "${target}"
+    done
+}
+export -f lines
+
+partition-with-sgdisk() {
+    local i j num size typecode label fstype mountpoint
+    _cmd_ sgdisk ${disk} --zap-all
+    for i in $(seq 1 ${#}); do
+        for j in $(seq 1 ${#}); do
+            # partitions are listed in the order they should be mounted, but created in the order according to $num
+            read num size typecode label fstype mountpoint <<< "${!j}"
+            if [ "${num}" = "${i}" ]; then
+                _cmd_ sgdisk ${disk} --new ${i}:${size} --typecode ${i}:${typecode} --change-name ${i}:${label}
+            fi
+        done
+    done
+    if [ ${parttype} = mbr ]; then
+        # XXX: get from $@
+        _cmd_ sgdisk ${disk} --gpttombr 1:2:3:4
+    fi
+    case ${parttype} in
+        mbr) _cmd_ sfdisk ${disk} --list ;;
+        gpt) _cmd_ sgdisk --print ;;
+    esac
+}
+
+partition-encrypt() {
+    local i num size typecode label fstype mountpoint
+
+    _cmd_ mkdir -vp /tmp/luks.keys
+    _cmd_ chmod -v 0700 /tmp/luks.keys
+
+    for i in $(seq 1 $#); do
+        read num size typecode label fstype mountpoint <<< "${!i}"
+
+        _cmd_ dd bs=1 count=32 if=/dev/random of=/tmp/luks.keys/${label}.key
+        _cmd_ chmod -v 0400 /tmp/luks.keys/${label}.key
+
+        _cmd_ cryptsetup luksFormat -q -d /tmp/luks.keys/${label}.key -s 512 ${disk}${num}
+        _cmd_ cryptsetup luksAddKey -q -d /tmp/luks.keys/${label}.key ${disk}${num} <(echo -n "${INSTALL_PASSWORD}")
+
+        lines /tmp/crypttab \
+            "${label} ${disk}${num} /etc/luks.keys/${label}.key"
+
+        _cmd_ cryptsetup luksOpen -q -d /tmp/luks.keys/${label}.key ${disk}${num} ${label}
+    done
+}
+
+partition-format() {
+    local i dev num size typecode label fstype mountpoint
+    for i in $(seq 1 $#); do
+        read num size typecode label fstype mountpoint <<< "${!i}"
+        for dev in /dev/mapper/${label} /dev/disk/by-partlabel/${label} ${disk}${num}; do
+            [ -e ${dev} ] && break
+        done 
+        case ${fstype} in
+            swap)  _cmd_ mkswap -L ${label} ${dev} ;;
+            *)     _cmd_ mkfs.ext4 -L ${label} -t ${fstype} ${dev} ;;
+        esac
+    done
+}
+
+partition-mount() {
+    local i num size typecode label fstype mountpoint
+    for i in $(seq 1 $#); do
+        read num size typecode label fstype mountpoint <<< "${!i}"
+        case ${fstype} in
+            swap)
+                _cmd_ swapon LABEL=${label}
+                ;;
+            *)
+                _cmd_ mkdir -vp /mnt${mountpoint}
+                _cmd_ mount -v LABEL=${label} /mnt${mountpoint}
+                ;;
+        esac
+    done
+}
+
+partition() {
+    disk=$1
+    parttype=$2
+    shift 2
+
+    message "Partitioning with sgdisk"
+    partition-with-sgdisk "${@}"
+
+    message "Encrypting"
+    partition-encrypt "${@}"
+
+    message "Formatting"
+    partition-format "${@}"
+
+    message "Mounting"
+    partition-mount "${@}"
+}
+export -f partition partition-with-sgdisk partition-encrypt partition-format partition-mount
