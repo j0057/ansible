@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-create_partitions() {
+configure_disk() {
     # D945GCLF2 does not support GPT partition tables ...
 
     message "Partitioning"
@@ -16,9 +16,9 @@ create_partitions() {
     mount LABEL=boot /mnt/boot
     mount LABEL=home /mnt/home
 }
-export -f create_partitions
+export -f configure_disk
 
-create_netctl_profiles() {
+configure_network() {
     lines "/etc/udev/rules.d/10-network.rules" \
         "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"00:27:0e:01:9c:0c\", NAME=\"net0\""
 
@@ -29,7 +29,7 @@ create_netctl_profiles() {
 
     netctl enable net0
 }
-export -f create_netctl_profiles
+export -f configure_network
 
 export INSTALL_HOST="${1:-j0057.github.io/ansible}"
 export INSTALL_HOSTNAME="muon"

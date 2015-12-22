@@ -16,7 +16,7 @@ locale-gen
 message "Setting locale to ${INSTALL_LOCALE}"
 echo "LANG=${INSTALL_LOCALE/ */}" > /etc/locale.conf
 
-create_netctl_profiles
+configure_network
 
 message "Creating initial ram disk"
 mkinitcpio -p linux

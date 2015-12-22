@@ -3,7 +3,7 @@
 message "Environment"
 set | grep ^INSTALL_
 
-create_partitions
+configure_disk
 
 message "Installing reflector"
 pacman --sync --refresh --noconfirm --color always reflector

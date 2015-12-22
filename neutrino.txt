@@ -1,15 +1,15 @@
 #!/bin/bash -e
 
-create_partitions() {
+configure_disk() {
     partition "/dev/sda" "mbr" \
         "2  +0:+16384M  8300    root    ext4    /" \
         "1  1M:+1023M   8300    boot    ext4    /boot" \
         "3  +0:+131072M 8300    home    ext4    /home" \
         "4  +0:+4096M   8200    swap    swap    -"
 }
-export -f create_partitions
+export -f configure_disk
 
-create_netctl_profiles() {
+configure_network() {
     lines "/etc/udev/rules.d/10-network.rules" \
         "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"00:26:22:0f:d3:8f\", NAME=\"net0\"" \
         "SUBSYSTEM==\"net\", ACTION==\"add\", ATTR{address}==\"00:26:5e:68:0a:39\", NAME=\"wlan0\""
@@ -21,7 +21,7 @@ create_netctl_profiles() {
 
     netctl enable net0
 }
-export -f create_netctl_profiles
+export -f configure_network
 
 post_install() {
     sed -i 's/^#\?HandleLidSwitch=.*$/HandleLidSwitch=ignore/' /etc/systemd/logind.conf

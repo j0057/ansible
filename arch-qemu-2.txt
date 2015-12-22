@@ -1,22 +1,22 @@
 #!/bin/bash -e
 
-create_partitions() {
+configure_disk() {
     partition /dev/sda \
         "1  1M:+1M      ef02    bios    -       -" \
         "3  0:+16G      8300    root    ext4    /" \
         "2  0:+256M     8300    boot    ext4    /boot" \
         "4  0:0         8300    home    ext4    /home"
 }
-export -f create_partitions
+export -f configure_disk
 
-create_netctl_profiles() {
+configure_network() {
     lines /etc/netctl/eth0 "Interface=eth0" "Connection=ethernet" "IP=dhcp"
     lines /etc/netctl/eth1 "Interface=eth1" "Connection=ethernet" "IP=static" \
         "Address=(\"${INSTALL_ETH1_IP}\")"
     netctl enable eth0
     netctl enable eth1
 }
-export -f create_netctl_profiles
+export -f configure_network
 
 export INSTALL_HOST="${1:-j0057.github.io/ansible}"
 export INSTALL_HOSTNAME="arch-qemu-2"
