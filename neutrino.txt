@@ -18,13 +18,11 @@ configure_network() {
         "Interface=net0" \
         "Connection=ethernet" \
         "IP=dhcp"
-
-    netctl enable net0
 }
 export -f configure_network
 
 post_install() {
-    sed -i 's/^#\?HandleLidSwitch=.*$/HandleLidSwitch=ignore/' /etc/systemd/logind.conf
+    _cmd_ sed -i 's/^#\?HandleLidSwitch=.*$/HandleLidSwitch=ignore/' /etc/systemd/logind.conf
 }
 export -f post_install
 
@@ -33,13 +31,14 @@ export INSTALL_HOSTNAME="neutrino"
 export INSTALL_TZNAME="Europe/Amsterdam"
 export INSTALL_LOCALE="en_US.UTF-8 UTF-8"
 export INSTALL_PACKAGES="base grub lsb-release openssh python2 vim-minimal
+    ifplugd wpa_supplicant wpa_actiond
     tmux htop bind-tools
-    wpa_supplicant wpa_actiond
-    xorg-server xorg-drivers
-    lightdm lightdm-gtk-greeter
-    xfce4 xfce4-goodies
-    chromium
-    haveged powertop"
-export INSTALL_SERVICES="sshd.service lightdm.service haveged.service multi-user.target"
+    haveged powertop
+    xorg-server xorg-drivers lightdm lightdm-gtk-greeter xfce4 xfce4-goodies
+    chromium"
+export INSTALL_SERVICES="netctl-ifplugd@net0.service netctl-auto@wlan0.service sshd.service
+    haveged.service
+    multi-user.target"
+export INSTALL_PASSWORD="root"
 
 source <(curl -s "http://${INSTALL_HOST}/arch_stage0.txt")
