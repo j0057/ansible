@@ -265,4 +265,27 @@
     - { name: "films", dir: "/mnt/usb2t/films", uid: "60000", gid: "60000" }
     - { name: "series", dir: "/mnt/usb2t/series", uid: "60000", gid: "60000" }
 
-
+- name: container btvpn
+  hosts:
+  - btvpn2
+  vars_files: [secrets.yml]
+  roles:
+  - role: iptables
+    iptables:
+      filter: |
+        .. -A INPUT -i net0+ -p tcp -m state --state RELATED,ESTABLISHED -j ACCEPT
+           -A INPUT -i net0+ -p tcp --dport 22 -m state --state NEW -j ACCEPT
+           -A INPUT -i tun0 -p tcp --dport {{ secrets.vpn.vpn1.peer_port }} -m state --state NEW -j ACCEPT
+        -6 -A INPUT -p icmpv6 -j ACCEPT -m comment --comment "icmpv6"
+           -A INPUT -j LOG --log-prefix "[DROP] " -m limit --limit 1/sec
+           -A INPUT -j DROP
+        -4 -A OUTPUT -o tun0 -j ACCEPT
+        -4 -A OUTPUT -o net0+ -d {{ secrets.vpn.vpn1.ip }}/32 -j ACCEPT
+        -4 -A OUTPUT -o net0+ -d 10.103.0.0/24 -j ACCEPT
+        -4 -A OUTPUT -o net0+ -d 192.168.178.0/24 -j ACCEPT
+        -4 -A OUTPUT -o lo -d 127.0.0.0/8 -j ACCEPT
+        -4 -A OUTPUT -j REJECT --reject-with icmp-net-prohibited
+        -6 -A OUTPUT -j REJECT --reject-with icmp6-adm-prohibited
+  - role: openvpn
+    vpn_name: vpn1
+  - role: transmission
