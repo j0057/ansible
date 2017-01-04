@@ -1,0 +1,12 @@
+{% for table in ['filter', 'nat', 'mangle', 'raw', 'security'] %}
+*{{ table }}
+{% for chain in (iptables_policy[table].keys() + iptables.get('chains', {}).get(table, [])) | sort(case_sensitive=1) %}
+:{{ chain }} {{ iptables_policy[table].get(chain, '-') }} [0:0]
+{% endfor %}
+{% for line in iptables.get(table, '').split('\n') %}
+{% if line.startswith('-6 ') or not line.startswith('-4 ') %}
+{{ line[3:] }}
+{% endif %}
+{% endfor %}
+COMMIT
+{% endfor %}

@@ -1,0 +1,16 @@
+- name: install iptables.rules
+  template:
+    src: iptables.rules.j2
+    dest: /etc/iptables/iptables.rules
+  notify: restart iptables
+  tags: iptables
+
+- name: install ip6tables.rules
+  template:
+    src: ip6tables.rules.j2
+    dest: /etc/iptables/ip6tables.rules
+  notify: restart ip6tables
+  tags: iptables
+
+- meta: flush_handlers
+  tags: iptables
