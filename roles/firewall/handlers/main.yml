@@ -1,6 +1,0 @@
-- name: "restart firewall"
-  service: name={{ item }} state=restarted
-  with_items:
-  - fail2ban.service
-  - firewall.service
-  tags: firewall

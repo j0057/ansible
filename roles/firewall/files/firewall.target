@@ -1,6 +1,0 @@
-[Unit]
-Description=Firewall target
-
-[Install]
-WantedBy=multi-user.target
-Also=fail2ban.service firewall.service

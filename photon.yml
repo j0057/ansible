@@ -53,7 +53,7 @@
     - nl.stomrin
     - nl.stomrin.www
 
-  - role: firewall
+  - role: iptables
     iptables:
       chains:
         filter: [allow, fail2ban, geoblocks, spam]
