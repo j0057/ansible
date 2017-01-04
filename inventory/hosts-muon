@@ -1,13 +1,7 @@
-muon     ansible_python_interpreter=/usr/bin/python2 ansible_connection=local ansible_sudo=true
-photon   ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root ansible_ssh_host=photon.fritz.box ansible_ssh_port=22
-proton   ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root ansible_ssh_host=proton.fritz.box ansible_ssh_port=22
-electron ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root ansible_ssh_host=electron.fritz.box ansible_ssh_port=22
-
-
-ubuntu01 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=jjm ansible_ssh_host=ssh.j0057.nl ansible_ssh_port=22 ansible_sudo=True
-ubuntu02 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=jjm ansible_ssh_host=ns1.j0057.nl ansible_ssh_port=22 ansible_sudo=True
-ubuntu03 ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=jjm ansible_ssh_host=ns2.j0057.nl ansible_ssh_port=22 ansible_sudo=True
-
+muon        ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root
+photon      ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root
+proton      ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root
+btvpn2      ansible_python_interpreter=/usr/bin/python2 ansible_connection=ssh ansible_ssh_user=root
 
 [config]
 muon
@@ -18,23 +12,7 @@ photon
 [workstation]
 proton
 
-[mediacenter]
-electron
-
 [home:children]
 config
 server
 workstation
-mediacenter
-
-
-[proxy]
-ubuntu01
-
-[dns]
-ubuntu02
-ubuntu03
-
-[azure:children]
-proxy
-dns
