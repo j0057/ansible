@@ -123,6 +123,8 @@
   - role: geoblocks
     geoblocks_countries: [cn, kz, ru, ph, in, vn]
 
+  - name: fail2ban
+
   - role: dns
     dnssec: true
     zones:

@@ -1,9 +1,0 @@
-.include /usr/lib/systemd/system/fail2ban.service
-
-[Unit]
-After=firewall.service
-Requires=firewall.service
-
-[Install]
-WantedBy=
-WantedBy=firewall.target

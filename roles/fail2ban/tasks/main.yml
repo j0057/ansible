@@ -1,0 +1,22 @@
+- name: install fail2ban
+  pacman: name=fail2ban state=installed
+  notify: restart fail2ban
+  tags: fail2ban
+
+- name: create systemd drop file directory
+  file: name=/etc/systemd/system/fail2ban.service.d state=directory mode=0755 owner=root group=root
+  tags: fail2ban
+
+- name: configure fail2ban
+  copy: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }}
+  with_items:
+  - { src: DEFAULT.conf,            dest: /etc/fail2ban/jail.d,                     mode: "0644" }
+  - { src: dovecot.conf,            dest: /etc/fail2ban/jail.d,                     mode: "0644" }
+  - { src: postfix.conf,            dest: /etc/fail2ban/jail.d,                     mode: "0644" }
+  - { src: postfix-sasl.conf,       dest: /etc/fail2ban/jail.d,                     mode: "0644" }
+  - { src: sshd.conf,               dest: /etc/fail2ban/jail.d,                     mode: "0644" }
+  - { src: require-iptables.conf,   dest: /etc/systemd/system/fail2ban.service.d,   mode: "0644" }
+  notify: restart fail2ban
+  tags: fail2ban
+
+- meta: flush_handlers
