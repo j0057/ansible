@@ -1,5 +1,0 @@
-- include: common.yml
-- include: mgmt-server.yml
-- include: main-server.yml
-- include: media-server.yml
-- include: azure.yml
