@@ -1,0 +1,20 @@
+- name: install scripts
+  copy: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner=root group=root
+  with_items:
+  - { src: geoblocks-update,    dest: /usr/bin,             mode: "0700" }
+  - { src: geoblocks-iptables,  dest: /usr/bin,             mode: "0700" }
+  - { src: geoblocks,           dest: /usr/bin,             mode: "0755" }
+  - { src: geoblocks.service,   dest: /etc/systemd/system,  mode: "0644" }
+  notify:
+  - update geoblocks
+  - restart geoblocks
+  tags: geoblocks
+
+- name: configure geoblocks
+  template: src=geoblocks.conf.j2 dest=/etc/geoblocks.conf mode=0755 owner=root group=root
+  notify:
+  - update geoblocks
+  - restart geoblocks
+  tags: geoblocks
+
+- meta: flush_handlers

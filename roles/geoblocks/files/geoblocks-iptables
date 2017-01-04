@@ -1,0 +1,53 @@
+#!/bin/bash
+
+create_ipsets() {
+    for cc in $GEOBLOCKS; do
+        ipset create $cc hash:net
+    done
+}
+
+load_ipsets() {
+    sed 's/^/add /' $GEOBLOCKS_DIR/geoblocks | ipset restore
+}
+
+unload_ipsets() {
+    for cc in $GEOBLOCKS; do
+        ipset flush $cc
+    done
+}
+
+destroy_ipsets() {
+    for cc in $GEOBLOCKS; do
+        ipset destroy $cc
+    done
+}
+
+start_iptables() {
+    for cc in $GEOBLOCKS; do
+        iptables -t filter -A geoblocks -m set --match-set $cc src -p tcp -m multiport ! --dports 80,443 -m limit --limit 1/s -j LOG --log-prefix "[GEO/$cc]"
+        iptables -t filter -A geoblocks -m set --match-set $cc src -p tcp -m multiport ! --dports 80,443 -j DROP
+    done
+}
+
+stop_iptables() {
+    iptables -t filter -F geoblocks
+}
+
+. "${GEOBLOCKS_CONFIG:-/etc/geoblocks.conf}" || exit 1
+
+case "$1" in
+    start)
+        create_ipsets
+        load_ipsets
+        start_iptables
+        ;;
+    stop)
+        stop_iptables
+        unload_ipsets
+        destroy_ipsets
+        ;;
+    reload)
+        unload_ipsets
+        reload_ipsets
+        ;;
+esac

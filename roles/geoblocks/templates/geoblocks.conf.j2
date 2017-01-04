@@ -1,0 +1,5 @@
+GEOLITE_URL="http://geolite.maxmind.com/download/geoip/database/GeoIPCountryCSV.zip"
+GEOBLOCKS="{{ geoblocks_countries | join(' ') }}"
+GEOBLOCKS_DIR=/var/lib/geoblocks
+
+export GEOLITE_URL GEOBLOCKS GEOBLOCKS_DIR

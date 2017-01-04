@@ -120,6 +120,9 @@
         -4 -A PREROUTING -p tcp --dport 9091 -j DNAT --to-destination 10.103.0.66 -m comment --comment "tcp/9091:btvpn"
         -4 -A POSTROUTING -s 10.103.0.0/24 -o net0 -j MASQUERADE -m comment --comment "masquerade-lxc-network"
 
+  - role: geoblocks
+    geoblocks_countries: [cn, kz, ru, ph, in, vn]
+
   - role: dns
     dnssec: true
     zones:

@@ -1,0 +1,10 @@
+- name: update geoblocks
+  shell: /usr/bin/geoblocks-update
+  tags: geoblocks
+
+- name: restart geoblocks
+  service:
+    name: geoblocks.service
+    enabled: yes
+    state: restarted
+  tags: geoblocks

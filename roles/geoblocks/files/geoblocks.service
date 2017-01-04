@@ -1,0 +1,14 @@
+[Unit]
+Description = GeoIP-based IP blocking
+
+[Service]
+Type = oneshot
+RemainAfterExit = yes
+ExecStart = /usr/bin/geoblocks-iptables start
+ExecStop = /usr/bin/geoblocks-iptables stop
+ExecReload = /usr/bin/geoblocks-iptables reload
+
+[Install]
+Requires = iptables.service
+After = iptables.service
+WantedBy = multi-user.target

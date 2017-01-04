@@ -1,0 +1,5 @@
+#!/bin/bash
+. "${GEOBLOCKS_CONFIG:-/etc/geoblocks.conf}" || exit 1
+mkdir -p "$GEOBLOCKS_DIR"
+geoblocks $GEOBLOCKS > $GEOBLOCKS_DIR/geoblocks~ || exit 1
+mv $GEOBLOCKS_DIR/geoblocks~ $GEOBLOCKS_DIR/geoblocks
