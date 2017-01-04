@@ -1,0 +1,32 @@
+
+        +-----------+   +--------+     +--------+          +-------+
+xs4all--| fritz.box |---| switch |--+--| photon |-------+--| btvpn |
+        +-----------+   +--------+  |  +--------+       |  +-------+
+              :                     |                   |
+              :   192.168.178.0/24  |  +------+         |  +------+
+              :                     +--| muon |         +--| mail |
+              :                     |  +------+         |  +------+
+  +--------+  :  +------+           |                   | 
+  | proton |..:..| imac |           |  +---------+      |  +------+
+  +--------+  :  +------+           +--| fermion |      +--| file |
+              :                        +---------+      |  +------+
+ +---------+  :  +------+                               |
+ | yogapro |..:..| ipad |                               |  +----+
+ +---------+  :  +------+                               +--| db |
+              :                                         |  +----+
+ +---------+  :  +--------+                             |
+ | novajjm |..:..| s4mini |               10.103.0.0/24 |  +-----+
+ +---------+     +--------+                             +--| dns |
+                                                           +-----+
+
+
+photon      archlinux       lxc + nginx
+muon        archlinux       ansible
+fermion     osmc            osmc
+proton      archlinux       cinnamon + virtualbox
+
+btvpn       archlinux       openvpn + transmission
+mail        archlinux       postfix + dovecot
+file        archlinux       samba + nfs + cups
+db          archlinux       mariadb
+dns         archlinux       bind
