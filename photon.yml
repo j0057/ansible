@@ -1,10 +1,7 @@
-
 - name: server configuration
   hosts: [server]
   vars_files: [secrets.yml]
-
   roles:
-
   - role: packages
     packages:
     - dnsutils
@@ -57,6 +54,71 @@
     - nl.stomrin.www
 
   - role: firewall
+    iptables:
+      chains:
+        filter: [allow, fail2ban, geoblocks, spam]
+
+      filter: |
+        .. -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT -m comment --comment "established-traffic"
+
+           -A INPUT -j allow
+           -A INPUT -j spam
+           -A INPUT -j fail2ban
+           -A INPUT -j geoblocks
+
+        -4 -A INPUT -p udp --sport 53 -j ACCEPT -m comment --comment dns-answers
+        -4 -A INPUT -s 127.0.0.0/8 -d 127.0.0.0/8 -j ACCEPT -m comment --comment "local"
+        -4 -A INPUT -p icmp -j ACCEPT -m comment --comment allow-icmp
+        -6 -A INPUT -s ff02::/16 -p icmpv6 -j ACCEPT -m comment --comment "link-local-multicast-icmp"
+        -6 -A INPUT -s ff80::/10 -p icmpv6 -j ACCEPT -m comment --comment "link-local-icmp"
+
+           -A INPUT -m limit --limit 1/sec -j LOG --log-prefix "[DROP] "
+           -A INPUT -j DROP
+
+           -A allow -p tcp --dport 22 -m state --state NEW -j ACCEPT -m comment --comment "tcp/ssh"
+           -A allow -p tcp --dport 25 -m state --state NEW -j ACCEPT -m comment --comment "tcp/smtp"
+           -A allow -p tcp --dport 53 -m state --state NEW -j ACCEPT -m comment --comment "tcp/dns"
+           -A allow -p tcp --dport 80 -m state --state NEW -j ACCEPT -m comment --comment "tcp/http"
+           -A allow -p tcp --dport 110 -m state --state NEW -j ACCEPT -m comment --comment "tcp/pop3"
+           -A allow -p tcp --dport 111 -m state --state NEW -j ACCEPT -m comment --comment "tcp/nfs/portmap"
+           -A allow -p tcp --dport 139 -m state --state NEW -j ACCEPT -m comment --comment "tcp/netbios/1"
+           -A allow -p tcp --dport 143 -m state --state NEW -j ACCEPT -m comment --comment "tcp/imap"
+           -A allow -p tcp --dport 443 -m state --state NEW -j ACCEPT -m comment --comment "tcp/https"
+           -A allow -p tcp --dport 445 -m state --state NEW -j ACCEPT -m comment --comment "tcp/netbios/2"
+           -A allow -p tcp --dport 465 -m state --state NEW -j ACCEPT -m comment --comment "tcp/smtps"
+           -A allow -p tcp --dport 631 -m state --state NEW -j ACCEPT -m comment --comment "tcp/cups"
+           -A allow -p tcp --dport 993 -m state --state NEW -j ACCEPT -m comment --comment "tcp/imaps"
+           -A allow -p tcp --dport 995 -m state --state NEW -j ACCEPT -m comment --comment "tcp/pop3s"
+           -A allow -p tcp --dport 2049 -m state --state NEW -j ACCEPT -m comment --comment "tcp/nfs/nfsd"
+           -A allow -p tcp --dport 4614 -m state --state NEW -j ACCEPT -m comment --comment "tcp/bittorrent"
+           -A allow -p tcp --dport 5353 -m state --state NEW -j ACCEPT -m comment --comment "tcp/mdns"
+           -A allow -p tcp --dport 9091 -m state --state NEW -j ACCEPT -m comment --comment "tcp/transmission"
+           -A allow -p tcp --dport 20048 -m state --state NEW -j ACCEPT -m comment --comment "tcp/nfs/mountd"
+           -A allow -p tcp --dport 32803 -m state --state NEW -j ACCEPT -m comment --comment "tcp/nfs/lockd"
+           -A allow -p tcp --dport 32764:32769 -m state --state NEW -j ACCEPT -m comment --comment "tcp/nfs/*"
+
+           -A allow -p udp --dport 53 -j ACCEPT -m comment --comment "udp/dns"
+           -A allow -p udp --dport 67 -j ACCEPT -m comment --comment "udp/dhcp"
+           -A allow -p udp --dport 68 -j ACCEPT -m comment --comment "udp/bootp"
+           -A allow -p udp --dport 111 -j ACCEPT -m comment --comment "udp/nfs/portmap"
+           -A allow -p udp --dport 123 -j ACCEPT -m comment --comment "udp/ntp"
+           -A allow -p udp --dport 137 -j ACCEPT -m comment --comment "udp/netbios/1"
+           -A allow -p udp --dport 138 -j ACCEPT -m comment --comment "udp/netbios/2"
+           -A allow -p udp --dport 2049 -j ACCEPT -m comment --comment "udp/nfs/nfsd"
+           -A allow -p udp --dport 5353 -j ACCEPT -m comment --comment "udp/mdns"
+           -A allow -p udp --dport 20048 -j ACCEPT -m comment --comment "udp/nfs/mountd"
+           -A allow -p udp --dport 32803 -j ACCEPT -m comment --comment "udp/nfs/lockd"
+           -A allow -p udp --dport 32764:32769 -j ACCEPT -m comment --comment "udp/nfs/*"
+
+        -4 -A spam -d 255.255.255.255/32 -p udp -m udp --dport 17500 -j DROP -m comment --comment spam-dropbox-1
+        -4 -A spam -d 192.168.178.255/32 -p udp -m udp --dport 17500 -j DROP -m comment --comment spam-dropbox-2
+        -4 -A spam -d 192.168.178.255/32 -p udp -m udp --dport 8612 -j DROP -m comment --comment spam-canon-driver
+        -4 -A spam -s 192.168.178.1/32                    -p tcp -m tcp --dport 14013 -j REJECT --reject-with tcp-reset -m comment --comment "router-spam"
+        -6 -A spam -d 2001:980:e8e5:1:2665:11ff:feec:d7f7 -p tcp -m tcp --dport 14013 -j REJECT --reject-with tcp-reset -m comment --comment "router-spam"
+
+      nat: |
+        -4 -A PREROUTING -p tcp --dport 9091 -j DNAT --to-destination 10.103.0.66 -m comment --comment "tcp/9091:btvpn"
+        -4 -A POSTROUTING -s 10.103.0.0/24 -o net0 -j MASQUERADE -m comment --comment "masquerade-lxc-network"
 
   - role: dns
     dnssec: true
