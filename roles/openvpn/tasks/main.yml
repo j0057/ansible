@@ -1,0 +1,35 @@
+- name: install openvpn
+  pacman:
+    name: openvpn
+    state: installed
+  notify: restart openvpn service
+  tags: openvpn
+
+- name: configure openvpn
+  template:
+    src: "{{ secrets.vpn[vpn_name].template }}"
+    dest: "/etc/openvpn/client/{{ secrets.vpn[vpn_name].name }}.conf"
+    mode: 0600
+  notify: restart openvpn service
+  tags: openvpn
+
+- name: create openvpn-client@.service.d
+  file:
+    name: /etc/systemd/system/openvpn-client@.service.d
+    state: directory
+    mode: 0700
+  notify: restart openvpn service
+  tags: openvpn
+
+- name: configure openvpn-client@.service
+  copy:
+    dest: /etc/systemd/system/openvpn-client@.service.d/require-iptables.conf
+    content: |
+      [Unit]
+      Requires = iptables.service
+      After = iptables.service
+    mode: 0644
+  notify: restart openvpn service
+  tags: openvpn
+
+- meta: flush_handlers

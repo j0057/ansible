@@ -1,0 +1,6 @@
+- name: restart openvpn service
+  service:
+    name: "openvpn-client@{{ secrets.vpn[vpn_name].name }}.service"
+    enabled: yes
+    state: restarted
+  tags: openvpn

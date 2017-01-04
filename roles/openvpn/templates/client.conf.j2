@@ -1,0 +1,36 @@
+client
+dev tun
+proto tcp
+remote {{ secrets.vpn[vpn_name].ip }} {{ secrets.vpn[vpn_name].port }}
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+remote-cert-tls server
+cipher AES-256-CBC
+comp-lzo no
+route-delay 5
+verb 3
+sndbuf 0
+rcvbuf 0
+key-direction 1
+
+<ca>
+{{ secrets.vpn[vpn_name].ca }}
+</ca>
+
+<cert>
+{{ secrets.vpn[vpn_name].cert }}
+</cert>
+
+<key>
+{{ secrets.vpn[vpn_name].key }}
+</key>
+
+<tls-auth>
+{{ secrets.vpn[vpn_name].static_key }}
+</tls-auth>
+
+{% for d in secrets.vpn[vpn_name].direct %}
+route {{ d.net }} {{ d.mask }} net_gateway
+{% endfor %}
