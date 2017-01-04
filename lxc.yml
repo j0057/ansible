@@ -1,0 +1,80 @@
+- name: create LXC archlinux containers
+  hosts:
+  - server
+  vars:
+    containers:
+    - name: btvpn2
+      ip: 10.103.0.82/24
+      config:
+      - lxc.mount.entry = /mnt/usb2t/series mnt/usb2t/series none bind,create=dir,optional 0 0
+      - lxc.mount.entry = /mnt/usb2t/films  mnt/usb2t/films  none bind,create=dir,optional 0 0
+      - lxc.mount.entry = /var/cache/pacman var/cache/pacman none bind,create=dir,optional 0 0
+
+  tasks:
+
+  - name: create arch containers
+    lxc_container:
+      name: "{{ item.name }}"
+      state: started
+      backing_store: dir
+      container_log: yes
+      container_log_level: INFO
+      template: archlinux
+      template_options: "--packages python2,openssh --enable_units sshd.service --disable_units {{ disabled | join(',') }}"
+      container_config: "{{ def_config + item.config }}"
+    with_items: "{{ containers }}"
+    tags: lxc
+    vars:
+      def_config:
+      - lxc.network.type = veth
+      - lxc.network.name = net0
+      - lxc.network.link = lxc0
+      - lxc.network.flags = up
+      - "lxc.network.ipv4 = {{ item.ip }}"
+      - lxc.network.ipv4.gateway = 10.103.0.1
+      - lxc.pts = 1024
+      - lxc.tty = 0
+      - lxc.kmsg = 0
+      - lxc.cgroup.devices.allow = c 10:200 rwm
+      - lxc.hook.autodev = /var/lib/lxc/autodev
+      disabled:
+      - console-getty.service
+      - dbus.service
+      - getty@lxc-tty1.service
+      - getty@lxc-tty2.service
+      - getty@lxc-tty3.service
+      - getty@lxc-tty4.service
+      - getty@lxc-tty5.service
+      - getty@lxc-tty6.service
+      - proc-sys-fs-binfmt_misc.automount
+      - systemd-logind.service
+      - systemd-networkd.service
+      - systemd-resolved.service
+      - systemd-udevd-control.socket
+      - systemd-udevd-kernel.socket
+      - systemd-udevd.service
+
+  - name: create .ssh directory
+    file:
+      name: "/var/lib/lxc/{{ item.name }}/rootfs/root/.ssh"
+      state: directory
+      mode: 0700
+    with_items: "{{ containers }}"
+    tags: lxc
+
+  - name: copy authorized_keys file
+    copy:
+      src: /root/.ssh/authorized_keys
+      dest: "/var/lib/lxc/{{ item.name }}/rootfs/root/.ssh"
+      mode: 0600
+      remote_src: yes
+    with_items: "{{ containers }}"
+    tags: lxc
+
+  - name: start arch containers
+    service:
+      name: "lxc@{{ item.name }}.service"
+      enabled: yes
+      state: started
+    with_items: "{{ containers }}"
+    tags: lxc
