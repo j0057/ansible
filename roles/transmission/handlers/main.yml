@@ -1,0 +1,10 @@
+- name: reload systemd
+  shell: systemctl daemon-reload
+  tags: transmission
+
+- name: restart transmission
+  service:
+    name: transmission.service
+    enabled: yes
+    state: restarted
+  tags: transmission

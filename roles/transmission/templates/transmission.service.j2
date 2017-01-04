@@ -1,0 +1,12 @@
+[Unit]
+Description=Transmission BitTorrent daemon
+
+[Service]
+User=transmission
+Type=notify
+ExecStart=/usr/bin/transmission-daemon --foreground --port 9091 --peerport {{ secrets.vpn.vpn1.peer_port }} --no-auth --allowed '127.0.0.1,192.168.178.*,10.103.0.*' --no-portmap --log-info
+ExecReload=/bin/kill -s HUP $MAINPID
+UMask=0002
+
+[Install]
+WantedBy=multi-user.target
