@@ -67,10 +67,10 @@
            -A INPUT -j geoblocks
 
         -4 -A INPUT -p udp --sport 53 -j ACCEPT -m comment --comment dns-answers
-        -4 -A INPUT -s 127.0.0.0/8 -d 127.0.0.0/8 -j ACCEPT -m comment --comment "local"
-        -4 -A INPUT -p icmp -j ACCEPT -m comment --comment allow-icmp
-        -6 -A INPUT -s ff02::/16 -p icmpv6 -j ACCEPT -m comment --comment "link-local-multicast-icmp"
-        -6 -A INPUT -s ff80::/10 -p icmpv6 -j ACCEPT -m comment --comment "link-local-icmp"
+        -4 -A INPUT -i lo -d 127.0.0.0/8 -j ACCEPT -m comment --comment "local"
+        -6 -A INPUT -i lo -d ::1/28 -j ACCEPT -m comment --comment "local"
+        -4 -A INPUT -p icmp   -j ACCEPT -m comment --comment "allow-icmp"
+        -6 -A INPUT -p icmpv6 -j ACCEPT -m comment --comment "allow-icmpv6"
 
            -A INPUT -m limit --limit 1/sec -j LOG --log-prefix "[DROP] "
            -A INPUT -j DROP
