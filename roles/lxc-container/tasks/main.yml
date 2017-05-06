@@ -1,0 +1,52 @@
+- name: "{{ name }} : create container"
+  lxc_container:
+    name: "{{ name }}"
+    state: started
+    backing_store: dir
+    container_log: yes
+    container_log_level: INFO
+    template: "{{ classes[class].template }}"
+    template_options: "{{ classes[class].template_options }}"
+    container_config: "{{ config + classes[class].config }}"
+  notify: restart container
+  tags: lxc
+
+
+- name: "{{ name }} : disable services"
+  file:
+    src: "/dev/null"
+    dest: "/var/lib/lxc/{{ name }}/rootfs/etc/systemd/system//{{ item }}"
+    state: link
+  with_items: "{{ classes[class].systemd_disable_other }}"
+  notify: restart container
+  tags: lxc
+
+- name: "{{ name }} : create .ssh directory"
+  file:
+    name: "/var/lib/lxc/{{ name }}/rootfs/root/.ssh"
+    state: directory
+    mode: "0700"
+    owner: root
+    group: root
+  tags: lxc
+
+- name: "{{ name }} : copy authorized_keys file"
+  copy:
+    src: "/root/.ssh/authorized_keys"
+    dest: "/var/lib/lxc/{{ name }}/rootfs/root/.ssh"
+    mode: "0700"
+    owner: root
+    group: root
+    remote_src: yes
+  tags: lxc
+
+- name: "{{ name }} : configure DNS"
+  copy:
+    dest: "/etc/resolv.conf"
+    content: "{{ resolv_conf }}"
+    mode: "0644"
+    owner: root
+    group: root
+  when: resolv_conf is defined
+  tags: lxc
+

@@ -1,0 +1,18 @@
+classes:
+  archlinux:
+    template: archlinux
+    template_options: >
+      --packages python2,openssh
+      --enable_units sshd
+      --disable_units console-getty,dbus,getty@lxc-tty1,getty@lxc-tty2,getty@lxc-tty3,getty@lxc-tty4,getty@lxc-tty5,getty@lxc-tty6,systemd-logind,systemd-networkd,systemd-resolved,systemd-udevd
+    config:
+      - lxc.pts = 1024
+      - lxc.tty = 0
+      - lxc.kmsg = 0
+      - lxc.cgroup.devices.allow = c 10:200 rwm
+      - lxc.hook.autodev = /var/lib/lxc/autodev
+    systemd_disable_other:
+      - lvm2-lvmetad.socket
+      - proc-sys-fs-binfmt_misc.automount
+      - systemd-udevd-control.socket
+      - systemd-udevd-kernel.socket

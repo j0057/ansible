@@ -1,0 +1,6 @@
+- name: restart container
+  service:
+    name: "lxc@{{ name }}.service"
+    enabled: yes
+    state: restarted
+  tags: lxc
